@@ -472,6 +472,25 @@ test("worktree skips symlink escapes outside the repository", () => {
   }
 });
 
+test("worktree retains internal symlinked source files", () => {
+  const root = createRepo();
+  const link = join(root, "src", "internal-link.ts");
+  try {
+    symlinkSync(join(root, "src", "math.ts"), link);
+  } catch {
+    return;
+  }
+  try {
+    const result = api.analyzeSymbol({ root, project: "tsconfig.json", file: "src/internal-link.ts", name: "calculateTotal" });
+    assert.equal(result.ok, true);
+    assert.equal(result.analysis.status, "complete");
+    assert.equal(result.target.file, "src/internal-link.ts");
+    assert.ok(!result.warnings.some((warning) => warning.code === "PATH_OUTSIDE_ROOT" && warning.file === "src/internal-link.ts"));
+  } finally {
+    rmSync(link, { force: true });
+  }
+});
+
 test("worktree combines staged and unstaged tracked changes", () => {
   const root = createRepo();
   const base = git(root, ["rev-parse", "HEAD"]);
