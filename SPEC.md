@@ -16,6 +16,7 @@ Latest diagnostic collection bounding: `a0f148b`.
 Latest bounded source reads: `149e0fa`.
 Latest validated real-path reads: `dd212e4`.
 Latest bounded revision blob reads: `2f3c482`.
+Latest snapshot diagnostic identity: `0c8a130`.
 Runtime evidence is tracked in [VALIDATION.md](VALIDATION.md); task status is
 authoritative in [TASK.md](TASK.md).
 
@@ -135,8 +136,10 @@ is included on nodes and evidence so old locations cannot be mistaken for the
 current checkout. A location selector must remain within the requested source
 line; an out-of-range column returns `TARGET_NOT_FOUND` instead of being clamped
 into another line. Diagnostics also retain snapshot identity and source range
-when the same warning occurs in both contexts. Rename mapping retains old and
-new paths; it does not infer semantic identity from a matching name.
+when the same warning occurs in both contexts; snapshot-loader and project
+configuration diagnostics are tagged before changed-result deduplication. Rename
+mapping retains old and new paths; it does not infer semantic identity from a
+matching name.
 
 ## Git comparison rules
 

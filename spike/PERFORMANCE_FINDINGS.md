@@ -1,7 +1,7 @@
 # Local performance findings
 
 Date: 2026-09-07
-Benchmark implementation revision: `db809f4`; latest core implementation revision: `8bb3651`; latest package verification revision: `273a344`; latest provider observation bounding: `32fd01a`; latest diagnostic collection bounding: `a0f148b`; latest bounded source reads: `149e0fa`; latest validated real-path reads: `dd212e4`; latest bounded revision blob reads: `2f3c482`
+Benchmark implementation revision: `db809f4`; latest core implementation revision: `8bb3651`; latest package verification revision: `273a344`; latest provider observation bounding: `32fd01a`; latest diagnostic collection bounding: `a0f148b`; latest bounded source reads: `149e0fa`; latest validated real-path reads: `dd212e4`; latest bounded revision blob reads: `2f3c482`; latest snapshot diagnostic identity: `0c8a130`
 
 This note records bounded local resource experiments on macOS and Linux
 containers. It is evidence that the configured limits stop work predictably;

@@ -41,7 +41,9 @@ read limits are in `149e0fa`, so concurrent file growth is rejected before the
 full file is decoded into memory. Validated real-path reads close the symlink
 replacement window in `dd212e4`. Git revision blobs now use a bounded binary
 buffer and classify output-limit overflow as `FILE_BUDGET_EXCEEDED` in
-`2f3c482`, before UTF-8 decoding.
+`2f3c482`, before UTF-8 decoding. Snapshot file-read and project diagnostics now
+retain the snapshot identity that produced them, including duplicate base/head
+budget warnings, in `0c8a130`.
 It is a working draft,
 not a published release: the public schema is still `0.1-draft`, local macOS
 and Linux container verification passes, the hosted cross-platform CI matrix
@@ -135,7 +137,9 @@ buffer capped at `maxFileBytes + 1`, are checked before UTF-8 decoding, and emit
 `FILE_BUDGET_EXCEEDED` when the configured file budget is exceeded. Permitted
 external TypeScript declarations use the descriptor reader and re-check their
 real path before opening. Limits and partial stop reasons are included in the
-result.
+result. Diagnostics tied to a revision or working-tree snapshot retain that
+snapshot's ID so identical warnings from different contexts remain
+distinguishable.
 
 ## Boundary and limitations
 

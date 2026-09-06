@@ -1,7 +1,7 @@
 # Project-host feasibility findings
 
 Date: 2026-09-07
-Evidence implementation revision: `db809f4`; latest core implementation revision: `8bb3651`; latest package verification revision: `273a344`; latest provider observation bounding: `32fd01a`; latest diagnostic collection bounding: `a0f148b`; latest bounded source reads: `149e0fa`; latest validated real-path reads: `dd212e4`; latest bounded revision blob reads: `2f3c482`
+Evidence implementation revision: `db809f4`; latest core implementation revision: `8bb3651`; latest package verification revision: `273a344`; latest provider observation bounding: `32fd01a`; latest diagnostic collection bounding: `a0f148b`; latest bounded source reads: `149e0fa`; latest validated real-path reads: `dd212e4`; latest bounded revision blob reads: `2f3c482`; latest snapshot diagnostic identity: `0c8a130`
 
 This note records the bounded feasibility check that informed the first provider.
 It is evidence for project-host behavior, not a performance guarantee.
@@ -36,8 +36,8 @@ It is evidence for project-host behavior, not a performance guarantee.
    Alpine runtime binaries inside a Git-capable container. Each Linux run used
    a fresh lockfile `npm ci` install, followed by cache-preferred package smoke;
    this reproduces the dependency-install order used by CI. The latest complete
-   container rerun is recorded against `2f3c482` after the revision-blob
-   regression was added; it also passed dependency audit, package/release checks,
+   container rerun is recorded against `0c8a130` after the revision-blob and
+   snapshot-diagnostic regressions were added; it also passed dependency audit,
    and docs checks.
    It does not establish
    Windows/hosted-matrix behavior, sustained cross-platform performance,
@@ -45,8 +45,8 @@ It is evidence for project-host behavior, not a performance guarantee.
    declaration reads stop at the per-file budget plus one byte before decoding
    and re-open validated real paths. Git revision blobs use bounded binary output
    and classify overflow as `FILE_BUDGET_EXCEEDED` before decoding;
-   the direct bounded-reader and oversized-blob regressions are part of the same
-   32-case suite.
+   the direct bounded-reader, oversized-blob, and distinct base/head diagnostic
+   identity regressions are part of the same 32-case suite.
 
 ## Decisions and remaining questions
 

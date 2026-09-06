@@ -15,6 +15,7 @@ Latest diagnostic collection bounding: [`a0f148b`](https://github.com/yapweijun1
 Latest bounded source reads: [`149e0fa`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/149e0fa)
 Latest validated real-path reads: [`dd212e4`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/dd212e4)
 Latest bounded revision blob reads: [`2f3c482`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/2f3c482)
+Latest snapshot diagnostic identity: [`0c8a130`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/0c8a130)
 Last reconciled: 2026-09-07
 
 This document owns architecture and design decisions. [SPEC.md](SPEC.md) owns
@@ -156,7 +157,8 @@ Paths, one-based positions, edge ordering, path selection, and tie breakers are
 stable for identical snapshots, configuration, provider version, and limits.
 Timing, absolute paths, and random IDs are omitted from semantic output. Diagnostics
 retain snapshot identity and source range when the same warning occurs in both
-contexts. The
+contexts; snapshot loaders and project parsing attach the producing snapshot
+before changed-result diagnostics are deduplicated. The
 smoke suite repeats requests and compares complete payloads byte-for-byte at the
 object level; cross-platform determinism is still unverified.
 

@@ -86,6 +86,9 @@ and permitted external declaration reads in
 Git revision blobs now use a bounded binary buffer and classify output-limit
 overflow as `FILE_BUDGET_EXCEEDED` before decoding in
 [`2f3c482`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/2f3c482).
+Snapshot-loader and project-configuration diagnostics now retain their producing
+snapshot before changed-result deduplication in
+[`0c8a130`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/0c8a130).
 [TASK.md](TASK.md) is the authoritative status ledger.
 
 ## Work packages
@@ -168,7 +171,8 @@ reader after a real-path recheck. Deterministic ordering and unchanged-Git
 assertions are covered locally. Unresolved module observations are capped at the
 effective edge budget, diagnostic collection is capped at `maxDiagnostics`, and
 the 32-case suite includes high-fan-out regressions for both truncation markers,
-the bounded reader, and oversized revision blobs.
+the bounded reader, oversized revision blobs, and distinct base/head diagnostic
+snapshot identities.
 A bounded fan-out benchmark records default versus hard-cap behavior
 across four sizes on macOS and the 241-file fixture on Node 22/24 Linux, with
 separate API/CLI cold-start observations. A 20,000-oversized-file stress script
@@ -188,7 +192,8 @@ check pass locally. The current 32-case macOS suite passes, and current Node
 cache-preferred package install, type checks, and package checks pass. Earlier
 clean Linux runs also pass tarball install/API smoke. The latest full run includes the
 external-helper, symlink-escape, malformed API request, out-of-range coordinate,
-snapshot-aware, provider-observation, and diagnostic-limit fixtures. Package-only Node 22.23.2 and 24.20.0
+snapshot-aware, provider-observation, diagnostic-limit, oversized revision-blob,
+and distinct base/head diagnostic-snapshot fixtures. Package-only Node 22.23.2 and 24.20.0
 Linux checkouts also pass clean `npm ci` and `release:check`.
 No Windows/hosted workflow result, registry publication, clean registry
 install, or provenance is claimed.

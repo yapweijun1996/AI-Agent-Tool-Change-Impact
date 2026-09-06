@@ -20,3 +20,4 @@ pass.
 - Bound working-tree and permitted external declaration reads before UTF-8 decoding, and add an initial bound for Git revision input.
 - Re-open validated real paths for bounded reads and re-check permitted external declaration paths to reduce symlink-replacement races.
 - Read Git revision blobs through bounded binary buffers, classify output-limit overflow as `FILE_BUDGET_EXCEEDED`, and cover the behavior with an oversized-blob regression.
+- Preserve the producing snapshot ID on loader and project-configuration diagnostics so duplicate base/head warnings remain distinguishable.

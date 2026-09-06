@@ -9,15 +9,17 @@ Core implementation revisions: `b57321d`, `0cdd08f`, `13e9f14`, `6b43c58`, `ca54
 Bounded source/Git/external reads are in `149e0fa`.
 Validated real-path reads are in `dd212e4`.
 Bounded revision-blob buffers and oversized-blob diagnostics are in `2f3c482`.
+Snapshot-loader and project-diagnostic identity preservation are in `0c8a130`.
 
-Final local gate run on 2026-09-07 at code revision `2f3c482` used Node.js
+Final local gate run on 2026-09-07 at code revision `0c8a130` used Node.js
 `v23.10.0` on macOS `Darwin 25.6.0 arm64`. After a fresh
 `npm ci --ignore-scripts --no-audit --no-fund`, `npm test` (32/32), `npm run typecheck`,
 `npm run pack:check` (38 files), `npm run release:check` with and without the
 matching tag, `npm run pack:smoke`, `npm audit --audit-level=low --json` (zero
 vulnerabilities), `npm run docs:check`, workflow YAML parsing, and
 `git diff --check` all passed. The test count is now 32/32 after provider-,
-diagnostic-, and revision-blob-bound regression coverage. This is local evidence; it does not substitute
+diagnostic-, revision-blob-bound, and snapshot-identity regression coverage.
+This is local evidence; it does not substitute
 for the unrun hosted matrix or registry gates below.
 
 After the bounded source-read change in `149e0fa`, fresh Node.js `22.23.2` and
@@ -32,20 +34,24 @@ audit, package check, both release checks, installed API/CLI smoke, documentatio
 check, and `git diff --check`. The new oversized Git-blob fixture passed in both
 runtimes. These are local containers, not hosted runner evidence.
 
+The revision-blob regression now exercises two different revisions and verifies
+that identical `FILE_BUDGET_EXCEEDED` warnings retain two distinct snapshot IDs;
+the macOS and Node 22/24 container suites pass this assertion at `0c8a130`.
+
 After the real-path read change in `dd212e4`, targeted `npm test`,
 `npm run typecheck`, `npm run docs:check`, and `git diff --check` also passed on
-the macOS runtime. The full package gate above is the current `2f3c482` run; no
+the macOS runtime. The full package gate above is the current `0c8a130` run; no
 hosted or registry evidence is inferred from either local run.
 
 | Area | Evidence | Result |
 | --- | --- | --- |
 | Build and type safety | `npm run typecheck`; `npm test` builds with strict `tsc -p tsconfig.json`, including unused locals/parameters checks | Pass |
-| Runtime smoke/integration | `npm test` on Node.js `v23.10.0`, macOS `Darwin 25.6.0 arm64`, plus fresh clean copies at `2f3c482` using Node.js `v22.23.2` and `v24.20.0` Alpine runtimes | Pass: 32 tests on macOS and 32 tests on each current Linux runtime, with installed API/CLI smoke; Linux copies use the committed lockfile with fresh `npm ci` installs, followed by typecheck, dependency audit, pack, release, package-smoke, and docs checks |
+| Runtime smoke/integration | `npm test` on Node.js `v23.10.0`, macOS `Darwin 25.6.0 arm64`, plus fresh clean copies at `0c8a130` using Node.js `v22.23.2` and `v24.20.0` Alpine runtimes | Pass: 32 tests on macOS and 32 tests on each current Linux runtime, with installed API/CLI smoke; Linux copies use the committed lockfile with fresh `npm ci` installs, followed by typecheck, dependency audit, pack, release, package-smoke, and docs checks |
 | Draft contract | Ajv `8.20.0` validates capabilities, success, partial, and error envelopes, including effective `analysis.limits` | Pass |
 | Dependency audit | `npm audit --json` (production and development dependency graph) | Pass: 0 vulnerabilities |
 | Package contents | `npm pack --dry-run --ignore-scripts`; `npm run release:check`; `npm run pack:smoke` temporary tarball `--prefer-offline` install with `--ignore-scripts`, API/CLI smoke, and a space-containing temporary path; fsmonitor-isolation smoke; Node 22/24 Linux container tarball install/API checks | Pass locally: release metadata and 38-file tarball set agree; packaged files include the unreleased changelog; development tests/sources are excluded; packaged API and CLI loaded and configured fsmonitor helper was not executed; clean Node 22.23.2 and Node 24.20.0 Linux package-only checkouts also pass `npm ci --ignore-scripts` and `release:check`; Windows `.cmd` path handling is exercised through the quoted path fixture but hosted execution remains unrun |
 | Bounded resource observation | `node spike/performance-benchmark.cjs` on temporary 21-, 121-, 241-, and 501-file fan-out/depth repositories on macOS, plus the 241-file fixture on Node 22/24 Linux containers; three repeated 241-file cold starts on macOS; 12,000-missing-import and 20,000-oversized-file reproductions under default limits; direct pre-decode bounded-reader assertion in the diagnostic-limit test | Pass locally: default node cap stops at 100 nodes for larger fixtures; hard caps complete; semantic counts and stop reasons remain stable across three repeated runs; the high-fan-out provider reproduction returns 299 unresolved observations with `PROVIDER_OBSERVATION_LIMIT` in a 163,378-byte envelope, `node spike/diagnostic-limit.cjs` returns 1,000 warnings with `DIAGNOSTIC_LIMIT` in a 154,605-byte envelope, and the bounded reader rejects a 4 KiB file after 513 bytes under a 512-byte budget; API/CLI child-process timings and RSS across macOS/Linux are recorded in [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) |
-| Git/read-only behavior | Temporary repositories, revision/worktree cases, unchanged Git assertions, and an oversized revision blob under a tight `maxFileBytes` limit | Pass for tested cases; oversized Git output is rejected before UTF-8 decoding and reported as `FILE_BUDGET_EXCEEDED` |
+| Git/read-only behavior | Temporary repositories, revision/worktree cases, unchanged Git assertions, and an oversized revision blob under a tight `maxFileBytes` limit | Pass for tested cases; oversized Git output is rejected before UTF-8 decoding and reported as `FILE_BUDGET_EXCEEDED`, while duplicate base/head loader warnings retain distinct snapshot IDs |
 | Cross-platform workflow | `.github/workflows/ci.yml` configured for Node 22/24 × Ubuntu/macOS/Windows, full Git history, read-only contents permission, and low-severity dependency audit | Configured; remote execution not yet recorded |
 | Registry release | No publish or registry install was requested or authorized | Not run |
 
@@ -103,7 +109,7 @@ open. “Not run” means no evidence is available.
 | V-10 | Two commits, non-current head, deleted symbol/file, removed export, rename/move | Pass for tested cases | Modification, deleted symbol, and rename old/new snapshot tests pass; removed-file/export matrix remains |
 | V-11 | Staged/unstaged edits, untracked files, missing ref, conflict, concurrent edit | Pass for tested cases | Worktree/untracked/read-only, two-read content-hashed capture, staged plus unstaged edits, missing endpoint, conflict, and concurrent-content-change checks pass; broader repository-state combinations remain |
 | V-12 | Top-level side effects, tsconfig/package changes, unsupported asset | Partial | `tsconfig.json` and `package.json` configuration changes plus unsupported-file projection pass; side-effect and broader package matrix remain |
-| V-13 | Empty complete, partial, unresolved observations elsewhere in scope | Pass for tested cases | Complete empty isolated-target, dynamic partial, unresolved-module observations, and dual-snapshot diagnostic identity pass; broader irrelevant-observation combinations remain |
+| V-13 | Empty complete, partial, unresolved observations elsewhere in scope | Pass for tested cases | Complete empty isolated-target, dynamic partial, unresolved-module observations, and dual-snapshot loader/project diagnostic identity pass; broader irrelevant-observation combinations remain |
 | V-14 | Test imports/type-only/unused/mock/skipped/unrelated/external test project | Partial | Filename candidate and dependency separation pass; negative test matrix remains |
 | V-15 | Large files/projects, fan-out/deep graph, cancellation, repeated sessions | Partial | Four fan-out/depth sizes (21–501 files) on macOS plus current 32-case Node 22/24 Linux checks confirm default versus hard-cap behavior; bounded source/external reads stop before decoding beyond the per-file budget and Git revision blobs classify oversized output as `FILE_BUDGET_EXCEEDED`; 12,000-missing-import and 20,000-oversized-file reproductions stay within the 300-observation and 1,000-diagnostic default budgets and emit explicit truncation markers; three repeated macOS cold starts preserve counts/stop reasons; cancellation and memory-isolation evidence remain |
 | V-16 | Long paths, many diagnostics, tight byte budget, invalid budget, oversized graph | Pass for tested cases | Output/argument limits, explicit diagnostic-cap behavior, high-diagnostic stress, and valid JSON error behavior pass; long-path stress remains |
