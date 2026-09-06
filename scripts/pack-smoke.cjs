@@ -82,7 +82,40 @@ try {
   assert.equal(cliImpact.operation, "file-impact");
   assert.equal(cliImpact.analysis.limits.depth, 2);
   assert.ok(cliImpact.impact.direct.some((item) => cliImpact.graph.nodes.some((node) => node.id === item.node && node.file === "src/consumer.ts")));
-  process.stdout.write("pack-smoke: pass (installed API and CLI analysis)\n");
+
+  const compactImpactOutput = execFileSync(process.execPath, [
+    installedCliScript,
+    "file",
+    "src/base.ts",
+    "--root",
+    fixtureDirectory,
+    "--project",
+    "tsconfig.json",
+    "--max-output-bytes=16384",
+    "--json",
+  ], { cwd: appDirectory, encoding: "utf8" });
+  const compactImpact = JSON.parse(compactImpactOutput);
+  const compactBytes = Buffer.byteLength(JSON.stringify(compactImpact));
+  assert.ok(compactBytes >= 256, "pack smoke fixture must exercise the minimum output budget");
+  let formattedError;
+  try {
+    execFileSync(process.execPath, [
+      installedCliScript,
+      "file",
+      "src/base.ts",
+      "--root",
+      fixtureDirectory,
+      "--project",
+      "tsconfig.json",
+      `--max-output-bytes=${compactBytes}`,
+    ], { cwd: appDirectory, encoding: "utf8" });
+    assert.fail("pretty output should exceed the compact output budget");
+  } catch (error) {
+    assert.equal(error.status, 1);
+    formattedError = JSON.parse(error.stdout);
+  }
+  assert.equal(formattedError.error.code, "OUTPUT_LIMIT_EXCEEDED");
+  process.stdout.write("pack-smoke: pass (installed API and CLI analysis/output limits)\n");
 } finally {
   rmSync(tempRoot, { recursive: true, force: true });
 }
