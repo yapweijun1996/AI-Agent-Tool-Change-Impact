@@ -128,6 +128,11 @@ test("file impact returns reverse dependency paths and candidate tests", () => {
   assert.ok(result.impact.transitive.some((item) => result.graph.nodes.find((node) => node.id === item.node).file === "src/api.ts"));
   assert.ok(result.tests.some((candidate) => candidate.file === "test/math.test.ts"));
   assert.ok(result.graph.edges.every((edge) => edge.evidence.location && edge.evidence.level === "resolved"));
+  const normalized = api.analyzeFile({ root, project: "tsconfig.json", file: "./src//./math.ts" });
+  assert.deepEqual(normalized, result);
+  const outside = api.analyzeFile({ root, project: "tsconfig.json", file: "src/../math.ts" });
+  assert.equal(outside.ok, false);
+  assert.equal(outside.error.code, "FILE_OUTSIDE_ROOT");
   assert.equal(git(root, ["rev-parse", "HEAD"]), before);
 });
 

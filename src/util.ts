@@ -16,11 +16,12 @@ export const HARD_LIMITS: Readonly<Limits> = {
 };
 
 export function normalizeRepoPath(input: string): string {
-  const normalized = input.replaceAll("\\", "/").replace(/^\.\//, "");
-  if (!normalized || normalized.startsWith("/") || normalized.split("/").includes("..")) {
+  const normalized = input.replaceAll("\\", "/");
+  const segments = normalized.split("/").filter((segment) => segment.length > 0 && segment !== ".");
+  if (!normalized || normalized.includes("\0") || normalized.startsWith("/") || normalized.split("/").includes("..") || segments.length === 0) {
     throw new ImpactError("FILE_OUTSIDE_ROOT", `Path is not a repository-relative file: ${input}`);
   }
-  return normalized;
+  return segments.join("/");
 }
 
 export function relativeRepoPath(root: string, fileName: string): string {
