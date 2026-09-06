@@ -14,3 +14,4 @@ pass.
 - Run CI and release-check dependency installs with lifecycle scripts disabled to keep verification read-only and reproducible.
 - Harden CLI inline-value parsing and Git revision validation, with regression coverage for embedded `=` values, whitespace, and NUL input.
 - Reject missing required JavaScript API fields as `INVALID_ARGUMENT` before project or Git work begins.
+- Enable compiler checks that reject unused TypeScript locals and parameters.

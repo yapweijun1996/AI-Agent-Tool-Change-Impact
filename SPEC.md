@@ -10,6 +10,7 @@ Latest local release evidence: `17020ad`.
 Latest CLI/revision input hardening: `ab27679`.
 Latest documentation/clean-install evidence reconciliation: `1a57175`.
 Latest required API request validation: `b1f6477`.
+Latest TypeScript compiler hygiene: `473b4da`.
 Runtime evidence is tracked in [VALIDATION.md](VALIDATION.md); task status is
 authoritative in [TASK.md](TASK.md).
 

@@ -9,6 +9,7 @@ Latest local release evidence: [`17020ad`](https://github.com/yapweijun1996/AI-A
 Latest CLI/revision input hardening: [`ab27679`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/ab27679)
 Latest documentation/clean-install evidence reconciliation: [`1a57175`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/1a57175)
 Latest required API request validation: [`b1f6477`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/b1f6477)
+Latest TypeScript compiler hygiene: [`473b4da`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/473b4da)
 Last reconciled: 2026-09-07
 
 This document owns architecture and design decisions. [SPEC.md](SPEC.md) owns
