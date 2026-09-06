@@ -92,7 +92,7 @@ The following commands passed after the implementation commit:
 | `npm run typecheck` | Pass: strict TypeScript check |
 | `npm audit --omit=dev` | Pass: 0 production vulnerabilities |
 | `npm pack --dry-run --ignore-scripts` | Pass: 37 package files, no development sources/tests included |
-| Pack-and-install smoke | Pass: local tarball installed with `npm install --offline --omit=dev`; packaged API returned `0.1-draft` |
+| Pack-and-install smoke | Pass: local tarball installed with `npm install --offline --omit=dev`; packaged API returned `0.1-draft`, and packaged `analyzeChanged` did not execute a configured fsmonitor marker |
 | Node 22/24 Linux container matrix | Pass: temporary clean `git archive` checkouts in `node:22-alpine` and `node:24-alpine`; `npm ci --offline`, the full 24-case suite, typecheck, and pack check pass using only the locked npm cache; earlier clean runs also pass tarball install/API smoke; the full run includes the external-helper fixture |
 | `node spike/performance-benchmark.cjs` | Pass locally: default 241-file fan-out plus 21/121/501-file parameterized runs on macOS, and default 241-file API/CLI runs on Node 22/24 Linux; defaults stop at 100 nodes, hard caps complete within fixture size; observations are recorded in [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) |
 | `git diff --check` | Pass: no whitespace errors |
