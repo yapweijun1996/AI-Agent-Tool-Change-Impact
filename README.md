@@ -28,6 +28,7 @@ Node 22/24 release evidence is recorded in `17020ad`.
 CLI inline values and Git revision inputs are hardened in `ab27679`.
 Documentation and clean-install evidence are reconciled in `079acbd` and
 `1a57175`.
+Required JavaScript API fields are validated before work begins in `b1f6477`.
 It is a working draft,
 not a published release: the public schema is still `0.1-draft`, local macOS
 and Linux container verification passes, the hosted cross-platform CI matrix
