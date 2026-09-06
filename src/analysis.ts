@@ -118,7 +118,7 @@ export function analyzeFile(request: FileImpactRequest): ImpactResult {
     const seed = provider.nodeForFile(file);
     const fileResult = provider.fileEdges();
     const traversal = buildTraversal(provider, [seed], fileResult.edges, limits);
-    return boundedResult(makeEnvelope("file-impact", context, diagnostics, traversal, [
+    return boundedResult(makeEnvelope("file-impact", context, limits, diagnostics, traversal, [
       { node: seed.id, reason: "requested-target" },
     ], {
       type: "file",
@@ -143,7 +143,7 @@ export function analyzeSymbol(request: SymbolImpactRequest): ImpactResult {
     const target = provider.resolveTarget(file, request.name, request.line, request.column);
     const references = provider.references(target);
     const traversal = buildTraversal(provider, [nodeFromTarget(target)], references.edges, limits);
-    return boundedResult(makeEnvelope("symbol-impact", context, diagnostics, traversal, [
+    return boundedResult(makeEnvelope("symbol-impact", context, limits, diagnostics, traversal, [
       { node: target.nodeId, reason: "requested-target" },
     ], {
       type: "symbol",
@@ -246,7 +246,7 @@ export function analyzeChanged(request: ChangedImpactRequest): ImpactResult {
       snapshots: [baseLoaded.snapshot.ref, headLoaded.snapshot.ref],
       resolution: "local-project-with-external-fallback",
     };
-    const analysis = makeAnalysisScope(headContext, merged.status, [...merged.stopReasons, ...allDiagnostics.filter((entry) => entry.severity === "warning").map((entry) => entry.code), ...(unresolved.length > 0 ? ["UNRESOLVED_OBSERVATIONS"] : [])], merged, allDiagnostics, unresolved);
+    const analysis = makeAnalysisScope(headContext, limits, merged.status, [...merged.stopReasons, ...allDiagnostics.filter((entry) => entry.severity === "warning").map((entry) => entry.code), ...(unresolved.length > 0 ? ["UNRESOLVED_OBSERVATIONS"] : [])], merged, allDiagnostics, unresolved);
     const envelope: ResultEnvelope = {
       schemaVersion: "0.1-draft",
       ok: true,
@@ -321,6 +321,7 @@ function buildTraversal(provider: TypeScriptProvider, seeds: readonly GraphNode[
 function makeEnvelope(
   operation: ResultEnvelope["operation"],
   context: ProjectContext,
+  limits: Limits,
   diagnostics: readonly Diagnostic[],
   traversal: ReturnType<typeof buildTraversal>,
   seeds: readonly Seed[],
@@ -332,7 +333,7 @@ function makeEnvelope(
     ...diagnostics,
     ...allUnresolved.map((entry) => diagnostic(entry.code, entry.detail, { snapshot: entry.snapshot, file: entry.file, range: entry.range })),
   ]);
-  const analysis = makeAnalysisScope(context, traversal.status, [...traversal.stopReasons, ...(allUnresolved.length > 0 ? ["UNRESOLVED_OBSERVATIONS"] : [])], traversal, allDiagnostics, allUnresolved);
+  const analysis = makeAnalysisScope(context, limits, traversal.status, [...traversal.stopReasons, ...(allUnresolved.length > 0 ? ["UNRESOLVED_OBSERVATIONS"] : [])], traversal, allDiagnostics, allUnresolved);
   const contextOutput: AnalysisContext = {
     provider: "typescript-language-service",
     providerVersion: tsVersion(context),
@@ -372,7 +373,7 @@ function boundedResult(result: ImpactResult, limits: Limits): ImpactResult {
   }));
 }
 
-function makeAnalysisScope(context: ProjectContext, traversalStatus: "complete" | "partial", stopReasons: readonly string[], traversal: { nodes: GraphNode[]; edges: GraphEdge[] }, diagnostics: readonly Diagnostic[], unresolved: readonly UnresolvedObservation[]): AnalysisScope {
+function makeAnalysisScope(context: ProjectContext, limits: Limits, traversalStatus: "complete" | "partial", stopReasons: readonly string[], traversal: { nodes: GraphNode[]; edges: GraphEdge[] }, diagnostics: readonly Diagnostic[], unresolved: readonly UnresolvedObservation[]): AnalysisScope {
   const includedFiles = context.project.files.length;
   const excludedFiles = Math.max(0, context.snapshot.files.size - includedFiles);
   const limitations = new Set<string>();
@@ -391,6 +392,7 @@ function makeAnalysisScope(context: ProjectContext, traversalStatus: "complete" 
   return {
     status: traversalStatus === "complete" && !diagnostics.some((entry) => entry.severity === "warning") && unresolved.length === 0 ? "complete" : "partial",
     project: context.project,
+    limits: { ...limits },
     includedFiles,
     excludedFiles,
     limitations: [...limitations].sort(),

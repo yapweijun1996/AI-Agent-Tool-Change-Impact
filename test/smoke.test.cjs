@@ -123,6 +123,8 @@ test("file impact returns reverse dependency paths and candidate tests", () => {
   assert.equal(result.ok, true);
   assert.equal(result.operation, "file-impact");
   assert.equal(result.analysis.status, "complete");
+  assert.equal(result.analysis.limits.depth, 2);
+  assert.equal(result.analysis.limits.maxNodes, 100);
   const files = result.impact.direct.map((item) => result.graph.nodes.find((node) => node.id === item.node).file);
   assert.deepEqual(files, ["src/reexport.ts", "src/service.ts", "src/view.tsx", "test/math.test.ts"]);
   assert.ok(result.impact.transitive.some((item) => result.graph.nodes.find((node) => node.id === item.node).file === "src/api.ts"));
@@ -177,6 +179,7 @@ test("file traversal terminates on cycles and retains a deterministic diamond pa
   const shallow = api.analyzeFile({ root, project: "tsconfig.json", file: "src/math.ts", limits: { depth: 1 } });
   assert.equal(shallow.ok, true);
   assert.equal(shallow.analysis.status, "partial");
+  assert.equal(shallow.analysis.limits.depth, 1);
   assert.ok(shallow.analysis.stopReasons.includes("DEPTH_LIMIT"));
 });
 

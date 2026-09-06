@@ -98,6 +98,7 @@ export interface UnresolvedObservation {
 export interface AnalysisScope {
   status: AnalysisStatus;
   project: ProjectRef;
+  limits: Limits;
   includedFiles: number;
   excludedFiles: number;
   limitations: string[];

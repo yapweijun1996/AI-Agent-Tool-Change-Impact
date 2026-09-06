@@ -117,6 +117,47 @@
       },
       "additionalProperties": false
     },
+    "limits": {
+      "type": "object",
+      "required": ["depth", "maxNodes", "maxEdges", "maxPathsPerTarget", "maxOutputBytes", "maxFiles", "maxFileBytes", "maxTotalFileBytes"],
+      "properties": {
+        "depth": { "type": "integer", "minimum": 1 },
+        "maxNodes": { "type": "integer", "minimum": 1 },
+        "maxEdges": { "type": "integer", "minimum": 1 },
+        "maxPathsPerTarget": { "type": "integer", "minimum": 1 },
+        "maxOutputBytes": { "type": "integer", "minimum": 1 },
+        "maxFiles": { "type": "integer", "minimum": 1 },
+        "maxFileBytes": { "type": "integer", "minimum": 1 },
+        "maxTotalFileBytes": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "analysisScope": {
+      "type": "object",
+      "required": ["status", "project", "limits", "includedFiles", "excludedFiles", "limitations", "stopReasons", "returnedNodes", "returnedEdges"],
+      "properties": {
+        "status": { "enum": ["complete", "partial"] },
+        "project": {
+          "type": "object",
+          "required": ["configPath", "files"],
+          "properties": {
+            "configPath": { "type": "string", "minLength": 1 },
+            "files": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+          },
+          "additionalProperties": false
+        },
+        "limits": { "$ref": "#/$defs/limits" },
+        "includedFiles": { "type": "integer", "minimum": 0 },
+        "excludedFiles": { "type": "integer", "minimum": 0 },
+        "limitations": { "type": "array", "items": { "type": "string" } },
+        "stopReasons": { "type": "array", "items": { "type": "string" } },
+        "observedNodes": { "type": "integer", "minimum": 0 },
+        "returnedNodes": { "type": "integer", "minimum": 0 },
+        "observedEdges": { "type": "integer", "minimum": 0 },
+        "returnedEdges": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
     "success": {
       "type": "object",
       "required": ["schemaVersion", "ok", "operation", "unresolved", "warnings"],
@@ -148,7 +189,7 @@
         },
         "tests": { "type": "array" },
         "unresolved": { "type": "array" },
-        "analysis": { "type": "object" },
+        "analysis": { "$ref": "#/$defs/analysisScope" },
         "warnings": { "type": "array", "items": { "$ref": "#/$defs/diagnostic" } },
         "capabilities": { "type": "object" }
       },
