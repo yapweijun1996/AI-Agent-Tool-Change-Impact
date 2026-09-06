@@ -64,6 +64,9 @@ Packaged API/CLI end-to-end analysis smoke was added in
 [`273a344`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/273a344).
 Release metadata and tarball-set validation was added in
 [`2262658`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/2262658).
+Schema metadata and optional versioned-tag validation were added in
+[`4d770e0`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/4d770e0)
+and [`13990ce`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/13990ce).
 The draft schema and local verification pass; Windows/hosted cross-platform
 execution, cancellation/isolation evidence, schema freeze, and publication
 remain open.
