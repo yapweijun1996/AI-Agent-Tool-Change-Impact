@@ -345,17 +345,24 @@ test("revision snapshots classify oversized blobs as file-budget diagnostics", (
   writeFileSync(oversizedPath, `export const oversized = "${"x".repeat(4096)}";\n`);
   git(root, ["add", "src/oversized.ts"]);
   git(root, ["commit", "-qm", "oversized-blob"]);
-  const revision = git(root, ["rev-parse", "HEAD"]);
+  const base = git(root, ["rev-parse", "HEAD"]);
+  const mathPath = join(root, "src", "math.ts");
+  writeFileSync(mathPath, readFileSync(mathPath, "utf8").replace("value * 2", "value * 8"));
+  git(root, ["add", "src/math.ts"]);
+  git(root, ["commit", "-qm", "change-with-oversized-blob"]);
+  const head = git(root, ["rev-parse", "HEAD"]);
   const result = api.analyzeChanged({
     root,
     project: "tsconfig.json",
-    base: revision,
-    head: revision,
+    base,
+    head,
     limits: { maxFileBytes: 512 },
   });
   assert.equal(result.ok, true);
   assert.equal(result.analysis.status, "partial");
-  assert.ok(result.warnings.some((warning) => warning.code === "FILE_BUDGET_EXCEEDED" && warning.file === "src/oversized.ts"));
+  const warnings = result.warnings.filter((warning) => warning.code === "FILE_BUDGET_EXCEEDED" && warning.file === "src/oversized.ts");
+  assert.equal(warnings.length, 2);
+  assert.equal(new Set(warnings.map((warning) => warning.snapshot?.id)).size, 2);
 });
 
 test("changed analysis handles deleted symbols using the base snapshot", () => {

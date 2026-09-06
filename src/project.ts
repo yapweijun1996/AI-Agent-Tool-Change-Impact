@@ -190,6 +190,7 @@ export function createProjectContext(snapshot: SourceSnapshot, requestedProject?
     diagnostics.add({
       code: "PROJECT_CONFIG_DIAGNOSTIC",
       message: formatDiagnostic(entry),
+      snapshot: snapshot.ref,
       severity: "warning",
     });
   }

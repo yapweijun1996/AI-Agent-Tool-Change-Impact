@@ -76,6 +76,10 @@ export class SourceSnapshot {
   }
 }
 
+function attachSnapshotDiagnostics(diagnostics: readonly Diagnostic[], snapshot: SourceSnapshot): Diagnostic[] {
+  return diagnostics.map((entry) => entry.snapshot ? entry : { ...entry, snapshot: snapshot.ref });
+}
+
 function runGit(root: string, args: string[], encoding: BufferEncoding = "utf8", maxBuffer = 64 * 1024 * 1024): string {
   // A repository can configure core.fsmonitor as an executable helper. Disable
   // it so read-only analysis never runs repository-configured processes.
@@ -270,9 +274,10 @@ function loadWorkingTreeFiles(root: string, limits: Limits): { files: Map<string
 export function loadWorkingTree(rootInput?: string, limits: Limits = DEFAULT_LIMITS): SnapshotLoadResult {
   const root = repositoryRoot(rootInput);
   const loaded = loadWorkingTreeFiles(root, limits);
+  const snapshot = new SourceSnapshot(root, "working-tree", loaded.files, undefined, true);
   return {
-    snapshot: new SourceSnapshot(root, "working-tree", loaded.files, undefined, true),
-    diagnostics: loaded.diagnostics,
+    snapshot,
+    diagnostics: attachSnapshotDiagnostics(loaded.diagnostics, snapshot),
   };
 }
 
@@ -283,7 +288,10 @@ export function loadWorkingTreeStable(rootInput?: string, limits: Limits = DEFAU
   const second = loadWorkingTreeFiles(root, limits);
   const secondSnapshot = new SourceSnapshot(root, "working-tree", second.files, undefined, true);
   const diagnostics = createDiagnosticCollector(limits.maxDiagnostics);
-  for (const entry of [...first.diagnostics, ...second.diagnostics]) {
+  for (const entry of [
+    ...attachSnapshotDiagnostics(first.diagnostics, firstSnapshot),
+    ...attachSnapshotDiagnostics(second.diagnostics, secondSnapshot),
+  ]) {
     diagnostics.add(entry);
   }
   if (firstSnapshot.ref.id !== secondSnapshot.ref.id) {
@@ -336,10 +344,8 @@ export function loadRevision(rootInput: string | undefined, revisionInput: strin
       throw error;
     }
   }
-  return {
-    snapshot: new SourceSnapshot(root, "revision", files, revision, true),
-    diagnostics: diagnostics.toArray(),
-  };
+  const snapshot = new SourceSnapshot(root, "revision", files, revision, true);
+  return { snapshot, diagnostics: attachSnapshotDiagnostics(diagnostics.toArray(), snapshot) };
 }
 
 export function readGitText(root: string, revision: string, relativePath: string): string {
