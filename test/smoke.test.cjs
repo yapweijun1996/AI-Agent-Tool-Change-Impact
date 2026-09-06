@@ -361,7 +361,7 @@ test("worktree content changes during capture are reported as partial", () => {
   assert.ok(result.warnings.some((warning) => warning.code === "WORKTREE_CHANGED_DURING_CAPTURE"));
 });
 
-test("changed analysis disables configured external diff and textconv helpers", () => {
+test("changed analysis disables configured external diff, textconv, and fsmonitor helpers", () => {
   const root = createRepo();
   const marker = join(root, "helper-ran");
   const helper = join(root, "diff-helper.sh");
