@@ -32,10 +32,10 @@ reasoning, and automatic dependency installation are outside this version.
 | R-08 | Distinguish edge resolution from analysis completeness | Implemented | V-03, V-07, V-13 |
 | R-09 | Return candidate tests with separate classification and dependency evidence | Implemented | V-14 |
 | R-10 | Bound discovery, provider work, traversal, diagnostics, and serialized bytes | Implemented; broader thresholds pending | V-15, V-16 |
-| R-11 | Produce deterministic semantic results for identical declared inputs | Implemented locally; cross-platform pending | V-09, V-17 |
+| R-11 | Produce deterministic semantic results for identical declared inputs | Implemented on tested runtimes; cross-platform determinism pending | V-09, V-17 |
 | R-12 | Keep analysis read-only, offline, and free of repository-code execution | Implemented by design/tests | V-18, V-19 |
 | R-13 | Provide one consistent CLI/API contract with machine-readable errors | Implemented draft | V-05, V-16, V-20 |
-| R-14 | Verify packaging/platform support before advertising a release | Local package check only | V-21, V-22 pending |
+| R-14 | Verify packaging/platform support before advertising a release | Local artifact/runtime checks pass; Windows/hosted release gates pending | V-21, V-22 pending |
 
 ## Draft CLI
 
