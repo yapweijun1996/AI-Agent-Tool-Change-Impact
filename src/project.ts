@@ -35,11 +35,15 @@ function toAbsolute(root: string, value: string): string {
 function externalFileAllowed(root: string, fileName: string): boolean {
   const absolute = resolve(fileName);
   const typescriptRoot = resolve(root, "node_modules", "typescript");
-  if (absolute.startsWith(`${typescriptRoot}${sep}`)) {
-    return true;
-  }
-  const nodeModules = `${resolve(root, "node_modules")}${sep}`;
-  return absolute.startsWith(nodeModules);
+  const nodeModules = resolve(root, "node_modules");
+  const typescriptLib = resolve(ts.getDefaultLibFilePath({ target: ts.ScriptTarget.ES2022 }), "..");
+  return pathWithin(typescriptRoot, absolute) || pathWithin(nodeModules, absolute) || pathWithin(typescriptLib, absolute);
+}
+
+function pathWithin(parent: string, candidate: string): boolean {
+  const normalizedParent = ts.sys.useCaseSensitiveFileNames ? parent : parent.toLowerCase();
+  const normalizedCandidate = ts.sys.useCaseSensitiveFileNames ? candidate : candidate.toLowerCase();
+  return normalizedCandidate === normalizedParent || normalizedCandidate.startsWith(`${normalizedParent}${sep}`);
 }
 
 function readPermittedFile(root: string, fileName: string, snapshot: SourceSnapshot): string | undefined {
