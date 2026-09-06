@@ -47,6 +47,9 @@ and the full-history documentation-checkout requirement is in
 [`343750a`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/343750a);
 installed API/CLI artifact smoke is automated in
 [`0902d49`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/0902d49);
+Windows `.cmd` package-smoke invocation handling is hardened in
+[`2a68521`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/2a68521),
+but remains unverified on a Windows runner;
 documentation reconciliation follows the implementation revision above.
 
 ## Current situation
