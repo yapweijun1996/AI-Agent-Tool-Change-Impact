@@ -49,7 +49,8 @@ installed API/CLI artifact smoke is automated in
 [`0902d49`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/0902d49);
 Windows `.cmd` package-smoke invocation handling is hardened in
 [`2a68521`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/2a68521),
-but remains unverified on a Windows runner;
+and the smoke fixture now exercises space-containing temporary paths;
+Windows runner execution remains unverified;
 documentation reconciliation follows the implementation revision above.
 
 ## Current situation

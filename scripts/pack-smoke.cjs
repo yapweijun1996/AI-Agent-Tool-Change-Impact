@@ -10,7 +10,9 @@ const root = join(__dirname, "..");
 const npmCli = process.env.npm_execpath;
 const npmCommand = npmCli ? process.execPath : process.platform === "win32" ? "npm.cmd" : "npm";
 const npmPrefixArgs = npmCli ? [npmCli] : [];
-const tempRoot = mkdtempSync(join(tmpdir(), "agent-impact-pack-smoke-"));
+// Keep spaces in the temporary path so package and .cmd invocation quoting is
+// exercised on every platform, including the Windows runner.
+const tempRoot = mkdtempSync(join(tmpdir(), "agent-impact pack smoke-"));
 
 function runNpm(args, cwd) {
   return execFileSync(npmCommand, [...npmPrefixArgs, ...args], {
