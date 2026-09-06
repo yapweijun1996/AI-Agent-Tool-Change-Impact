@@ -1,7 +1,7 @@
 # Local performance findings
 
 Date: 2026-09-06
-Implementation revision: `89f5286`
+Implementation revision: `db809f4`
 
 This note records bounded local resource experiments on macOS and Linux
 containers. It is evidence that the configured limits stop work predictably;
@@ -29,10 +29,10 @@ for the default run; provider TypeScript `5.9.3`.
 
 | Mode | Process | Wall time | API work time | RSS delta | Result |
 | --- | --- | ---: | ---: | ---: | --- |
-| Defaults | API child | 1,343.3 ms | 1,104.3 ms | 84.6 MiB | `partial`, 100 nodes/99 edges, `NODE_LIMIT` |
-| Hard caps | API child | 1,352.5 ms | 1,021.2 ms | 89.3 MiB | `complete`, 241 nodes/240 edges |
-| Defaults | CLI child | 1,390.6 ms | — | — | `partial`, 100 nodes/99 edges, `NODE_LIMIT` |
-| Hard caps | CLI child | 1,390.2 ms | — | — | `complete`, 241 nodes/240 edges |
+| Defaults | API child | 386.2 ms | 276.8 ms | 78.3 MiB | `partial`, 100 nodes/99 edges, `NODE_LIMIT` |
+| Hard caps | API child | 384.1 ms | 280.4 ms | 83.1 MiB | `complete`, 241 nodes/240 edges |
+| Defaults | CLI child | 393.9 ms | — | — | `partial`, 100 nodes/99 edges, `NODE_LIMIT` |
+| Hard caps | CLI child | 385.3 ms | — | — | `complete`, 241 nodes/240 edges |
 
 The same run shape was repeated with bounded sizes. Returned counts are stable
 even though timing and RSS vary by process state.

@@ -1,7 +1,7 @@
 # Design
 
 Status: implemented v0.1 draft; release gates remain open.
-Implementation revision: [`89f5286`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/89f5286)
+Implementation revision: [`db809f4`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/db809f4)
 Last reconciled: 2026-09-06
 
 This document owns architecture and design decisions. [SPEC.md](SPEC.md) owns
@@ -100,8 +100,9 @@ then narrows the analysis set. `.git`, `node_modules`, `dist`, and `coverage`
 are excluded from source inventory. Symlink escapes are skipped. TypeScript
 standard-library files and local `node_modules` may be read for static
 resolution, but repository modules, config code, plugins, test runners,
-automatic type acquisition, external diff drivers, and textconv filters are
-never executed. Git commands disable external diff/textconv and optional locks.
+automatic type acquisition, external diff drivers, textconv filters, and
+`core.fsmonitor` hooks are never executed. Git commands disable external
+diff/textconv, `core.fsmonitor`, and optional locks.
 
 ### D-08: Bound work before serialization
 
@@ -144,7 +145,7 @@ as follows:
 | Evidence strength is confused with completeness | D-05 | Dynamic/missing module cases produce `partial` with observations |
 | Imports are presented as test coverage | D-06 | Candidate role and dependency edge IDs are separate fields |
 | Output caps do not bound work | D-08 | File/graph/provider/output limits are enforced; bounded fan-out observations exist, while stress/cancellation measurements remain open |
-| Scan/read/execution boundaries conflict | D-07 | Git flags, symlink checks, unchanged-Git assertions, and offline/read-only API |
+| Scan/read/execution boundaries conflict | D-07 | Git flags disable external diff/textconv/fsmonitor helpers; symlink checks, unchanged-Git assertions, and offline/read-only API |
 
 ## Open design questions
 

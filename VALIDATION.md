@@ -5,7 +5,7 @@ gates; implementation status is authoritative in [TASK.md](TASK.md).
 
 ## Current evidence
 
-Implementation revisions: `b57321d`, `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`, `954f6dc`, `bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, and `89f5286`, plus the documentation
+Implementation revisions: `b57321d`, `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`, `954f6dc`, `bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, `89f5286`, and `db809f4`, plus the documentation
 reconciliation that follows this implementation revision.
 
 | Area | Evidence | Result |
@@ -72,7 +72,7 @@ open. “Not run” means no evidence is available.
 | V-15 | Large files/projects, fan-out/deep graph, cancellation, repeated sessions | Partial | Four fan-out/depth sizes (21–501 files) on macOS plus the 241-file fixture on Node 22/24 Linux confirm default versus hard-cap behavior and record API/CLI observations; cancellation and memory-isolation evidence remain |
 | V-16 | Long paths, many diagnostics, tight byte budget, invalid budget, oversized graph | Pass for tested cases | Output/argument limits and valid JSON error behavior pass; long-path/diagnostic stress remains |
 | V-17 | Identical snapshots/config/dependencies/provider; changed provider/resolution input | Partial | Repeated identical API payloads compare equal; cross-provider/input invalidation is untested |
-| V-18 | External diff/textconv, executable plugin/config, automatic type acquisition | Pass for tested cases | Marker-based external diff/textconv helper fixture confirms configured helpers are not executed on macOS and Node 22/24 Linux; broader executable-config and automatic-type-acquisition matrix remains |
+| V-18 | External diff/textconv/fsmonitor, executable plugin/config, automatic type acquisition | Pass for tested cases | Marker-based external diff/textconv/fsmonitor helper fixture confirms configured helpers are not executed on macOS and Node 22/24 Linux; broader executable-config and automatic-type-acquisition matrix remains |
 | V-19 | Symlink escape, workspace symlink, external declarations, source/Git snapshots | Partial | Snapshot IDs, old/new evidence, and read boundaries are implemented; symlink/external-input fixture remains |
 | V-20 | CLI/API success, partial, validation/operation errors, coordinate handoff | Pass for tested cases | CLI JSON/exit behavior, API parity, partials, and `--at` pass; UTF-16/old-coordinate cases remain |
 | V-21 | Packaged artifact outside checkout on Node 22/24 and Linux/macOS/Windows | Partial | Node 23/macOS and Node 22/24 Linux pass tests, typecheck, and pack checks; the earlier clean Linux runs also pass tarball install/API smoke; Windows and hosted matrix remain unrun |

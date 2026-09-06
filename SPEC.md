@@ -2,7 +2,7 @@
 
 Status: implemented v0.1 draft; the executable schema and API are not frozen for
 backward compatibility.
-Last updated: 2026-09-06. Implementation revision: `89f5286`.
+Last updated: 2026-09-06. Implementation revision: `db809f4`.
 Runtime evidence is tracked in [VALIDATION.md](VALIDATION.md); task status is
 authoritative in [TASK.md](TASK.md).
 
@@ -122,7 +122,8 @@ semantic identity from a matching name.
   selected project configuration is an explicit operation error.
 - Missing refs, conflict state, and a worktree status change during capture are
   surfaced as Git errors/partial diagnostics. No fetch, checkout, reset, build,
-  install, source write, external diff, or textconv is performed.
+  install, source write, external diff, textconv, or `core.fsmonitor` helper is
+  performed.
 
 ## Limits, errors, and dependencies
 
