@@ -110,6 +110,8 @@ provider module-resolution callbacks now reuse bounded, real-path-validated
 reads for permitted external metadata and declarations in
 [`ba0538a`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/ba0538a),
 with an oversized package-metadata regression;
+CLI formatted-output enforcement is in
+[`c6296e4`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/c6296e4);
 documentation reconciliation is recorded in
 [`3a7bc99`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/3a7bc99),
 [`079acbd`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/079acbd),
@@ -123,7 +125,7 @@ and the follow-up benchmark note is in
 The repository now contains a CommonJS TypeScript implementation, a draft JSON
 Schema, a CLI, a JavaScript API, a fixture-backed Node test suite, package
 metadata/lockfile, and a configured cross-platform workflow. Local verification
-on Node.js `23.10.0` / macOS `Darwin 25.6.0 arm64` passes 35 smoke/integration
+on Node.js `23.10.0` / macOS `Darwin 25.6.0 arm64` passes 36 smoke/integration
 tests, including cycle-safe traversal, complete empty-impact results,
 external-helper and symlink-escape isolation, malformed API request validation,
 snapshot-aware diagnostics, bounded high-fan-out unresolved-module observations,
@@ -158,7 +160,7 @@ registry publication, and clean registry installation have not been verified.
 
 | ID | Work | Status | Evidence |
 | --- | --- | --- | --- |
-| DOC-01 | Inspect implementation baseline and working-tree state | Done | Git history/tree/status reconciled before and after `b57321d`/`0cdd08f`/`13e9f14`/`6b43c58`/`ca5453e`/`0169580`/`5d29c4c`/`954f6dc`/`bbfeb58`/`940effd`/`1753c22`/`e55647f`/`e51113d`/`89f5286`/`db809f4`/`143e9f7`/`d385ff5`/`798594c`/`83f398d`/`661cb4d`/`1e61baf`/`0644fda`/`343750a`/`0902d49`/`2a68521`/`1c195af`/`b248f10`/`48f102e`/`273a344`/`e3b848c`/`13e660d`/`d959fc1`/`33ed211`/`e2cc13e`/`2262658`/`aeef862`/`3693612`/`c4dca94`/`d9f777c`/`13990ce`/`4d770e0`/`17020ad`/`850f106`/`beb003e`/`f64fbb6`/`7970752`/`ab27679`/`3a7bc99`/`b1f6477`/`32fd01a`/`a0f148b`/`149e0fa`/`2f3c482`/`0c8a130`/`f8a580e`/`f9f904b`/`ba0538a` |
+| DOC-01 | Inspect implementation baseline and working-tree state | Done | Git history/tree/status reconciled before and after `b57321d`/`0cdd08f`/`13e9f14`/`6b43c58`/`ca5453e`/`0169580`/`5d29c4c`/`954f6dc`/`bbfeb58`/`940effd`/`1753c22`/`e55647f`/`e51113d`/`89f5286`/`db809f4`/`143e9f7`/`d385ff5`/`798594c`/`83f398d`/`661cb4d`/`1e61baf`/`0644fda`/`343750a`/`0902d49`/`2a68521`/`1c195af`/`b248f10`/`48f102e`/`273a344`/`e3b848c`/`13e660d`/`d959fc1`/`33ed211`/`e2cc13e`/`2262658`/`aeef862`/`3693612`/`c4dca94`/`d9f777c`/`13990ce`/`4d770e0`/`17020ad`/`850f106`/`beb003e`/`f64fbb6`/`7970752`/`ab27679`/`3a7bc99`/`b1f6477`/`32fd01a`/`a0f148b`/`149e0fa`/`2f3c482`/`0c8a130`/`f8a580e`/`f9f904b`/`ba0538a`/`c6296e4` |
 | DOC-02 | Review supplied product design and technical assumptions | Done | Review dispositions preserved in [DESIGN.md](DESIGN.md) |
 | DOC-03 | Maintain coordinated product/design/epic/roadmap/task docs | Done | This reconciliation updates the coordinated product/status Markdown documents, the unreleased changelog, the feasibility note, and the performance note |
 | DOC-04 | Validate links, references, consistency, and final changes | Done | `npm run docs:check`: all 11 Markdown files, relative links/anchors, identifiers, task DAG, fences, whitespace, and `.gitattributes` preservation pass |
@@ -204,7 +206,7 @@ using Node.js
 
 | Command | Result |
 | --- | --- |
-| `npm test` | Pass: 34 tests in the complete `f9f904b` gate; the latest `ba0538a` macOS rerun passes 35/35, including the provider-resolution regression |
+| `npm test` | Pass: 34 tests in the complete `f9f904b` gate; the latest `c6296e4` macOS rerun passes 36/36, including provider-resolution and formatted-output regressions |
 | `npm run typecheck` | Pass: strict TypeScript check with unused locals/parameters rejected |
 | `npm run docs:check` | Pass: 11 Markdown files; links/anchors, identifiers, task DAG, fences, whitespace, Git references, and `.gitattributes` preservation |
 | `npm audit --json` | Pass: 0 vulnerabilities across production and development dependencies |
@@ -217,6 +219,7 @@ using Node.js
 | `node spike/performance-benchmark.cjs` | Pass locally: default 241-file fan-out plus 21/121/501-file parameterized runs on macOS, default 241-file API/CLI runs on Node 22/24 Linux, and three repeated 241-file macOS cold starts; defaults stop at 100 nodes, hard caps complete within fixture size, and repeated semantic counts/stop reasons remain stable; observations are recorded in [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) |
 | High-fan-out unresolved-provider reproduction | Pass locally: a temporary file with 12,000 missing imports under default limits returns a usable partial result with 299 unresolved observations, `PROVIDER_OBSERVATION_LIMIT`, and a 163,378-byte JSON envelope |
 | High-fan-out diagnostic reproduction | Pass locally: `node spike/diagnostic-limit.cjs` creates 20,000 oversized files; default limits return a partial result with 1,000 warnings, `DIAGNOSTIC_LIMIT`, and a 154,605-byte JSON envelope |
+| CLI formatted-output regression | Pass locally: compact JSON stays within the selected budget while pretty formatting is rejected with a bounded `OUTPUT_LIMIT_EXCEEDED` envelope |
 | Pre-decode bounded-reader regression | Pass locally: the diagnostic-limit test writes a 4 KiB file and verifies `readTextFileBounded(..., 512)` stops after 513 bytes, returns no content, and releases the descriptor; working-tree, permitted external declaration, and provider module-resolution reads use the descriptor bound, while Git revision blobs use a bounded binary buffer and classify oversized output as `FILE_BUDGET_EXCEEDED` |
 | `git diff --check` | Pass: no whitespace errors |
 

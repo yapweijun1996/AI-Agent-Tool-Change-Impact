@@ -28,6 +28,8 @@ package-only release-check evidence is recorded in `17020ad`, and the latest
 full 34-case runtime gate is recorded in `f9f904b`.
 Provider module-resolution reads now reuse the bounded, real-path-validated
 reader, with an oversized package-metadata regression in `ba0538a`.
+CLI output is checked again after optional pretty formatting so the final
+serialized body stays within `maxOutputBytes`; the regression is in `c6296e4`.
 CLI inline values and Git revision inputs are hardened in `ab27679`.
 Documentation and clean-install evidence were reconciled in `079acbd` and
 `1a57175`; the diagnostic-bound update is in `ad028b6` with the follow-up
@@ -80,7 +82,7 @@ npm run docs:check
 The test suite creates temporary Git repositories from
 [`test/fixtures/basic`](test/fixtures/basic), then exercises the CLI and API
 without modifying the checkout. `npm test` builds TypeScript before running the
-35 smoke/integration cases, including cycle-safe traversal, deterministic
+36 smoke/integration cases, including cycle-safe traversal, deterministic
 diamond paths, an empty-impact result, malformed JavaScript API request and
 out-of-range coordinate handling, snapshot-aware diagnostics, and bounded
 high-fan-out unresolved-module and diagnostic observations. The suite also
@@ -123,6 +125,9 @@ JSON document to stdout; exit code `0` means a usable complete or partial result
 include `--depth`, `--max-nodes`, `--max-edges`, `--max-paths`,
 `--max-output-bytes`, `--max-files`, `--max-file-bytes`,
 `--max-total-file-bytes`, and `--max-diagnostics`.
+The output limit is checked on the final serialized body in both JSON and
+pretty-printed modes; an over-budget pretty result returns a structured
+`OUTPUT_LIMIT_EXCEEDED` error.
 
 The graph stores edges from consumer to dependency and reports reverse impact
 paths. `resolved` evidence means a static binding in the selected project;

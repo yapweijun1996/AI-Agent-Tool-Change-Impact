@@ -19,6 +19,7 @@ Latest bounded revision blob reads: `2f3c482`.
 Latest snapshot diagnostic identity: `0c8a130`.
 Latest internal symlink coverage: `f9f904b`.
 Latest provider resolution read boundary: `ba0538a`.
+Latest CLI formatted-output bound: `c6296e4`.
 Runtime evidence is tracked in [VALIDATION.md](VALIDATION.md); task status is
 authoritative in [TASK.md](TASK.md).
 
@@ -73,6 +74,9 @@ flags `--depth`, `--max-nodes`, `--max-edges`, `--max-paths`,
 `--max-total-file-bytes`, and `--max-diagnostics`. Unknown flags, missing values,
 invalid coordinates, and impossible limits return a machine-readable
 `INVALID_ARGUMENT` error.
+The output limit is checked on the final serialized body in both JSON and
+pretty-printed CLI modes; an over-budget formatted result returns
+`OUTPUT_LIMIT_EXCEEDED`.
 
 | Operation | Implemented meaning |
 | --- | --- |
@@ -185,8 +189,9 @@ independently cancellable in this adapter, so worker isolation and query-time
 limits remain release work.
 If a usable result cannot fit the byte limit, the API returns
 `OUTPUT_LIMIT_EXCEEDED` rather than malformed JSON. All handled JSON CLI calls
-write one JSON document; exit code `0` is usable complete/partial, `2` is an
-invalid invocation, and `1` is an operation failure.
+write one JSON document; pretty CLI output is subject to the same final-body
+limit. Exit code `0` is usable complete/partial, `2` is an invalid invocation,
+and `1` is an operation failure.
 
 Operation error codes defined by the draft API are `INVALID_ARGUMENT`, `ROOT_NOT_FOUND`,
 `NOT_A_REPOSITORY`, `FILE_NOT_FOUND`, `FILE_OUTSIDE_ROOT`,

@@ -14,6 +14,8 @@ Repository-internal source and repository-root symlink boundary coverage is in
 `f9f904b`.
 Provider module-resolution reads now reuse bounded, real-path-validated input in
 `ba0538a`, with an oversized package-metadata regression.
+CLI formatted output is checked against the final serialized-byte budget in
+`c6296e4`, with a regression covering pretty-print expansion.
 
 Final local gate run on 2026-09-07 at code revision `f9f904b` used Node.js
 `v23.10.0` on macOS `Darwin 25.6.0 arm64`. After a fresh
@@ -21,8 +23,8 @@ Final local gate run on 2026-09-07 at code revision `f9f904b` used Node.js
 `npm run pack:check` (38 files), `npm run release:check` with and without the
 matching tag, `npm run pack:smoke`, `npm audit --audit-level=low --json` (zero
 vulnerabilities), `npm run docs:check`, workflow YAML parsing, and
-`git diff --check` all passed. The latest macOS rerun at `ba0538a` reports 35/35
-tests, including the provider-resolution read-boundary regression. The f9f904b
+`git diff --check` all passed. The latest macOS rerun at `c6296e4` reports 36/36
+tests, including provider-resolution and formatted-output regressions. The f9f904b
 gate remains the latest complete cross-runtime run; the test count there is 34/34
 after provider-,
 diagnostic-, revision-blob-bound, snapshot-identity, internal-source-symlink,
@@ -61,7 +63,7 @@ hosted or registry evidence is inferred from either local run.
 | Area | Evidence | Result |
 | --- | --- | --- |
 | Build and type safety | `npm run typecheck`; `npm test` builds with strict `tsc -p tsconfig.json`, including unused locals/parameters checks | Pass |
-| Runtime smoke/integration | `npm test` on Node.js `v23.10.0`, macOS `Darwin 25.6.0 arm64` at `ba0538a`, plus fresh clean copies at `f9f904b` using Node.js `v22.23.2` and `v24.20.0` Alpine runtimes | Pass: 35 tests on the latest macOS rerun; 34 tests on each current Linux runtime at `f9f904b`, with installed API/CLI smoke; Linux copies use the committed lockfile with fresh `npm ci` installs, followed by typecheck, dependency audit, pack, release, package-smoke, and docs checks |
+| Runtime smoke/integration | `npm test` on Node.js `v23.10.0`, macOS `Darwin 25.6.0 arm64` at `c6296e4`, plus fresh clean copies at `f9f904b` using Node.js `v22.23.2` and `v24.20.0` Alpine runtimes | Pass: 36 tests on the latest macOS rerun; 34 tests on each current Linux runtime at `f9f904b`, with installed API/CLI smoke; Linux copies use the committed lockfile with fresh `npm ci` installs, followed by typecheck, dependency audit, pack, release, package-smoke, and docs checks |
 | Draft contract | Ajv `8.20.0` validates capabilities, success, partial, and error envelopes, including effective `analysis.limits` | Pass |
 | Dependency audit | `npm audit --json` (production and development dependency graph) | Pass: 0 vulnerabilities |
 | Package contents | `npm pack --dry-run --ignore-scripts`; `npm run release:check`; `npm run pack:smoke` temporary tarball `--prefer-offline` install with `--ignore-scripts`, API/CLI smoke, and a space-containing temporary path; fsmonitor-isolation smoke; Node 22/24 Linux container tarball install/API checks | Pass locally: release metadata and 38-file tarball set agree; packaged files include the unreleased changelog; development tests/sources are excluded; packaged API and CLI loaded and configured fsmonitor helper was not executed; clean Node 22.23.2 and Node 24.20.0 Linux package-only checkouts also pass `npm ci --ignore-scripts` and `release:check`; Windows `.cmd` path handling is exercised through the quoted path fixture but hosted execution remains unrun |
@@ -127,7 +129,7 @@ open. “Not run” means no evidence is available.
 | V-13 | Empty complete, partial, unresolved observations elsewhere in scope | Pass for tested cases | Complete empty isolated-target, dynamic partial, unresolved-module observations, and dual-snapshot loader/project diagnostic identity pass; broader irrelevant-observation combinations remain |
 | V-14 | Test imports/type-only/unused/mock/skipped/unrelated/external test project | Partial | Filename candidate and dependency separation pass; negative test matrix remains |
 | V-15 | Large files/projects, fan-out/deep graph, cancellation, repeated sessions | Partial | Four fan-out/depth sizes (21–501 files) on macOS plus current 34-case Node 22/24 Linux checks confirm default versus hard-cap behavior; bounded source/external/module-resolution reads stop before decoding beyond the per-file budget and Git revision blobs classify oversized output as `FILE_BUDGET_EXCEEDED`; 12,000-missing-import and 20,000-oversized-file reproductions stay within the 300-observation and 1,000-diagnostic default budgets and emit explicit truncation markers; three repeated macOS cold starts preserve counts/stop reasons; cancellation and memory-isolation evidence remain |
-| V-16 | Long paths, many diagnostics, tight byte budget, invalid budget, oversized graph | Pass for tested cases | Output/argument limits, explicit diagnostic-cap behavior, high-diagnostic stress, and valid JSON error behavior pass; long-path stress remains |
+| V-16 | Long paths, many diagnostics, tight byte budget, invalid budget, oversized graph | Pass for tested cases | API and CLI output/argument limits, including final pretty-format byte enforcement, explicit diagnostic-cap behavior, high-diagnostic stress, and valid JSON error behavior pass; long-path stress remains |
 | V-17 | Identical snapshots/config/dependencies/provider; changed provider/resolution input | Partial | Repeated identical API payloads compare equal; cross-provider/input invalidation is untested |
 | V-18 | External diff/textconv/fsmonitor, executable plugin/config, automatic type acquisition | Pass for tested cases | Marker-based external diff/textconv/fsmonitor helper fixture confirms configured helpers are not executed on macOS and Node 22/24 Linux; broader executable-config and automatic-type-acquisition matrix remains |
 | V-19 | Symlink escape, workspace symlink, external declarations, source/Git snapshots | Pass for tested cases | Internal workspace source symlinks and repository roots addressed through internal symlinks are analyzed, while symlink escapes are skipped and reported on macOS and Node 22/24 Linux; snapshot IDs, old/new evidence, bounded provider module-resolution reads, and read boundaries pass on macOS; broader external-input matrix remains |

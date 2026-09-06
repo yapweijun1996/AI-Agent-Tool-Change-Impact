@@ -18,6 +18,7 @@ Latest bounded revision blob reads: [`2f3c482`](https://github.com/yapweijun1996
 Latest snapshot diagnostic identity: [`0c8a130`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/0c8a130)
 Latest internal symlink coverage: [`f9f904b`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/f9f904b)
 Latest provider resolution read boundary: [`ba0538a`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/ba0538a)
+Latest CLI formatted-output bound: [`c6296e4`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/c6296e4)
 Last reconciled: 2026-09-07
 
 This document owns architecture and design decisions. [SPEC.md](SPEC.md) owns
@@ -141,6 +142,8 @@ at `maxFileBytes + 1`; the byte count is checked before UTF-8 decoding and an
 overflow is reported as `FILE_BUDGET_EXCEEDED`. Permitted external TypeScript
 declarations and module-resolution metadata use the descriptor reader and the
 same per-file budget after a real-path recheck.
+The CLI applies the serialized-byte check after optional pretty formatting as
+well as before it, so presentation cannot bypass the output budget.
 Defaults are depth 2, 100 nodes, 300 edges, one retained path per impact item,
 1 MiB output, 10,000 files, 2 MiB per file, 64 MiB total source, and 1,000
 diagnostics. Hard graph caps are depth 5, 5,000 nodes, and 15,000 edges; hard

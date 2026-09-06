@@ -98,6 +98,9 @@ Provider module-resolution callbacks now reuse the bounded, real-path-validated
 reader for permitted external metadata and declarations, with an oversized
 package-metadata regression in
 [`ba0538a`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/ba0538a).
+CLI output is checked after optional pretty formatting so presentation cannot
+exceed the declared serialized-byte budget; regression coverage is in
+[`c6296e4`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/c6296e4).
 [TASK.md](TASK.md) is the authoritative status ledger.
 
 ## Work packages
@@ -176,10 +179,12 @@ limits are enforced before projection; source descriptors stop at their
 effective per-file byte budget plus one byte before decoding, while Git revision
 blobs use a bounded binary subprocess buffer and classify overflow as
 `FILE_BUDGET_EXCEEDED`. Permitted external declarations and module-resolution
-metadata use the descriptor reader after a real-path recheck. Deterministic ordering and unchanged-Git
+metadata use the descriptor reader after a real-path recheck. CLI formatting is
+also checked against the serialized-byte budget after pretty-print expansion.
+Deterministic ordering and unchanged-Git
 assertions are covered locally. Unresolved module observations are capped at the
 effective edge budget, diagnostic collection is capped at `maxDiagnostics`, and
-the 35-case suite includes high-fan-out regressions for both truncation markers,
+the 36-case suite includes high-fan-out regressions for both truncation markers,
 the bounded reader, oversized revision blobs, distinct base/head diagnostic
 snapshot identities, an internal symlink source boundary, and a repository-root
 symlink alias boundary.
@@ -197,7 +202,7 @@ matrix execution still require evidence.
 Node 22/24 × Linux/macOS/Windows workflow are present. `npm pack --dry-run`,
 `npm run release:check`, `npm run pack:smoke`, and a cache-preferred install/API
 plus fsmonitor-isolation smoke
-check pass locally. The current 35-case macOS suite passes, and current Node
+check pass locally. The current 36-case macOS suite passes, and current Node
 22/24 Linux container copies recorded at `f9f904b` also pass the 34-case suite,
 clean lockfile `npm ci`,
 cache-preferred package install, type checks, and package checks pass. Earlier

@@ -23,3 +23,4 @@ pass.
 - Read Git revision blobs through bounded binary buffers, classify output-limit overflow as `FILE_BUDGET_EXCEEDED`, and cover the behavior with an oversized-blob regression.
 - Preserve the producing snapshot ID on loader and project-configuration diagnostics so duplicate base/head warnings remain distinguishable.
 - Cover repository-internal symlinked source files and repository-root symlink aliases while continuing to reject symlink escapes outside the repository boundary.
+- Enforce `maxOutputBytes` after CLI pretty formatting as well as compact JSON serialization, with a regression for over-budget formatted output.
