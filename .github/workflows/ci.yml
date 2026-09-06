@@ -42,5 +42,8 @@ jobs:
       - name: Check package contents
         run: npm run pack:check
 
+      - name: Smoke test packaged artifact
+        run: npm run pack:smoke
+
       - name: Check documentation
         run: npm run docs:check
