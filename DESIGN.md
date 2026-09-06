@@ -17,6 +17,7 @@ Latest validated real-path reads: [`dd212e4`](https://github.com/yapweijun1996/A
 Latest bounded revision blob reads: [`2f3c482`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/2f3c482)
 Latest snapshot diagnostic identity: [`0c8a130`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/0c8a130)
 Latest internal symlink coverage: [`f9f904b`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/f9f904b)
+Latest provider resolution read boundary: [`ba0538a`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/ba0538a)
 Last reconciled: 2026-09-07
 
 This document owns architecture and design decisions. [SPEC.md](SPEC.md) owns
@@ -119,7 +120,9 @@ NUL bytes are rejected. Symlink targets that resolve outside the repository
 are skipped; targets that resolve inside it remain eligible source inputs.
 TypeScript
 standard-library files and local `node_modules` may be read for static
-resolution, but repository modules, config code, plugins, test runners,
+resolution. Project and provider resolution callbacks share the bounded,
+real-path-validated reader for permitted external metadata and declarations;
+repository modules, config code, plugins, test runners,
 automatic type acquisition, external diff drivers, textconv filters, and
 `core.fsmonitor` hooks are never executed. Working-tree files are opened through
 the real path that passed the root-boundary check, and permitted external
@@ -136,8 +139,8 @@ growth cannot force the full file into memory before the input budget rejects it
 Git revision blobs are captured through a bounded binary subprocess buffer capped
 at `maxFileBytes + 1`; the byte count is checked before UTF-8 decoding and an
 overflow is reported as `FILE_BUDGET_EXCEEDED`. Permitted external TypeScript
-declarations use the descriptor reader and the same per-file budget after a
-real-path recheck.
+declarations and module-resolution metadata use the descriptor reader and the
+same per-file budget after a real-path recheck.
 Defaults are depth 2, 100 nodes, 300 edges, one retained path per impact item,
 1 MiB output, 10,000 files, 2 MiB per file, 64 MiB total source, and 1,000
 diagnostics. Hard graph caps are depth 5, 5,000 nodes, and 15,000 edges; hard
@@ -196,7 +199,7 @@ as follows:
 | Repository paths are not canonical or escape the root | D-07 | Dot/repeated-separator paths normalize to one repository-relative form; parent and NUL segments fail with `FILE_OUTSIDE_ROOT`; internal source/root symlink and external symlink escape fixtures pass |
 | Evidence strength is confused with completeness | D-05 | Dynamic/missing module cases produce `partial` with observations |
 | Imports are presented as test coverage | D-06 | Candidate role and dependency edge IDs are separate fields |
-| Output caps do not bound work | D-08 | File/graph/provider/diagnostic/output limits are enforced before projection; high-fan-out unresolved observations and 20,000 oversized-file diagnostics emit explicit truncation markers, while stress/cancellation measurements remain open |
+| Output caps do not bound work | D-08 | File/graph/provider/diagnostic/output limits are enforced before projection; high-fan-out unresolved observations, oversized external resolution metadata, and 20,000 oversized-file diagnostics emit bounded outcomes, while stress/cancellation measurements remain open |
 | Scan/read/execution boundaries conflict | D-07 | Git flags disable external diff/textconv/fsmonitor helpers; symlink checks, unchanged-Git assertions, and offline/read-only API |
 
 ## Open design questions

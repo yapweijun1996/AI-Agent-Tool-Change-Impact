@@ -26,6 +26,8 @@ added in `13990ce`).
 Unknown JavaScript API limit fields fail closed in `74563b1`; Node 22/24
 package-only release-check evidence is recorded in `17020ad`, and the latest
 full 34-case runtime gate is recorded in `f9f904b`.
+Provider module-resolution reads now reuse the bounded, real-path-validated
+reader, with an oversized package-metadata regression in `ba0538a`.
 CLI inline values and Git revision inputs are hardened in `ab27679`.
 Documentation and clean-install evidence were reconciled in `079acbd` and
 `1a57175`; the diagnostic-bound update is in `ad028b6` with the follow-up
@@ -78,14 +80,16 @@ npm run docs:check
 The test suite creates temporary Git repositories from
 [`test/fixtures/basic`](test/fixtures/basic), then exercises the CLI and API
 without modifying the checkout. `npm test` builds TypeScript before running the
-34 smoke/integration cases, including cycle-safe traversal, deterministic
+35 smoke/integration cases, including cycle-safe traversal, deterministic
 diamond paths, an empty-impact result, malformed JavaScript API request and
 out-of-range coordinate handling, snapshot-aware diagnostics, and bounded
 high-fan-out unresolved-module and diagnostic observations. The suite also
 verifies that an internal symlinked source file and a repository root addressed
 through an internal symlink remain within the repository boundary.
-The same 34-case suite and package checks pass in current Node.js 22 and 24
-Linux container copies using fresh lockfile installs.
+The 34-case suite and package checks recorded at `f9f904b` pass in current
+Node.js 22 and 24 Linux container copies using fresh lockfile installs. The
+new provider-resolution read-boundary regression is verified on the macOS
+runtime; a hosted cross-platform rerun remains outstanding.
 The packaged tarball was also installed in temporary directories and its API and
 CLI were loaded successfully on the local macOS runtime and Node 22/24 Linux
 containers; the smoke prefers the npm cache, permits registry fallback for
@@ -141,8 +145,9 @@ partial. Working-tree reads stop at the effective per-file byte budget plus one
 byte before UTF-8 decoding. Git revision blobs use a bounded binary subprocess
 buffer capped at `maxFileBytes + 1`, are checked before UTF-8 decoding, and emit
 `FILE_BUDGET_EXCEEDED` when the configured file budget is exceeded. Permitted
-external TypeScript declarations use the descriptor reader and re-check their
-real path before opening. Limits and partial stop reasons are included in the
+external TypeScript declarations and module-resolution metadata use the
+descriptor reader and re-check their real path before opening. Limits and
+partial stop reasons are included in the
 result. Diagnostics tied to a revision or working-tree snapshot retain that
 snapshot's ID so identical warnings from different contexts remain
 distinguishable.

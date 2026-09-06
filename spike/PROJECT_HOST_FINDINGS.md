@@ -1,7 +1,7 @@
 # Project-host feasibility findings
 
 Date: 2026-09-07
-Evidence implementation revision: `db809f4`; latest core implementation revision: `8bb3651`; latest package verification revision: `273a344`; latest provider observation bounding: `32fd01a`; latest diagnostic collection bounding: `a0f148b`; latest bounded source reads: `149e0fa`; latest validated real-path reads: `dd212e4`; latest bounded revision blob reads: `2f3c482`; latest snapshot diagnostic identity: `0c8a130`; latest internal symlink coverage: `f9f904b`
+Evidence implementation revision: `db809f4`; latest core implementation revision: `8bb3651`; latest package verification revision: `273a344`; latest provider observation bounding: `32fd01a`; latest diagnostic collection bounding: `a0f148b`; latest bounded source reads: `149e0fa`; latest validated real-path reads: `dd212e4`; latest bounded revision blob reads: `2f3c482`; latest snapshot diagnostic identity: `0c8a130`; latest internal symlink coverage: `f9f904b`; latest provider resolution read boundary: `ba0538a`
 
 This note records the bounded feasibility check that informed the first provider.
 It is evidence for project-host behavior, not a performance guarantee.
@@ -30,8 +30,9 @@ It is evidence for project-host behavior, not a performance guarantee.
    Deleted declarations remain addressable in the base context, and rename
    results retain old and new paths.
 5. The implementation enforces file, graph, unresolved-observation, diagnostic,
-   and output limits. The current 34-case smoke suite verifies behavior at the API/CLI
-   boundary on the macOS runtime and in current clean-clone Linux runs using
+   and output limits. The current 35-case smoke suite verifies behavior at the API/CLI
+   boundary on the macOS runtime; the current clean-clone Linux runs recorded at
+   `f9f904b` cover 34 cases using
    Node.js `v22.23.2` and `v24.20.0`
    Alpine runtime binaries inside a Git-capable container. Each Linux run used
    a fresh lockfile `npm ci` install, followed by cache-preferred package smoke;
@@ -48,7 +49,9 @@ It is evidence for project-host behavior, not a performance guarantee.
    and classify overflow as `FILE_BUDGET_EXCEEDED` before decoding;
    the direct bounded-reader, oversized-blob, distinct base/head diagnostic
    identity, internal-source-symlink, and repository-root-symlink regressions are
-   part of the same 34-case suite.
+   part of the same 34-case suite. The provider-resolution regression at
+   `ba0538a` confirms oversized external package metadata becomes an unresolved
+   observation before decoding on macOS.
 
 ## Decisions and remaining questions
 

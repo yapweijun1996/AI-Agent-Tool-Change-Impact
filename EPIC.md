@@ -94,6 +94,10 @@ fixture in
 [`f8a580e`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/f8a580e);
 repository-root access through an internal symlink is covered in
 [`f9f904b`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/f9f904b).
+Provider module-resolution callbacks now reuse the bounded, real-path-validated
+reader for permitted external metadata and declarations, with an oversized
+package-metadata regression in
+[`ba0538a`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/ba0538a).
 [TASK.md](TASK.md) is the authoritative status ledger.
 
 ## Work packages
@@ -171,11 +175,11 @@ File, graph, retained provider-observation, diagnostic, and serialized-output
 limits are enforced before projection; source descriptors stop at their
 effective per-file byte budget plus one byte before decoding, while Git revision
 blobs use a bounded binary subprocess buffer and classify overflow as
-`FILE_BUDGET_EXCEEDED`. Permitted external declarations use the descriptor
-reader after a real-path recheck. Deterministic ordering and unchanged-Git
+`FILE_BUDGET_EXCEEDED`. Permitted external declarations and module-resolution
+metadata use the descriptor reader after a real-path recheck. Deterministic ordering and unchanged-Git
 assertions are covered locally. Unresolved module observations are capped at the
 effective edge budget, diagnostic collection is capped at `maxDiagnostics`, and
-the 34-case suite includes high-fan-out regressions for both truncation markers,
+the 35-case suite includes high-fan-out regressions for both truncation markers,
 the bounded reader, oversized revision blobs, distinct base/head diagnostic
 snapshot identities, an internal symlink source boundary, and a repository-root
 symlink alias boundary.
@@ -193,8 +197,9 @@ matrix execution still require evidence.
 Node 22/24 × Linux/macOS/Windows workflow are present. `npm pack --dry-run`,
 `npm run release:check`, `npm run pack:smoke`, and a cache-preferred install/API
 plus fsmonitor-isolation smoke
-check pass locally. The current 34-case macOS suite passes, and current Node
-22/24 Linux container copies also pass the 34-case suite, clean lockfile `npm ci`,
+check pass locally. The current 35-case macOS suite passes, and current Node
+22/24 Linux container copies recorded at `f9f904b` also pass the 34-case suite,
+clean lockfile `npm ci`,
 cache-preferred package install, type checks, and package checks pass. Earlier
 clean Linux runs also pass tarball install/API smoke. The latest full run includes the
 external-helper, symlink-escape, malformed API request, out-of-range coordinate,

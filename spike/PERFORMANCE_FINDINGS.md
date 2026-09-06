@@ -1,7 +1,7 @@
 # Local performance findings
 
 Date: 2026-09-07
-Benchmark implementation revision: `db809f4`; latest core implementation revision: `8bb3651`; latest package verification revision: `273a344`; latest provider observation bounding: `32fd01a`; latest diagnostic collection bounding: `a0f148b`; latest bounded source reads: `149e0fa`; latest validated real-path reads: `dd212e4`; latest bounded revision blob reads: `2f3c482`; latest snapshot diagnostic identity: `0c8a130`
+Benchmark implementation revision: `db809f4`; latest core implementation revision: `8bb3651`; latest package verification revision: `273a344`; latest provider observation bounding: `32fd01a`; latest diagnostic collection bounding: `a0f148b`; latest bounded source reads: `149e0fa`; latest validated real-path reads: `dd212e4`; latest bounded revision blob reads: `2f3c482`; latest snapshot diagnostic identity: `0c8a130`; latest provider resolution read boundary: `ba0538a`
 
 This note records bounded local resource experiments on macOS and Linux
 containers. It is evidence that the configured limits stop work predictably;
@@ -166,8 +166,11 @@ guarantee. The script accepts `AGENT_IMPACT_DIAGNOSTIC_FILES` and
 
 At revision `149e0fa`, the same test also exercises the bounded descriptor reader
 directly: a 4 KiB file read with a 512-byte budget stops after 513 bytes and
-returns no decoded content. Working-tree and permitted external declaration reads
-use this descriptor bound and re-open validated real paths; Git revision blobs
+returns no decoded content. Working-tree and permitted external declaration
+reads use this descriptor bound and re-open validated real paths. At
+`ba0538a`, provider module-resolution reads were routed through the same bound;
+the oversized package-metadata regression confirms the resolver receives no
+decoded over-budget content. Git revision blobs
 use their bounded binary buffer and reject oversized output before decoding.
 This is a memory-bound and path-isolation regression check, not a sustained-memory
 or cancellation guarantee.
