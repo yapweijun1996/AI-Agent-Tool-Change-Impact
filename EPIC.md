@@ -62,6 +62,8 @@ quoting (`1c195af`) and disables install scripts during the temporary install
 [`48f102e`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/48f102e); hosted Windows execution remains open.
 Packaged API/CLI end-to-end analysis smoke was added in
 [`273a344`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/273a344).
+Release metadata and tarball-set validation was added in
+[`2262658`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/2262658).
 The draft schema and local verification pass; Windows/hosted cross-platform
 execution, cancellation/isolation evidence, schema freeze, and publication
 remain open.

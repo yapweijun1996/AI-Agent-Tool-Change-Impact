@@ -60,6 +60,10 @@ cache-preferred dependency resolution is in
 [`48f102e`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/48f102e);
 packaged API/CLI end-to-end analysis smoke is in
 [`273a344`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/273a344);
+release metadata validation is in
+[`2262658`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/2262658);
+repeated resource observations are recorded in
+[`aeef862`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/aeef862);
 documentation reconciliation follows the implementation revision above.
 
 ## Current situation
@@ -94,7 +98,7 @@ registry publication, and clean registry installation have not been verified.
 
 | ID | Work | Status | Evidence |
 | --- | --- | --- | --- |
-| DOC-01 | Inspect implementation baseline and working-tree state | Done | Git history/tree/status reconciled before and after `b57321d`/`0cdd08f`/`13e9f14`/`6b43c58`/`ca5453e`/`0169580`/`5d29c4c`/`954f6dc`/`bbfeb58`/`940effd`/`1753c22`/`e55647f`/`e51113d`/`89f5286`/`db809f4`/`143e9f7`/`d385ff5`/`798594c`/`83f398d`/`661cb4d`/`1e61baf`/`0644fda`/`343750a`/`0902d49`/`2a68521`/`1c195af`/`b248f10`/`48f102e`/`273a344`/`e3b848c`/`13e660d` |
+| DOC-01 | Inspect implementation baseline and working-tree state | Done | Git history/tree/status reconciled before and after `b57321d`/`0cdd08f`/`13e9f14`/`6b43c58`/`ca5453e`/`0169580`/`5d29c4c`/`954f6dc`/`bbfeb58`/`940effd`/`1753c22`/`e55647f`/`e51113d`/`89f5286`/`db809f4`/`143e9f7`/`d385ff5`/`798594c`/`83f398d`/`661cb4d`/`1e61baf`/`0644fda`/`343750a`/`0902d49`/`2a68521`/`1c195af`/`b248f10`/`48f102e`/`273a344`/`e3b848c`/`13e660d`/`d959fc1`/`33ed211`/`e2cc13e`/`2262658`/`aeef862` |
 | DOC-02 | Review supplied product design and technical assumptions | Done | Review dispositions preserved in [DESIGN.md](DESIGN.md) |
 | DOC-03 | Maintain coordinated product/design/epic/roadmap/task docs | Done | This reconciliation updates the eight product/status Markdown documents, the unreleased changelog, the feasibility note, and the performance note |
 | DOC-04 | Validate links, references, consistency, and final changes | Done | `npm run docs:check`: all 11 Markdown files, relative links/anchors, identifiers, task DAG, fences, whitespace, and `.gitattributes` preservation pass |
