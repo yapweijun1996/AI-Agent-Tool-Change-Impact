@@ -26,7 +26,7 @@ import type {
   SymbolImpactRequest,
   UnresolvedObservation,
 } from "./types";
-import { compareText, diagnostic, mergeLimits } from "./util";
+import { compareText, createDiagnosticCollector, diagnostic, mergeLimits } from "./util";
 
 export type ImpactResult = ResultEnvelope | ErrorEnvelope | CapabilitiesResult;
 
@@ -173,20 +173,23 @@ export function analyzeChanged(request: ChangedImpactRequest): ImpactResult {
     const headLoaded = request.worktree === true
       ? loadWorkingTreeStable(root, limits)
       : loadRevision(root, request.head ?? "", limits);
-    const baseContext = createProjectContext(baseLoaded.snapshot, request.project);
-    const headContext = createProjectContext(headLoaded.snapshot, request.project);
+    const baseContext = createProjectContext(baseLoaded.snapshot, request.project, limits);
+    const headContext = createProjectContext(headLoaded.snapshot, request.project, limits);
     const baseProvider = new TypeScriptProvider(baseContext, limits);
     const headProvider = new TypeScriptProvider(headContext, limits);
     const baseSeeds: GraphNode[] = [];
     const headSeeds: GraphNode[] = [];
     const changed: ChangedSeed[] = [];
-    const diagnostics: Diagnostic[] = [
+    const diagnostics = createDiagnosticCollector(limits.maxDiagnostics);
+    for (const entry of [
       ...gitChanges.diagnostics,
       ...baseLoaded.diagnostics,
       ...headLoaded.diagnostics,
       ...baseContext.diagnostics,
       ...headContext.diagnostics,
-    ];
+    ]) {
+      diagnostics.add(entry);
+    }
     for (const change of gitChanges.changes) {
       const oldFile = change.oldPath ?? (change.status === "deleted" ? change.path : change.path);
       const oldDeclarations = change.status === "added" ? [] : baseProvider.declarationsInRanges(oldFile, change.oldRanges);
@@ -200,7 +203,7 @@ export function analyzeChanged(request: ChangedImpactRequest): ImpactResult {
       const seed = changedSeedFromChange(change, oldSymbols, newSymbols, snapshots);
       changed.push(seed);
       if (seed.status === "configuration") {
-        diagnostics.push(diagnostic("CONFIGURATION_CHANGE", `Configuration change requires project-context reassessment: ${change.path}`, { file: change.path }));
+        diagnostics.add(diagnostic("CONFIGURATION_CHANGE", `Configuration change requires project-context reassessment: ${change.path}`, { file: change.path }));
         continue;
       }
       if (oldDeclarations.length > 0) {
@@ -225,7 +228,8 @@ export function analyzeChanged(request: ChangedImpactRequest): ImpactResult {
       }
       if (oldDeclarations.length === 0 && newDeclarations.length === 0 && change.status !== "deleted" && !headContext.isProjectFile(change.path)) {
         changed[changed.length - 1] = { ...seed, status: "unsupported" };
-        diagnostics.push(diagnostic("UNSUPPORTED_CHANGED_FILE", `Changed file is outside the selected TypeScript project: ${change.path}`, { file: change.path }));
+        diagnostics.add(diagnostic("UNSUPPORTED_CHANGED_FILE", `Changed file is outside the selected TypeScript project: ${change.path}`,
+          { file: change.path }));
       }
     }
     const baseFileEdges = baseProvider.fileEdges();
@@ -239,10 +243,10 @@ export function analyzeChanged(request: ChangedImpactRequest): ImpactResult {
       ...baseTraversal.unresolved,
       ...headTraversal.unresolved,
     ]);
-    const allDiagnostics = dedupeDiagnostics([
-      ...diagnostics,
+    const allDiagnostics = boundedDiagnostics([
+      ...diagnostics.toArray(),
       ...unresolved.map((entry) => diagnostic(entry.code, entry.detail, { snapshot: entry.snapshot, file: entry.file, range: entry.range })),
-    ]);
+    ], limits.maxDiagnostics);
     const context: AnalysisContext = {
       provider: `${baseProvider.name}+${headProvider.name}`,
       providerVersion: `${baseProvider.version},${headProvider.version}`,
@@ -280,7 +284,7 @@ function loadCurrentProvider(rootInput: string | undefined, project: string | un
     throw new ImpactError("ROOT_NOT_FOUND", `Repository root does not exist: ${rootInput}`);
   }
   const loaded = loadWorkingTree(rootInput, limits);
-  const context = createProjectContext(loaded.snapshot, project);
+  const context = createProjectContext(loaded.snapshot, project, limits);
   const provider = new TypeScriptProvider(context, limits);
   return { context, provider, diagnostics: [...loaded.diagnostics, ...context.diagnostics] };
 }
@@ -334,10 +338,10 @@ function makeEnvelope(
   unresolved: readonly UnresolvedObservation[],
 ): ResultEnvelope {
   const allUnresolved = dedupeUnresolved([...unresolved, ...traversal.unresolved]);
-  const allDiagnostics = dedupeDiagnostics([
+  const allDiagnostics = boundedDiagnostics([
     ...diagnostics,
     ...allUnresolved.map((entry) => diagnostic(entry.code, entry.detail, { snapshot: entry.snapshot, file: entry.file, range: entry.range })),
-  ]);
+  ], limits.maxDiagnostics);
   const analysis = makeAnalysisScope(context, limits, traversal.status, [...traversal.stopReasons, ...(allUnresolved.length > 0 ? ["UNRESOLVED_OBSERVATIONS"] : [])], traversal, allDiagnostics, allUnresolved);
   const contextOutput: AnalysisContext = {
     provider: "typescript-language-service",
@@ -509,6 +513,14 @@ function dedupeDiagnostics(values: readonly Diagnostic[]): Diagnostic[] {
     `${a.snapshot?.id ?? ""}:${a.file ?? ""}:${a.range?.start.line ?? 0}:${a.range?.start.column ?? 0}:${a.code}:${a.message}`,
     `${b.snapshot?.id ?? ""}:${b.file ?? ""}:${b.range?.start.line ?? 0}:${b.range?.start.column ?? 0}:${b.code}:${b.message}`,
   ));
+}
+
+function boundedDiagnostics(values: readonly Diagnostic[], limit: number): Diagnostic[] {
+  const collector = createDiagnosticCollector(limit);
+  for (const entry of dedupeDiagnostics(values)) {
+    collector.add(entry);
+  }
+  return collector.toArray();
 }
 
 function errorEnvelope(error: unknown): ErrorEnvelope {

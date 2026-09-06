@@ -13,7 +13,44 @@ export const HARD_LIMITS: Readonly<Limits> = {
   maxFiles: 100000,
   maxFileBytes: 16 * 1024 * 1024,
   maxTotalFileBytes: 512 * 1024 * 1024,
+  maxDiagnostics: 10000,
 };
+
+export const DIAGNOSTIC_LIMIT_CODE = "DIAGNOSTIC_LIMIT";
+
+export interface DiagnosticCollector {
+  add(value: Diagnostic): void;
+  toArray(): Diagnostic[];
+}
+
+/** Keep diagnostic collection bounded before it reaches result serialization. */
+export function createDiagnosticCollector(limit: number): DiagnosticCollector {
+  const safeLimit = Math.max(1, limit);
+  const retained: Diagnostic[] = [];
+  let truncated = false;
+  return {
+    add(value) {
+      if (value.code === DIAGNOSTIC_LIMIT_CODE) {
+        truncated = true;
+        return;
+      }
+      if (retained.length < safeLimit - 1) {
+        retained.push(value);
+      } else {
+        truncated = true;
+      }
+    },
+    toArray() {
+      if (!truncated) {
+        return [...retained];
+      }
+      return [
+        ...retained.slice(0, Math.max(0, safeLimit - 1)),
+        diagnostic(DIAGNOSTIC_LIMIT_CODE, `Diagnostic collection was capped at ${safeLimit}; additional diagnostics were omitted`),
+      ];
+    },
+  };
+}
 
 export function normalizeRepoPath(input: string): string {
   const normalized = input.replaceAll("\\", "/");
@@ -72,6 +109,7 @@ export function mergeLimits(input: Partial<Limits> | undefined): Limits {
     "maxFiles",
     "maxFileBytes",
     "maxTotalFileBytes",
+    "maxDiagnostics",
   ];
   if (input !== undefined) {
     for (const key of Object.keys(input)) {
@@ -96,6 +134,7 @@ export function mergeLimits(input: Partial<Limits> | undefined): Limits {
     || merged.maxFiles > HARD_LIMITS.maxFiles
     || merged.maxFileBytes > HARD_LIMITS.maxFileBytes
     || merged.maxTotalFileBytes > HARD_LIMITS.maxTotalFileBytes
+    || merged.maxDiagnostics > HARD_LIMITS.maxDiagnostics
   ) {
     throw new ImpactError("INVALID_ARGUMENT", "Requested limit exceeds the supported hard cap");
   }

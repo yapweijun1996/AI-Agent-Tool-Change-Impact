@@ -4,7 +4,7 @@ import { isAbsolute, join, relative, resolve, sep } from "node:path";
 import { ImpactError } from "./errors";
 import type { Diagnostic, SnapshotRef } from "./types";
 import { DEFAULT_LIMITS, type Limits, type SnapshotKind } from "./types";
-import { compareText, normalizeRepoPath, relativeRepoPath, sha256, snapshotId } from "./util";
+import { compareText, createDiagnosticCollector, normalizeRepoPath, relativeRepoPath, sha256, snapshotId } from "./util";
 
 export interface SnapshotLoadResult {
   snapshot: SourceSnapshot;
@@ -127,14 +127,14 @@ function parseNullList(output: string): string[] {
 function loadWorkingTreeFiles(root: string, limits: Limits): { files: Map<string, string>; diagnostics: Diagnostic[] } {
   const names = parseNullList(runGit(root, ["ls-files", "--cached", "--others", "--exclude-standard", "-z"]));
   const files = new Map<string, string>();
-  const diagnostics: Diagnostic[] = [];
+  const diagnostics = createDiagnosticCollector(limits.maxDiagnostics);
   let totalBytes = 0;
   for (const relativePath of names.sort(compareText)) {
     if (!shouldIncludePath(relativePath)) {
       continue;
     }
     if (files.size >= limits.maxFiles) {
-      diagnostics.push({ code: "FILE_BUDGET_EXCEEDED", message: `Stopped reading files after ${limits.maxFiles} files`, severity: "warning" });
+      diagnostics.add({ code: "FILE_BUDGET_EXCEEDED", message: `Stopped reading files after ${limits.maxFiles} files`, severity: "warning" });
       break;
     }
     const absolutePath = join(root, ...relativePath.split("/"));
@@ -147,21 +147,26 @@ function loadWorkingTreeFiles(root: string, limits: Limits): { files: Map<string
       const relativeReal = relative(root, real);
       const outside = relativeReal === ".." || relativeReal.startsWith(`..${sep}`) || isAbsolute(relativeReal);
       if (outside) {
-        diagnostics.push({ code: "PATH_OUTSIDE_ROOT", message: `Skipped symlink outside root: ${relativePath}`, file: relativePath, severity: "warning" });
+        diagnostics.add({ code: "PATH_OUTSIDE_ROOT", message: `Skipped symlink outside root: ${relativePath}`, file: relativePath, severity: "warning" });
         continue;
       }
       if (stat.size > limits.maxFileBytes || totalBytes + stat.size > limits.maxTotalFileBytes) {
-        diagnostics.push({ code: "FILE_BUDGET_EXCEEDED", message: `Skipped oversized file: ${relativePath}`, file: relativePath, severity: "warning" });
+        diagnostics.add({ code: "FILE_BUDGET_EXCEEDED", message: `Skipped oversized file: ${relativePath}`, file: relativePath, severity: "warning" });
         continue;
       }
       const content = readFileSync(absolutePath, "utf8");
+      const contentBytes = Buffer.byteLength(content);
+      if (contentBytes > limits.maxFileBytes || totalBytes + contentBytes > limits.maxTotalFileBytes) {
+        diagnostics.add({ code: "FILE_BUDGET_EXCEEDED", message: `Skipped file after content-size check: ${relativePath}`, file: relativePath, severity: "warning" });
+        continue;
+      }
       files.set(relativePath, content);
-      totalBytes += Buffer.byteLength(content);
+      totalBytes += contentBytes;
     } catch (error) {
-      diagnostics.push({ code: "FILE_READ_FAILED", message: `Skipped unreadable file: ${relativePath}`, file: relativePath, severity: "warning" });
+      diagnostics.add({ code: "FILE_READ_FAILED", message: `Skipped unreadable file: ${relativePath}`, file: relativePath, severity: "warning" });
     }
   }
-  return { files, diagnostics };
+  return { files, diagnostics: diagnostics.toArray() };
 }
 
 export function loadWorkingTree(rootInput?: string, limits: Limits = DEFAULT_LIMITS): SnapshotLoadResult {
@@ -179,15 +184,18 @@ export function loadWorkingTreeStable(rootInput?: string, limits: Limits = DEFAU
   const firstSnapshot = new SourceSnapshot(root, "working-tree", first.files, undefined, true);
   const second = loadWorkingTreeFiles(root, limits);
   const secondSnapshot = new SourceSnapshot(root, "working-tree", second.files, undefined, true);
-  const diagnostics = [...first.diagnostics, ...second.diagnostics];
+  const diagnostics = createDiagnosticCollector(limits.maxDiagnostics);
+  for (const entry of [...first.diagnostics, ...second.diagnostics]) {
+    diagnostics.add(entry);
+  }
   if (firstSnapshot.ref.id !== secondSnapshot.ref.id) {
-    diagnostics.push({
+    diagnostics.add({
       code: "WORKTREE_CHANGED_DURING_CAPTURE",
       message: "Working-tree contents changed between stable snapshot reads; results are partial",
       severity: "warning",
     });
   }
-  return { snapshot: secondSnapshot, diagnostics };
+  return { snapshot: secondSnapshot, diagnostics: diagnostics.toArray() };
 }
 
 export function resolveRevision(root: string, revision: string): string {
@@ -203,32 +211,32 @@ export function loadRevision(rootInput: string | undefined, revisionInput: strin
   const revision = resolveRevision(root, revisionInput);
   const names = parseNullList(runGit(root, ["ls-tree", "-r", "--name-only", "-z", revision]));
   const files = new Map<string, string>();
-  const diagnostics: Diagnostic[] = [];
+  const diagnostics = createDiagnosticCollector(limits.maxDiagnostics);
   let totalBytes = 0;
   for (const relativePath of names.sort(compareText)) {
     if (!shouldIncludePath(relativePath)) {
       continue;
     }
     if (files.size >= limits.maxFiles) {
-      diagnostics.push({ code: "FILE_BUDGET_EXCEEDED", message: `Stopped reading revision after ${limits.maxFiles} files`, severity: "warning" });
+      diagnostics.add({ code: "FILE_BUDGET_EXCEEDED", message: `Stopped reading revision after ${limits.maxFiles} files`, severity: "warning" });
       break;
     }
     try {
       const content = runGit(root, ["show", `${revision}:${relativePath}`]);
       const bytes = Buffer.byteLength(content);
       if (bytes > limits.maxFileBytes || totalBytes + bytes > limits.maxTotalFileBytes) {
-        diagnostics.push({ code: "FILE_BUDGET_EXCEEDED", message: `Skipped oversized revision file: ${relativePath}`, file: relativePath, severity: "warning" });
+        diagnostics.add({ code: "FILE_BUDGET_EXCEEDED", message: `Skipped oversized revision file: ${relativePath}`, file: relativePath, severity: "warning" });
         continue;
       }
       files.set(relativePath, content);
       totalBytes += bytes;
     } catch {
-      diagnostics.push({ code: "FILE_READ_FAILED", message: `Skipped unreadable revision file: ${relativePath}`, file: relativePath, severity: "warning" });
+      diagnostics.add({ code: "FILE_READ_FAILED", message: `Skipped unreadable revision file: ${relativePath}`, file: relativePath, severity: "warning" });
     }
   }
   return {
     snapshot: new SourceSnapshot(root, "revision", files, revision, true),
-    diagnostics,
+    diagnostics: diagnostics.toArray(),
   };
 }
 

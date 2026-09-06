@@ -119,7 +119,7 @@
     },
     "limits": {
       "type": "object",
-      "required": ["depth", "maxNodes", "maxEdges", "maxPathsPerTarget", "maxOutputBytes", "maxFiles", "maxFileBytes", "maxTotalFileBytes"],
+      "required": ["depth", "maxNodes", "maxEdges", "maxPathsPerTarget", "maxOutputBytes", "maxFiles", "maxFileBytes", "maxTotalFileBytes", "maxDiagnostics"],
       "properties": {
         "depth": { "type": "integer", "minimum": 1 },
         "maxNodes": { "type": "integer", "minimum": 1 },
@@ -128,7 +128,8 @@
         "maxOutputBytes": { "type": "integer", "minimum": 1 },
         "maxFiles": { "type": "integer", "minimum": 1 },
         "maxFileBytes": { "type": "integer", "minimum": 1 },
-        "maxTotalFileBytes": { "type": "integer", "minimum": 1 }
+        "maxTotalFileBytes": { "type": "integer", "minimum": 1 },
+        "maxDiagnostics": { "type": "integer", "minimum": 1 }
       },
       "additionalProperties": false
     },

@@ -109,7 +109,7 @@ function parseArgs(argv: readonly string[]): ParsedArgs {
     if (!rawName) {
       throw new ImpactError("INVALID_ARGUMENT", "Flag name cannot be empty");
     }
-    if (!new Set(["json", "worktree", "root", "project", "base", "head", "line", "column", "at", "depth", "max-nodes", "max-edges", "max-paths", "max-output-bytes", "max-files", "max-file-bytes", "max-total-file-bytes"]).has(rawName)) {
+    if (!new Set(["json", "worktree", "root", "project", "base", "head", "line", "column", "at", "depth", "max-nodes", "max-edges", "max-paths", "max-output-bytes", "max-files", "max-file-bytes", "max-total-file-bytes", "max-diagnostics"]).has(rawName)) {
       throw new ImpactError("INVALID_ARGUMENT", `Unknown flag: --${rawName}`);
     }
     const booleanFlags = new Set(["json", "worktree"]);
@@ -143,6 +143,7 @@ function parseLimits(flags: ParsedArgs["flags"]): Limits {
     ["max-files", "maxFiles"],
     ["max-file-bytes", "maxFileBytes"],
     ["max-total-file-bytes", "maxTotalFileBytes"],
+    ["max-diagnostics", "maxDiagnostics"],
   ] as const) {
     const raw = flags.get(flag);
     if (raw !== undefined) {

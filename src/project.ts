@@ -3,8 +3,8 @@ import { isAbsolute, join, relative, resolve, sep } from "node:path";
 import * as ts from "typescript";
 import { ImpactError } from "./errors";
 import { SourceSnapshot } from "./snapshot";
-import type { Diagnostic, ProjectRef } from "./types";
-import { compareText, normalizeRepoPath } from "./util";
+import { DEFAULT_LIMITS, type Diagnostic, type Limits, type ProjectRef } from "./types";
+import { compareText, createDiagnosticCollector, normalizeRepoPath } from "./util";
 
 export interface ProjectContext {
   readonly snapshot: SourceSnapshot;
@@ -143,7 +143,7 @@ function toRepoFile(root: string, fileName: string): string | undefined {
   return value ? normalizeRepoPath(value) : undefined;
 }
 
-export function createProjectContext(snapshot: SourceSnapshot, requestedProject?: string): ProjectContext {
+export function createProjectContext(snapshot: SourceSnapshot, requestedProject?: string, limits: Limits = DEFAULT_LIMITS): ProjectContext {
   const configPath = discoverConfig(snapshot, requestedProject);
   const configAbsolute = snapshot.absolutePath(configPath);
   const configText = snapshot.readFile(configPath);
@@ -180,11 +180,14 @@ export function createProjectContext(snapshot: SourceSnapshot, requestedProject?
   if (!program) {
     throw new ImpactError("PROJECT_CONFIG_INVALID", `TypeScript could not create a program for ${configPath}`);
   }
-  const diagnostics: Diagnostic[] = parsedCommandLine.errors.map((entry) => ({
-    code: "PROJECT_CONFIG_DIAGNOSTIC",
-    message: formatDiagnostic(entry),
-    severity: "warning",
-  }));
+  const diagnostics = createDiagnosticCollector(limits.maxDiagnostics);
+  for (const entry of parsedCommandLine.errors) {
+    diagnostics.add({
+      code: "PROJECT_CONFIG_DIAGNOSTIC",
+      message: formatDiagnostic(entry),
+      severity: "warning",
+    });
+  }
   const project: ProjectRef = { configPath, files: projectFiles };
   return {
     snapshot,
@@ -194,7 +197,7 @@ export function createProjectContext(snapshot: SourceSnapshot, requestedProject?
     fileNames: absoluteFiles,
     languageService,
     program,
-    diagnostics,
+    diagnostics: diagnostics.toArray(),
     externalFallback: snapshot.externalFallback,
     absolutePath: (file) => snapshot.absolutePath(file),
     repoPath: (file) => snapshot.toRepoPath(file),

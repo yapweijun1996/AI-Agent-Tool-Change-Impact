@@ -194,6 +194,7 @@ export interface Limits {
   maxFiles: number;
   maxFileBytes: number;
   maxTotalFileBytes: number;
+  maxDiagnostics: number;
 }
 
 export const DEFAULT_LIMITS: Limits = {
@@ -205,6 +206,7 @@ export const DEFAULT_LIMITS: Limits = {
   maxFiles: 10000,
   maxFileBytes: 2 * 1024 * 1024,
   maxTotalFileBytes: 64 * 1024 * 1024,
+  maxDiagnostics: 1000,
 };
 
 export interface TargetSelector {

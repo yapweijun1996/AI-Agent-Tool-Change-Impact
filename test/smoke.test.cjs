@@ -272,6 +272,26 @@ test("unresolved provider observations stay within the edge-derived cap", () => 
   assert.ok(result.unresolved.some((entry) => entry.code === "PROVIDER_OBSERVATION_LIMIT"));
 });
 
+test("diagnostics stay within the explicit diagnostic cap", () => {
+  const root = createRepo();
+  const noise = join(root, "noise");
+  mkdirSync(noise);
+  for (let index = 0; index < 40; index += 1) {
+    writeFileSync(join(noise, `oversized-${index}.ts`), "x".repeat(1024));
+  }
+  const result = api.analyzeFile({
+    root,
+    project: "tsconfig.json",
+    file: "src/math.ts",
+    limits: { maxFileBytes: 512, maxDiagnostics: 5, maxOutputBytes: 16 * 1024 },
+  });
+  assert.equal(result.ok, true);
+  assert.equal(result.analysis.limits.maxDiagnostics, 5);
+  assert.equal(result.analysis.status, "partial");
+  assert.ok(result.warnings.length <= 5);
+  assert.ok(result.warnings.some((entry) => entry.code === "DIAGNOSTIC_LIMIT"));
+});
+
 test("ambiguous symbols fail closed and support location disambiguation", () => {
   const root = createRepo();
   const path = join(root, "src", "ambiguous.ts");
@@ -494,11 +514,17 @@ test("output and argument limits fail with machine-readable errors", () => {
   const invalidLimit = api.analyzeFile({ root, project: "tsconfig.json", file: "src/math.ts", limits: { maxFiles: 100001 } });
   assert.equal(invalidLimit.ok, false);
   assert.equal(invalidLimit.error.code, "INVALID_ARGUMENT");
+  const invalidDiagnostics = api.analyzeFile({ root, project: "tsconfig.json", file: "src/math.ts", limits: { maxDiagnostics: 10001 } });
+  assert.equal(invalidDiagnostics.ok, false);
+  assert.equal(invalidDiagnostics.error.code, "INVALID_ARGUMENT");
   const cli = spawnSync(process.execPath, [join(__dirname, "..", "dist", "cli.js"), "file", "src/math.ts", "--root", root, "--project", "tsconfig.json", "--json"], { encoding: "utf8" });
   assert.equal(cli.status, 0);
   assert.equal(cli.stderr, "");
   assert.equal(cli.stdout.trim().split("\n").length, 1);
   assert.doesNotThrow(() => JSON.parse(cli.stdout));
+  const boundedCli = spawnSync(process.execPath, [join(__dirname, "..", "dist", "cli.js"), "file", "src/math.ts", "--root", root, "--project", "tsconfig.json", "--max-diagnostics=1", "--json"], { encoding: "utf8" });
+  assert.equal(boundedCli.status, 0);
+  assert.equal(JSON.parse(boundedCli.stdout).analysis.limits.maxDiagnostics, 1);
 });
 
 test("invalid invocations return exit code 2 and one JSON document", () => {
