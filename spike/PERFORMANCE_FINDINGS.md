@@ -50,6 +50,18 @@ insufficient to establish release thresholds, sustained-memory behavior,
 cancellation latency, or Windows/hosted performance; those remain open CI-08
 evidence.
 
+## Repeated cold-start observation
+
+On 2026-09-07, the default 241-file fixture was run three consecutive times on
+the same Node.js `v23.10.0` / macOS environment. Every run returned the same
+semantic counts and stop reasons: API default `partial` with 100 nodes/99 edges
+and `NODE_LIMIT`, API hard caps `complete` with 241 nodes/240 edges, and the
+same corresponding CLI results. Across the three runs, API-default wall time
+was 381.9–401.3 ms with 81.9–83.3 MiB RSS delta; API-hard wall time was
+384.3–390.7 ms with 82.6–87.2 MiB RSS delta. CLI wall time was 384.2–386.3 ms
+for defaults and 385.6–391.0 ms for hard caps. This is repeatability evidence,
+not a release threshold or sustained-memory guarantee.
+
 ## Linux container observations
 
 The same default 241-file fixture was run in clean Git archive checkouts using

@@ -78,7 +78,7 @@ remain open.
 | E-05: Evidence graph and impact | CI-05 | Done for scope | Reverse traversal, stable IDs, retained paths, cycle-safe depth/node/edge caps |
 | E-06: Candidate-test projection | CI-06 | Done for scope | Filename candidates linked to retained dependency edges |
 | E-07: Changed-target orchestration | CI-07 | Done for tested cases | Modification, deletion, rename, configuration, unsupported-file, worktree projections |
-| E-08: Resource and correctness hardening | CI-08 | In progress | Deterministic limits/read-only checks and bounded fan-out measurements across four sizes are present; cancellation, isolation, and platform runs remain |
+| E-08: Resource and correctness hardening | CI-08 | In progress | Deterministic limits/read-only checks, three repeated cold starts, and bounded fan-out measurements across four sizes are present; cancellation, isolation, and platform runs remain |
 | E-09: Package and release gates | CI-09 | In progress | Local pack dry-run includes the unreleased changelog, `npm run release:check` validates package metadata and the tarball file set, installed API/CLI smoke, and CI workflow with full-history checkout and `contents: read` permissions are present; schema freeze, cross-platform artifact checks, and registry evidence remain |
 
 ## Acceptance by work package
