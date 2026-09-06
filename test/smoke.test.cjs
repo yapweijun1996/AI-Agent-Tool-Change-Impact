@@ -1,6 +1,6 @@
 const assert = require("node:assert/strict");
 const { execFileSync, spawnSync } = require("node:child_process");
-const { chmodSync, cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } = require("node:fs");
+const { chmodSync, cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } = require("node:fs");
 const { delimiter, join } = require("node:path");
 const test = require("node:test");
 
@@ -313,6 +313,29 @@ test("worktree includes non-ignored untracked source and does not mutate Git", (
   assert.ok(result.changed.some((entry) => entry.path === "src/new/feature.ts"));
   assert.ok(!result.changed.some((entry) => entry.path === "ignored.ts"));
   assert.equal(git(root, ["status", "--porcelain"]), before);
+});
+
+test("worktree skips symlink escapes outside the repository", () => {
+  const root = createRepo();
+  const outsideRoot = mkdtempSync(join(require("node:os").tmpdir(), "agent-impact-outside-"));
+  const outsideFile = join(outsideRoot, "escape.ts");
+  const link = join(root, "src", "escape.ts");
+  writeFileSync(outsideFile, "export const escape = 1;\n");
+  try {
+    symlinkSync(outsideFile, link);
+  } catch {
+    rmSync(outsideRoot, { recursive: true, force: true });
+    return;
+  }
+  try {
+    const result = api.analyzeFile({ root, project: "tsconfig.json", file: "src/math.ts" });
+    assert.equal(result.ok, true);
+    assert.equal(result.analysis.status, "partial");
+    assert.ok(result.warnings.some((warning) => warning.code === "PATH_OUTSIDE_ROOT"));
+    assert.ok(!result.graph.nodes.some((node) => node.file === "src/escape.ts"));
+  } finally {
+    rmSync(outsideRoot, { recursive: true, force: true });
+  }
 });
 
 test("worktree combines staged and unstaged tracked changes", () => {
