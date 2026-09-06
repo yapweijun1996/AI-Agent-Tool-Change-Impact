@@ -117,6 +117,17 @@ test("JavaScript API rejects malformed request objects", () => {
   const wrongWorktree = api.analyzeChanged({ base: "HEAD", worktree: "true" });
   assert.equal(wrongWorktree.ok, false);
   assert.equal(wrongWorktree.error.code, "INVALID_ARGUMENT");
+
+  const root = createRepo();
+  const missingFileField = api.analyzeFile({ root, project: "tsconfig.json" });
+  assert.equal(missingFileField.ok, false);
+  assert.equal(missingFileField.error.code, "INVALID_ARGUMENT");
+  const missingSymbolFile = api.analyzeSymbol({ root, project: "tsconfig.json", name: "calculateTotal" });
+  assert.equal(missingSymbolFile.ok, false);
+  assert.equal(missingSymbolFile.error.code, "INVALID_ARGUMENT");
+  const missingChangedBase = api.analyzeChanged({ root, project: "tsconfig.json", head: "HEAD" });
+  assert.equal(missingChangedBase.ok, false);
+  assert.equal(missingChangedBase.error.code, "INVALID_ARGUMENT");
 });
 
 test("file impact returns reverse dependency paths and candidate tests", () => {

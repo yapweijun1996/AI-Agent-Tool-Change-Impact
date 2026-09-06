@@ -43,6 +43,12 @@ function assertOptionalNonEmptyString(value: unknown, name: string): void {
   }
 }
 
+function assertRequiredNonEmptyString(value: unknown, name: string): asserts value is string {
+  if (typeof value !== "string" || value.trim().length === 0) {
+    throw new ImpactError("INVALID_ARGUMENT", `${name} must be a non-empty string`);
+  }
+}
+
 function assertLimitsInput(value: unknown): void {
   if (value !== undefined && (value === null || typeof value !== "object" || Array.isArray(value))) {
     throw new ImpactError("INVALID_ARGUMENT", "limits must be an object when supplied");
@@ -58,13 +64,13 @@ function validateCommonRequest(value: unknown, operation: string): asserts value
 
 function validateFileRequest(value: unknown): asserts value is FileImpactRequest {
   validateCommonRequest(value, "analyzeFile");
-  assertOptionalNonEmptyString(value.file, "file");
+  assertRequiredNonEmptyString(value.file, "file");
 }
 
 function validateSymbolRequest(value: unknown): asserts value is SymbolImpactRequest {
   validateCommonRequest(value, "analyzeSymbol");
-  assertOptionalNonEmptyString(value.file, "file");
-  assertOptionalNonEmptyString(value.name, "name");
+  assertRequiredNonEmptyString(value.file, "file");
+  assertRequiredNonEmptyString(value.name, "name");
   const hasLine = value.line !== undefined;
   const hasColumn = value.column !== undefined;
   if (hasLine !== hasColumn) {
@@ -77,7 +83,7 @@ function validateSymbolRequest(value: unknown): asserts value is SymbolImpactReq
 
 function validateChangedRequest(value: unknown): asserts value is ChangedImpactRequest {
   validateCommonRequest(value, "analyzeChanged");
-  assertOptionalNonEmptyString(value.base, "base");
+  assertRequiredNonEmptyString(value.base, "base");
   assertOptionalNonEmptyString(value.head, "head");
   if (value.worktree !== undefined && typeof value.worktree !== "boolean") {
     throw new ImpactError("INVALID_ARGUMENT", "worktree must be boolean when supplied");

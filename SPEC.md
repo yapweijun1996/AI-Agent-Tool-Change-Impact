@@ -89,7 +89,8 @@ The draft machine-readable schema is
 [`schemas/result-v0.1-draft.schema.json`](schemas/result-v0.1-draft.schema.json).
 The smoke suite validates capabilities, success, partial, and error envelopes
 with Ajv. JavaScript API entry points validate request objects and return
-`INVALID_ARGUMENT` envelopes for malformed runtime inputs.
+`INVALID_ARGUMENT` envelopes for malformed runtime inputs, including missing
+required fields.
 
 The envelope contains `schemaVersion`, `ok`, `operation`, context/project and
 snapshot identity, changed seeds or requested target, graph nodes/edges, direct
