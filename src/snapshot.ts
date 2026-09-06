@@ -11,6 +11,13 @@ export interface SnapshotLoadResult {
   diagnostics: Diagnostic[];
 }
 
+class GitOutputLimitError extends Error {
+  public constructor() {
+    super("Git output exceeded the configured read buffer");
+    this.name = "GitOutputLimitError";
+  }
+}
+
 export class SourceSnapshot {
   public readonly root: string;
   public readonly ref: SnapshotRef;
@@ -86,6 +93,47 @@ function runGit(root: string, args: string[], encoding: BufferEncoding = "utf8",
       maxBuffer,
     });
   } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new ImpactError("GIT_ERROR", `Git command failed: git ${safeArgs.join(" ")}`, { cause: message });
+  }
+}
+
+function isGitOutputLimitError(error: unknown, maxBuffer: number): boolean {
+  if (!(error instanceof Error)) {
+    return false;
+  }
+  const code = (error as NodeJS.ErrnoException).code;
+  if (code === "ERR_CHILD_PROCESS_STDIO_MAXBUFFER") {
+    return true;
+  }
+  if (code !== "ENOBUFS") {
+    return false;
+  }
+  const stdout = (error as Error & { stdout?: unknown }).stdout;
+  return Buffer.isBuffer(stdout)
+    ? stdout.byteLength >= maxBuffer
+    : typeof stdout === "string" && Buffer.byteLength(stdout, "utf8") >= maxBuffer;
+}
+
+function runGitBuffer(root: string, args: string[], maxBuffer = 64 * 1024 * 1024): Buffer {
+  const safeArgs = ["-c", "core.fsmonitor=false", ...args];
+  try {
+    const output = execFileSync("git", safeArgs, {
+      cwd: root,
+      encoding: "buffer",
+      stdio: ["ignore", "pipe", "pipe"],
+      env: {
+        ...process.env,
+        GIT_OPTIONAL_LOCKS: "0",
+        GIT_TERMINAL_PROMPT: "0",
+      },
+      maxBuffer,
+    });
+    return Buffer.isBuffer(output) ? output : Buffer.from(output);
+  } catch (error) {
+    if (isGitOutputLimitError(error, maxBuffer)) {
+      throw new GitOutputLimitError();
+    }
     const message = error instanceof Error ? error.message : String(error);
     throw new ImpactError("GIT_ERROR", `Git command failed: git ${safeArgs.join(" ")}`, { cause: message });
   }
@@ -272,16 +320,20 @@ export function loadRevision(rootInput: string | undefined, revisionInput: strin
       break;
     }
     try {
-      const content = runGit(root, ["show", `${revision}:${relativePath}`], "utf8", Math.min(64 * 1024 * 1024, limits.maxFileBytes + 1));
-      const bytes = Buffer.byteLength(content, "utf8");
+      const contentBuffer = runGitBuffer(root, ["show", `${revision}:${relativePath}`], Math.min(64 * 1024 * 1024, limits.maxFileBytes + 1));
+      const bytes = contentBuffer.byteLength;
       if (bytes > limits.maxFileBytes || totalBytes + bytes > limits.maxTotalFileBytes) {
+        diagnostics.add({ code: "FILE_BUDGET_EXCEEDED", message: `Skipped revision file after content-size check: ${relativePath}`, file: relativePath, severity: "warning" });
+        continue;
+      }
+      files.set(relativePath, contentBuffer.toString("utf8"));
+      totalBytes += bytes;
+    } catch (error) {
+      if (error instanceof GitOutputLimitError) {
         diagnostics.add({ code: "FILE_BUDGET_EXCEEDED", message: `Skipped oversized revision file: ${relativePath}`, file: relativePath, severity: "warning" });
         continue;
       }
-      files.set(relativePath, content);
-      totalBytes += bytes;
-    } catch {
-      diagnostics.add({ code: "FILE_READ_FAILED", message: `Skipped unreadable revision file: ${relativePath}`, file: relativePath, severity: "warning" });
+      throw error;
     }
   }
   return {
