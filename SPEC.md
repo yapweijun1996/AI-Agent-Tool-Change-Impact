@@ -8,10 +8,11 @@ Latest release metadata validation: `4d770e0`.
 Latest API limit validation: `74563b1`.
 Latest local release evidence: `17020ad`.
 Latest CLI/revision input hardening: `ab27679`.
-Latest documentation/clean-install evidence reconciliation: `1a57175`.
+Previous documentation/clean-install evidence reconciliation: `1a57175`.
 Latest required API request validation: `b1f6477`.
 Latest TypeScript compiler hygiene: `473b4da`.
 Latest provider observation bounding: `32fd01a`.
+Latest diagnostic collection bounding: `a0f148b`.
 Runtime evidence is tracked in [VALIDATION.md](VALIDATION.md); task status is
 authoritative in [TASK.md](TASK.md).
 
@@ -40,7 +41,7 @@ reasoning, and automatic dependency installation are outside this version.
 | R-07 | Preserve module/configuration/unsupported changes that cannot map to symbols | Implemented with explicit partial/error limits | V-12 |
 | R-08 | Distinguish edge resolution from analysis completeness | Implemented | V-03, V-07, V-13 |
 | R-09 | Return candidate tests with separate classification and dependency evidence | Implemented | V-14 |
-| R-10 | Bound discovery, provider work, traversal, diagnostics, and serialized bytes | Implemented; broader thresholds pending | V-15, V-16 |
+| R-10 | Bound discovery, provider work, traversal, diagnostics, and serialized bytes | Implemented for declared budgets; broader thresholds pending | V-15, V-16 |
 | R-11 | Produce deterministic semantic results for identical declared inputs | Implemented on tested runtimes; cross-platform determinism pending | V-09, V-17 |
 | R-12 | Keep analysis read-only, offline, and free of repository-code execution | Implemented by design/tests | V-18, V-19 |
 | R-13 | Provide one consistent CLI/API contract with machine-readable errors | Implemented draft | V-05, V-16, V-20 |
@@ -62,9 +63,10 @@ node dist/cli.js changed --root /path/to/repo --base HEAD --worktree --project t
 The CLI accepts `--root`, `--project`, `--base`, `--head`, `--worktree`,
 `--at LINE:COLUMN` (or paired `--line`/`--column`), `--json`, and the limit
 flags `--depth`, `--max-nodes`, `--max-edges`, `--max-paths`,
-`--max-output-bytes`, `--max-files`, `--max-file-bytes`, and
-`--max-total-file-bytes`. Unknown flags, missing values, invalid coordinates,
-and impossible limits return a machine-readable `INVALID_ARGUMENT` error.
+`--max-output-bytes`, `--max-files`, `--max-file-bytes`,
+`--max-total-file-bytes`, and `--max-diagnostics`. Unknown flags, missing values,
+invalid coordinates, and impossible limits return a machine-readable
+`INVALID_ARGUMENT` error.
 
 | Operation | Implemented meaning |
 | --- | --- |
@@ -115,6 +117,9 @@ Provider unresolved observations are capped at the effective `limits.maxEdges`
 before result projection. When observations are truncated, the result includes
 `PROVIDER_OBSERVATION_LIMIT` and remains `analysis.status: partial` so callers
 can distinguish a bounded observation set from a complete dependency inventory.
+Diagnostic collection is capped at the effective `limits.maxDiagnostics` before
+result projection. When file, project, or analysis diagnostics are truncated,
+the result includes `DIAGNOSTIC_LIMIT` and remains `analysis.status: partial`.
 
 Traversal tracks visited nodes per seed. Cycles therefore terminate without
 duplicating graph nodes, and a depth limit is reported only when an unvisited
@@ -152,11 +157,13 @@ new paths; it does not infer semantic identity from a matching name.
 ## Limits, errors, and dependencies
 
 Defaults are depth 2, 100 nodes, 300 edges, one retained path per impact item,
-1 MiB serialized output, 10,000 files, 2 MiB per file, and 64 MiB total source.
-Hard graph caps are depth 5, 5,000 nodes, and 15,000 edges. Hard input/output
-caps are 8 paths, 16 MiB output, 100,000 files, 16 MiB per file, and 512 MiB
-total source. Retained provider references, unresolved module observations, file
-edges, and dynamic observations are capped before graph projection. The
+1 MiB serialized output, 10,000 files, 2 MiB per file, 64 MiB total source, and
+1,000 diagnostics. Hard graph caps are depth 5, 5,000 nodes, and 15,000 edges.
+Hard input/output/diagnostic caps are 8 paths, 16 MiB output, 100,000 files,
+16 MiB per file, 512 MiB total source, and 10,000 diagnostics. Retained provider
+references, unresolved module observations, file edges, dynamic observations,
+and diagnostics are capped before graph/result projection. Working-tree readers
+also check the bytes actually read after the initial filesystem-stat check. The
 underlying TypeScript Language Service reference lookup is not independently
 cancellable in this adapter, so worker isolation and query-time limits remain
 release work.

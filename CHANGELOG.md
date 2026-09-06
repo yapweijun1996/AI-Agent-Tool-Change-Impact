@@ -16,3 +16,4 @@ pass.
 - Reject missing required JavaScript API fields as `INVALID_ARGUMENT` before project or Git work begins.
 - Enable compiler checks that reject unused TypeScript locals and parameters.
 - Bound unresolved provider observations by the effective edge budget and report `PROVIDER_OBSERVATION_LIMIT` when high-fan-out inputs are truncated.
+- Bound snapshot/project diagnostic collection with the `maxDiagnostics` limit and report `DIAGNOSTIC_LIMIT` when oversized-file or configuration diagnostics are truncated; re-check bytes after working-tree reads.

@@ -1,7 +1,7 @@
 # Local performance findings
 
 Date: 2026-09-07
-Benchmark implementation revision: `db809f4`; latest core implementation revision: `8bb3651`; latest package verification revision: `273a344`; latest provider observation bounding: `32fd01a`
+Benchmark implementation revision: `db809f4`; latest core implementation revision: `8bb3651`; latest package verification revision: `273a344`; latest provider observation bounding: `32fd01a`; latest diagnostic collection bounding: `a0f148b`
 
 This note records bounded local resource experiments on macOS and Linux
 containers. It is evidence that the configured limits stop work predictably;
@@ -116,3 +116,15 @@ effective 300-edge budget therefore bounds retained provider observations before
 the result is serialized. This is a bounded-work regression check, not a
 throughput or memory guarantee; resolver calls, cancellation, and isolation
 remain separate release measurements.
+
+## High-fan-out diagnostic collection
+
+At revision `a0f148b`, `node spike/diagnostic-limit.cjs` created a temporary
+repository with 20,000 untracked 300-byte files that exceeded the 256-byte file
+budget. With the default `maxDiagnostics: 1000` and a 16 MiB output allowance,
+the API returned a usable `partial` result with exactly 1,000 warnings,
+`DIAGNOSTIC_LIMIT`, and a 154,605-byte JSON envelope. The collector retained
+diagnostics during snapshot discovery instead of accumulating all 20,000
+entries; this is a bounded-work regression check, not a throughput or memory
+guarantee. The script accepts `AGENT_IMPACT_DIAGNOSTIC_FILES` and
+`AGENT_IMPACT_DIAGNOSTIC_FILE_BYTES` for smaller repeatable runs.

@@ -73,6 +73,9 @@ remain open.
 Provider unresolved observations are now bounded before result projection, with
 an explicit partial-result marker and regression coverage in
 [`32fd01a`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/32fd01a).
+Diagnostic collection is now bounded before projection, with an explicit
+`DIAGNOSTIC_LIMIT` marker, a post-read file-size check, and regression coverage
+in [`a0f148b`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/a0f148b).
 [TASK.md](TASK.md) is the authoritative status ledger.
 
 ## Work packages
@@ -86,7 +89,7 @@ an explicit partial-result marker and regression coverage in
 | E-05: Evidence graph and impact | CI-05 | Done for scope | Reverse traversal, stable IDs, retained paths, cycle-safe depth/node/edge caps |
 | E-06: Candidate-test projection | CI-06 | Done for scope | Filename candidates linked to retained dependency edges |
 | E-07: Changed-target orchestration | CI-07 | Done for tested cases | Modification, deletion, rename, configuration, unsupported-file, worktree projections |
-| E-08: Resource and correctness hardening | CI-08 | In progress | Deterministic limits/read-only checks, three repeated cold starts, and bounded fan-out measurements across four sizes are present; cancellation, isolation, and platform runs remain |
+| E-08: Resource and correctness hardening | CI-08 | In progress | Deterministic file/graph/provider/diagnostic/output limits, three repeated cold starts, high-fan-out regressions, and bounded fan-out measurements across four sizes are present; cancellation, isolation, and platform runs remain |
 | E-09: Package and release gates | CI-09 | In progress | Local pack dry-run includes the unreleased changelog, `npm run release:check` validates package metadata and the tarball file set, dependency audit and installed API/CLI smoke are configured, and CI uses full-history checkout, lifecycle-disabled dependency installation, and `contents: read`; schema freeze, cross-platform artifact checks, and registry evidence remain |
 
 ## Acceptance by work package
@@ -145,13 +148,16 @@ explicitly rather than returning a false empty result.
 
 ### E-08: Verify actual work and output bounds
 
-File, graph, retained provider-observation, and serialized-output limits are enforced;
-deterministic ordering and unchanged-Git assertions are covered locally. Unresolved
-module observations are capped at the effective edge budget before projection,
-and the 30-case suite includes a high-fan-out regression for the truncation
-marker. A bounded fan-out benchmark records default versus hard-cap behavior
+File, graph, retained provider-observation, diagnostic, and serialized-output
+limits are enforced before projection; deterministic ordering and unchanged-Git
+assertions are covered locally. Unresolved module observations are capped at the
+effective edge budget, diagnostic collection is capped at `maxDiagnostics`, and
+the 31-case suite includes high-fan-out regressions for both truncation markers.
+A bounded fan-out benchmark records default versus hard-cap behavior
 across four sizes on macOS and the 241-file fixture on Node 22/24 Linux, with
-separate API/CLI cold-start observations. Broader repeated runs,
+separate API/CLI cold-start observations. A 20,000-oversized-file stress script
+confirms the default diagnostic cap returns 1,000 warnings and a 154,605-byte
+partial result. Broader repeated runs,
 cancellation/resource-abort behavior, memory isolation, Windows, and hosted
 matrix execution still require evidence.
 
@@ -161,12 +167,12 @@ matrix execution still require evidence.
 Node 22/24 × Linux/macOS/Windows workflow are present. `npm pack --dry-run`,
 `npm run release:check`, `npm run pack:smoke`, and a cache-preferred install/API
 plus fsmonitor-isolation smoke
-check pass locally. The current 30-case macOS suite passes, and current Node
-22/24 Linux container copies also pass the 30-case suite, clean lockfile `npm ci`,
+check pass locally. The current 31-case macOS suite passes, and current Node
+22/24 Linux container copies also pass the 31-case suite, clean lockfile `npm ci`,
 cache-preferred package install, type checks, and package checks pass. Earlier
 clean Linux runs also pass tarball install/API smoke. The latest full run includes the
 external-helper, symlink-escape, malformed API request, out-of-range coordinate,
-and snapshot-aware diagnostic fixtures. Package-only Node 22.23.2 and 24.20.0
+snapshot-aware, provider-observation, and diagnostic-limit fixtures. Package-only Node 22.23.2 and 24.20.0
 Linux checkouts also pass clean `npm ci` and `release:check`.
 No Windows/hosted workflow result, registry publication, clean registry
 install, or provenance is claimed.

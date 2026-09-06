@@ -20,6 +20,7 @@ const hardLimits = {
   maxFiles: 100000,
   maxFileBytes: 16 * 1024 * 1024,
   maxTotalFileBytes: 512 * 1024 * 1024,
+  maxDiagnostics: 10000,
 };
 
 const apiChild = [
@@ -121,6 +122,7 @@ function runCli(root, name, limits) {
       "--max-files", String(limits.maxFiles),
       "--max-file-bytes", String(limits.maxFileBytes),
       "--max-total-file-bytes", String(limits.maxTotalFileBytes),
+      "--max-diagnostics", String(limits.maxDiagnostics),
     );
   }
   const started = performance.now();

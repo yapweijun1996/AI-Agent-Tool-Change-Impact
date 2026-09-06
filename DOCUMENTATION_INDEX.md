@@ -7,10 +7,11 @@ Latest API limit validation: `74563b1`.
 Latest local release evidence: `17020ad`.
 Latest lifecycle-safe CI install policy: `f64fbb6`.
 Latest CLI/revision input hardening: `ab27679`.
-Latest documentation/clean-install evidence reconciliation: `1a57175`.
+Previous documentation/clean-install evidence reconciliation: `1a57175`.
 Latest required API request validation: `b1f6477`.
 Latest TypeScript compiler hygiene: `473b4da`.
 Latest provider observation bounding: `32fd01a`.
+Latest diagnostic collection bounding: `a0f148b`.
 
 ## Reading order and ownership
 
@@ -25,7 +26,7 @@ Latest provider observation bounding: `32fd01a`.
 | [VALIDATION.md](VALIDATION.md) | Fixture plan, evidence, verification state, release gates | A pass for an unexecuted test or remote workflow |
 | [CHANGELOG.md](CHANGELOG.md) | Unreleased package change record | A published version, tag, or registry release |
 | [`spike/PROJECT_HOST_FINDINGS.md`](spike/PROJECT_HOST_FINDINGS.md) | Local project-host feasibility observations | Cross-platform or performance guarantees |
-| [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) | Reproducible bounded fan-out performance observation | A release performance SLA |
+| [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) | Reproducible bounded fan-out and diagnostic stress observations | A release performance SLA |
 
 For implementation work, read TASK, SPEC, DESIGN, then the relevant epic and
 validation rows. For product orientation, begin with README.
@@ -43,7 +44,7 @@ fixture-backed tests under `test/`, `package.json`/`package-lock.json`, and the
 draft schema under `schemas/`. The changelog records intended release contents
 but does not establish publication. The core implementation commits are `b57321d`,
 `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`,
-`954f6dc`, `bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, `89f5286`, `db809f4`, `143e9f7`, `d385ff5`, `798594c`, `83f398d`, `661cb4d`, and `8bb3651`. Delivery hardening then added `1e61baf`, `0644fda`, `343750a`, `0902d49`, `2a68521`, `1c195af`, `b248f10`, `48f102e`, `273a344`, `c4dca94`, `74563b1`, `2262658`, `13990ce`, `4d770e0`, `17020ad`, `850f106`, `beb003e`, `f64fbb6`, `ab27679`, `b1f6477`, `473b4da`, and `32fd01a`; documentation and evidence reconciliation followed in `3a7bc99`, `079acbd`, and `1a57175`. Runtime-floor, audit, release metadata, stable-capture, API-validation, lifecycle-safe installation, CLI/revision-input, required-field-validation, TypeScript unused-code-check, and provider-observation-bound evidence are recorded in the current task ledger.
+`954f6dc`, `bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, `89f5286`, `db809f4`, `143e9f7`, `d385ff5`, `798594c`, `83f398d`, `661cb4d`, and `8bb3651`. Delivery hardening then added `1e61baf`, `0644fda`, `343750a`, `0902d49`, `2a68521`, `1c195af`, `b248f10`, `48f102e`, `273a344`, `c4dca94`, `74563b1`, `2262658`, `13990ce`, `4d770e0`, `17020ad`, `850f106`, `beb003e`, `f64fbb6`, `ab27679`, `b1f6477`, `473b4da`, `32fd01a`, and `a0f148b`; documentation and evidence reconciliation followed in `3a7bc99`, `079acbd`, and `1a57175`. Runtime-floor, audit, release metadata, stable-capture, API-validation, lifecycle-safe installation, CLI/revision-input, required-field-validation, TypeScript unused-code-check, provider-observation-bound, and diagnostic-bound evidence are recorded in the current task ledger.
 TASK owns status; SPEC owns requirements and observable contracts; DESIGN owns
 architecture; VALIDATION owns evidence. Links connect these responsibilities
 instead of duplicating competing status tables.
