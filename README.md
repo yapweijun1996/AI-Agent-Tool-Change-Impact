@@ -11,7 +11,7 @@ can inspect the relevant code.
 The implementation was introduced in `b57321d`; provider-boundary, Git endpoint,
 conflict-coverage/package/CLI/boundary fixes, and graph traversal hardening are in
 `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`, `954f6dc`,
-`bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, `89f5286`, `db809f4`, `143e9f7`, `d385ff5`, `798594c`, `83f398d`, and `661cb4d`.
+`bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, `89f5286`, `db809f4`, `143e9f7`, `d385ff5`, `798594c`, `83f398d`, `661cb4d`, and `8bb3651`.
 CI token permissions were restricted in `0644fda` and the workflow now fetches
 full history for reproducible documentation validation in `343750a`.
 The installed artifact API/CLI smoke is automated by `npm run pack:smoke` from

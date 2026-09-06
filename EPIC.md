@@ -44,6 +44,8 @@ Out-of-range location selectors now fail closed in
 [`83f398d`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/83f398d).
 Repository-relative paths are canonicalized and traversal segments rejected in
 [`661cb4d`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/661cb4d).
+Effective analysis limits are exposed and schema-validated in
+[`8bb3651`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/8bb3651).
 NUL-byte path rejection is covered by a regression assertion in
 [`1e61baf`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/1e61baf).
 CI token permissions were restricted in

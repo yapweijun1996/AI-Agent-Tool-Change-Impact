@@ -5,13 +5,13 @@ gates; implementation status is authoritative in [TASK.md](TASK.md).
 
 ## Current evidence
 
-Core implementation revisions: `b57321d`, `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`, `954f6dc`, `bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, `89f5286`, `db809f4`, `143e9f7`, `d385ff5`, `798594c`, `83f398d`, and `661cb4d`; path normalization is in `661cb4d`, its NUL-byte regression is in `1e61baf`, installed API/CLI artifact smoke is in `0902d49`, Windows `.cmd` invocation hardening is in `2a68521`, the space-containing path fixture is in `1c195af`, and install scripts are disabled in `b248f10`.
+Core implementation revisions: `b57321d`, `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`, `954f6dc`, `bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, `89f5286`, `db809f4`, `143e9f7`, `d385ff5`, `798594c`, `83f398d`, `661cb4d`, and `8bb3651`; path normalization is in `661cb4d`, its NUL-byte regression is in `1e61baf`, installed API/CLI artifact smoke is in `0902d49`, Windows `.cmd` invocation hardening is in `2a68521`, the space-containing path fixture is in `1c195af`, and install scripts are disabled in `b248f10`.
 
 | Area | Evidence | Result |
 | --- | --- | --- |
 | Build and type safety | `npm run typecheck`; `npm test` builds with `tsc -p tsconfig.json` | Pass |
 | Runtime smoke/integration | `npm test` on Node.js `v23.10.0`, macOS `Darwin 25.6.0 arm64`, plus latest temporary clean Git clones after `1e61baf` using Node.js `v22.23.2` and `v24.20.0` Alpine runtimes | Pass: 28 tests and installed API/CLI smoke on macOS and each Linux runtime; Linux uses fresh `npm ci --offline` installs from the locked npm cache, with `NODE_OPTIONS=--max-old-space-size=1024` |
-| Draft contract | Ajv `8.20.0` validates capabilities, success, partial, and error envelopes | Pass |
+| Draft contract | Ajv `8.20.0` validates capabilities, success, partial, and error envelopes, including effective `analysis.limits` | Pass |
 | Dependency audit | `npm audit --json` (production and development dependency graph) | Pass: 0 vulnerabilities |
 | Package contents | `npm pack --dry-run --ignore-scripts`; `npm run pack:smoke` temporary tarball offline install with `--ignore-scripts`, API/CLI smoke, and a space-containing temporary path; fsmonitor-isolation smoke; Node 22/24 Linux container tarball install/API checks | Pass locally: 37 files; development tests/sources excluded; packaged API and CLI loaded and configured fsmonitor helper was not executed; Windows `.cmd` path handling is exercised through the quoted path fixture but hosted execution remains unrun |
 | Bounded resource observation | `node spike/performance-benchmark.cjs` on temporary 21-, 121-, 241-, and 501-file fan-out/depth repositories on macOS, plus the 241-file fixture on Node 22/24 Linux containers | Pass locally: default node cap stops at 100 nodes for larger fixtures; hard caps complete; API/CLI child-process timings and RSS across macOS/Linux are recorded in [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) |
