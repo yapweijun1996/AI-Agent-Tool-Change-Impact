@@ -2,7 +2,7 @@
 
 Status: implemented v0.1 draft; the executable schema and API are not frozen for
 backward compatibility.
-Last updated: 2026-09-06. Implementation revision: `6b43c58`.
+Last updated: 2026-09-06. Implementation revision: `954f6dc`.
 Runtime evidence is tracked in [VALIDATION.md](VALIDATION.md); task status is
 authoritative in [TASK.md](TASK.md).
 
@@ -123,18 +123,23 @@ semantic identity from a matching name.
 
 Defaults are depth 2, 100 nodes, 300 edges, one retained path per impact item,
 1 MiB serialized output, 10,000 files, 2 MiB per file, and 64 MiB total source.
-Hard graph caps are depth 5, 5,000 nodes, and 15,000 edges. Provider reference,
-file-edge, and dynamic-observation collection is capped before graph projection.
+Hard graph caps are depth 5, 5,000 nodes, and 15,000 edges. Hard input/output
+caps are 8 paths, 16 MiB output, 100,000 files, 16 MiB per file, and 512 MiB
+total source. Provider reference, file-edge, and dynamic-observation collection
+is capped before graph projection.
 If a usable result cannot fit the byte limit, the API returns
 `OUTPUT_LIMIT_EXCEEDED` rather than malformed JSON. All handled JSON CLI calls
 write one JSON document; exit code `0` is usable complete/partial, `2` is an
 invalid invocation, and `1` is an operation failure.
 
-Implemented error codes are `INVALID_ARGUMENT`, `ROOT_NOT_FOUND`,
+Operation error codes defined by the draft API are `INVALID_ARGUMENT`, `ROOT_NOT_FOUND`,
 `NOT_A_REPOSITORY`, `FILE_NOT_FOUND`, `FILE_OUTSIDE_ROOT`,
 `LANGUAGE_UNSUPPORTED`, `PROJECT_CONFIG_NOT_FOUND`, `PROJECT_CONFIG_INVALID`,
 `TARGET_NOT_FOUND`, `TARGET_AMBIGUOUS`, `GIT_ERROR`,
 `OUTPUT_LIMIT_EXCEEDED`, `ANALYSIS_LIMIT_EXCEEDED`, and `INTERNAL_ERROR`.
+The current implementation reports bounded work as a usable partial result with
+diagnostics; `ANALYSIS_LIMIT_EXCEEDED` is reserved in the draft vocabulary and
+is not emitted by the current provider.
 
 Runtime dependencies are Node.js `>=22` and TypeScript `5.9.3`; Ajv is a
 development-only schema-test dependency. The lockfile is committed. The

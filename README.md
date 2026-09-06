@@ -9,7 +9,7 @@ can inspect the relevant code.
 ## Current state
 
 The implementation was introduced in `b57321d`; provider-boundary, Git endpoint,
-and conflict-coverage fixes are in `0cdd08f`, `13e9f14`, and `6b43c58`. It is a working draft,
+and conflict-coverage/package/CLI/boundary fixes are in `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`, and `954f6dc`. It is a working draft,
 not a published release: the public schema is still `0.1-draft`, local macOS verification passes, the cross-platform
 CI matrix is configured but has not run here, and no npm publication has been
 performed.
@@ -68,8 +68,9 @@ test execution.
 
 The default limits are depth 2, 100 nodes, 300 edges, one path per impact item,
 1 MiB serialized output, 10,000 files, 2 MiB per file, and 64 MiB total source.
-Hard graph caps are depth 5, 5,000 nodes, and 15,000 edges. Limits and partial
-stop reasons are included in the result.
+Hard graph caps are depth 5, 5,000 nodes, and 15,000 edges; hard input/output
+caps are 8 paths, 16 MiB output, 100,000 files, 16 MiB per file, and 512 MiB
+total source. Limits and partial stop reasons are included in the result.
 
 ## Boundary and limitations
 

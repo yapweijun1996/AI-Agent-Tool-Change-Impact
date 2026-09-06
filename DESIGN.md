@@ -1,7 +1,7 @@
 # Design
 
 Status: implemented v0.1 draft; release gates remain open.
-Implementation revision: [`6b43c58`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/6b43c58)
+Implementation revision: [`954f6dc`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/954f6dc)
 Last reconciled: 2026-09-06
 
 This document owns architecture and design decisions. [SPEC.md](SPEC.md) owns
@@ -107,8 +107,10 @@ File count/bytes, graph nodes/edges/depth, reference collection, dynamic
 observations, and serialized output have deterministic caps. Defaults are depth
 2, 100 nodes, 300 edges, one retained path per impact item, 1 MiB output, 10,000
 files, 2 MiB per file, and 64 MiB total source. Hard graph caps are depth 5,
-5,000 nodes, and 15,000 edges. A stopped frontier is partial; an output that
-cannot fit is a structured `OUTPUT_LIMIT_EXCEEDED` error.
+5,000 nodes, and 15,000 edges; hard input/output caps are 8 paths, 16 MiB
+output, 100,000 files, 16 MiB per file, and 512 MiB total source. A stopped
+frontier is partial; an output that cannot fit is a structured
+`OUTPUT_LIMIT_EXCEEDED` error.
 
 ### D-09: Keep reproducibility conditional and measurable
 

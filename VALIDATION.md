@@ -5,8 +5,8 @@ gates; implementation status is authoritative in [TASK.md](TASK.md).
 
 ## Current evidence
 
-Implementation revisions: `b57321d`, `0cdd08f`, `13e9f14`, and `6b43c58`, plus the documentation
-reconciliation in the current worktree.
+Implementation revisions: `b57321d`, `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`, and `954f6dc`, plus the documentation
+reconciliation that follows this implementation revision.
 
 | Area | Evidence | Result |
 | --- | --- | --- |
@@ -36,8 +36,8 @@ An inline Python validator was run after this reconciliation for:
   separation, candidate-test terminology, dependencies, and release status.
 - Byte-identical preservation of `.gitattributes`.
 
-Result: **Pass** on 2026-09-06. It checked 9 Markdown files, 64 local links or
-anchors, all identifier definitions/references, an acyclic CI dependency graph,
+Result: **Pass** on 2026-09-06. It checked 9 Markdown files, 71 link/anchor
+references, all identifier definitions/references, an acyclic CI dependency graph,
 balanced fences, final newlines, whitespace, and byte-identical `.gitattributes`.
 The previous eight-file baseline had 37 links; the increase reflects the
 implementation and feasibility-note links added in this update.
@@ -66,7 +66,7 @@ open. “Not run” means no evidence is available.
 | V-12 | Top-level side effects, tsconfig/package changes, unsupported asset | Partial | Configuration change and unsupported-file projection are implemented; side-effect/package matrix remains |
 | V-13 | Empty complete, partial, unresolved observations elsewhere in scope | Partial | Complete and dynamic partial results pass; explicit empty/irrelevant-observation fixture remains |
 | V-14 | Test imports/type-only/unused/mock/skipped/unrelated/external test project | Partial | Filename candidate and dependency separation pass; negative test matrix remains |
-| V-15 | Large files/projects, fan-out/deep graph, cancellation, repeated sessions | Partial | Deterministic input/provider/graph caps are implemented; benchmarks, cancellation, and memory evidence are not run |
+| V-15 | Large files/projects, fan-out/deep graph, cancellation, repeated sessions | Partial | Deterministic hard input/provider/graph caps are implemented; benchmarks, cancellation, and memory evidence are not run |
 | V-16 | Long paths, many diagnostics, tight byte budget, invalid budget, oversized graph | Pass for tested cases | Output/argument limits and valid JSON error behavior pass; long-path/diagnostic stress remains |
 | V-17 | Identical snapshots/config/dependencies/provider; changed provider/resolution input | Partial | Repeated identical API payloads compare equal; cross-provider/input invalidation is untested |
 | V-18 | External diff/textconv, executable plugin/config, automatic type acquisition | Partial | Git disables external helpers and no code is executed in tests; adversarial helper fixture remains |

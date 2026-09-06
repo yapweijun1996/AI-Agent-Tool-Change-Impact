@@ -7,7 +7,15 @@ with Git endpoint validation in
 [`13e9f14`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/13e9f14);
 conflict-state coverage is in
 [`6b43c58`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/6b43c58);
-documentation reconciliation is the current worktree change.
+package checks build artifacts in
+[`ca5453e`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/ca5453e);
+CLI argument validation is in
+[`0169580`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/0169580);
+boundary hardening is in
+[`5d29c4c`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/5d29c4c);
+cross-platform resolution-boundary hardening is in
+[`954f6dc`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/954f6dc);
+documentation reconciliation follows the implementation revision above.
 
 ## Current situation
 
@@ -32,7 +40,7 @@ publication, and clean registry installation have not been verified.
 
 | ID | Work | Status | Evidence |
 | --- | --- | --- | --- |
-| DOC-01 | Inspect implementation baseline and working-tree state | Done | Git history/tree/status reconciled before and after `b57321d`/`0cdd08f`/`13e9f14`/`6b43c58` |
+| DOC-01 | Inspect implementation baseline and working-tree state | Done | Git history/tree/status reconciled before and after `b57321d`/`0cdd08f`/`13e9f14`/`6b43c58`/`ca5453e`/`0169580`/`5d29c4c`/`954f6dc` |
 | DOC-02 | Review supplied product design and technical assumptions | Done | Review dispositions preserved in [DESIGN.md](DESIGN.md) |
 | DOC-03 | Maintain coordinated product/design/epic/roadmap/task docs | Done | This reconciliation updates all eight Markdown documents |
 | DOC-04 | Validate links, references, consistency, and final changes | Done | Inline validator: 9 Markdown files, 64 links/anchors, identifiers, DAG, fences, whitespace, and `.gitattributes` preservation all pass |

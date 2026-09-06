@@ -14,6 +14,12 @@ Git endpoint validation was added in
 [`13e9f14`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/13e9f14).
 Conflict-state regression coverage was added in
 [`6b43c58`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/6b43c58).
+Package checks now build compiled entry points in
+[`ca5453e`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/ca5453e).
+CLI positional-argument validation was added in
+[`0169580`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/0169580).
+Boundary hardening was added in
+[`954f6dc`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/954f6dc).
 The draft schema and local verification pass; cross-platform execution,
 stress/cancellation evidence, schema freeze, and publication remain open.
 [TASK.md](TASK.md) is the authoritative status ledger.
