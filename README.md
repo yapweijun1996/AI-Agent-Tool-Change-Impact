@@ -100,7 +100,9 @@ total source. Limits and partial stop reasons are included in the result.
 
 ## Boundary and limitations
 
-Analysis reads Git objects and the current working tree; it never checks out,
+Analysis reads Git objects and the current working tree; changed worktree mode
+compares two bounded content-hashed reads and reports a mismatch as partial. It
+never checks out,
 resets, writes source, installs dependencies, runs repository code, runs tests,
 loads executable configuration, invokes external diff/textconv/fsmonitor
 helpers, or uses a network service. Historical snapshots may use the current local

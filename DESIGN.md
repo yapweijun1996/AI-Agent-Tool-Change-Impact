@@ -64,7 +64,8 @@ configuration is an actionable error.
 ### D-03: Analyze changes against versioned contexts
 
 `changed` reads Git objects for the base and head, or combines a base revision
-with a captured working tree. Deletions use base declarations; additions use
+with a two-read, content-hashed working-tree capture. A mismatch between the
+reads is reported as partial. Deletions use base declarations; additions use
 head declarations; modifications and renames retain both source identities.
 No checkout or reset occurs. Current local packages may be used to resolve an
 old snapshot, so historical dependency fidelity is a reported limitation.

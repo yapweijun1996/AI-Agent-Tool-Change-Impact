@@ -75,7 +75,7 @@ remain open.
 | --- | --- | --- | --- |
 | E-01: Project-host feasibility | CI-01 | Done locally | Config-bound virtual host and [`spike/PROJECT_HOST_FINDINGS.md`](spike/PROJECT_HOST_FINDINGS.md) |
 | E-02: Executable draft contracts | CI-02 | Done as draft | TypeScript contracts, draft JSON Schema, CLI/API runtime validation, and error fixtures |
-| E-03: Snapshot and Git boundary | CI-03 | Done for tested cases | Revision/worktree snapshots, canonical repository paths, endpoint diff, read-only flags, conflict, concurrent-content, and external diff/textconv/fsmonitor helper fixtures |
+| E-03: Snapshot and Git boundary | CI-03 | Done for tested cases | Revision/worktree snapshots, two-read content-hashed worktree capture, canonical repository paths, endpoint diff, read-only flags, conflict, concurrent-content, and external diff/textconv/fsmonitor helper fixtures |
 | E-04: TypeScript semantic provider | CI-04 | Done for scope | JS/TS/TSX targets, imports/re-exports, calls/references, extends/implements |
 | E-05: Evidence graph and impact | CI-05 | Done for scope | Reverse traversal, stable IDs, retained paths, cycle-safe depth/node/edge caps |
 | E-06: Candidate-test projection | CI-06 | Done for scope | Filename candidates linked to retained dependency edges |
@@ -102,7 +102,8 @@ payloads with Ajv. The schema is intentionally not frozen.
 ### E-03: Preserve the requested code states
 
 `src/snapshot.ts` reads Git trees and bounded working-tree files without
-checkout/reset. `src/git.ts` implements endpoint comparison, untracked files,
+checkout/reset; changed worktree analysis uses two content-hashed reads to
+detect mutations while files are being captured. `src/git.ts` implements endpoint comparison, untracked files,
 old/new ranges, rename status, conflict detection, and worktree capture-change
 diagnostics. The capture signature combines status and raw tracked diffs, and
 the smoke suite exercises conflict, concurrent-content, and configured external
