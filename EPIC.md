@@ -34,6 +34,8 @@ Git external-helper isolation coverage was added in
 [`89f5286`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/89f5286).
 Git fsmonitor helper isolation was added in
 [`db809f4`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/db809f4).
+Symlink-escape regression coverage was added in
+[`143e9f7`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/143e9f7).
 The draft schema and local verification pass; Windows/hosted cross-platform
 execution, cancellation/isolation evidence, schema freeze, and publication
 remain open.

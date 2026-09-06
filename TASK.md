@@ -29,6 +29,8 @@ Git external-helper isolation coverage is in
 [`89f5286`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/89f5286);
 Git fsmonitor helper isolation is in
 [`db809f4`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/db809f4);
+symlink-escape regression coverage is in
+[`143e9f7`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/143e9f7);
 documentation reconciliation follows the implementation revision above.
 
 ## Current situation
