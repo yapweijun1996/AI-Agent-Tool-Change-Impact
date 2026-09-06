@@ -173,6 +173,23 @@ export function loadWorkingTree(rootInput?: string, limits: Limits = DEFAULT_LIM
   };
 }
 
+export function loadWorkingTreeStable(rootInput?: string, limits: Limits = DEFAULT_LIMITS): SnapshotLoadResult {
+  const root = repositoryRoot(rootInput);
+  const first = loadWorkingTreeFiles(root, limits);
+  const firstSnapshot = new SourceSnapshot(root, "working-tree", first.files, undefined, true);
+  const second = loadWorkingTreeFiles(root, limits);
+  const secondSnapshot = new SourceSnapshot(root, "working-tree", second.files, undefined, true);
+  const diagnostics = [...first.diagnostics, ...second.diagnostics];
+  if (firstSnapshot.ref.id !== secondSnapshot.ref.id) {
+    diagnostics.push({
+      code: "WORKTREE_CHANGED_DURING_CAPTURE",
+      message: "Working-tree contents changed between stable snapshot reads; results are partial",
+      severity: "warning",
+    });
+  }
+  return { snapshot: secondSnapshot, diagnostics };
+}
+
 export function resolveRevision(root: string, revision: string): string {
   if (!revision || revision.startsWith("-")) {
     throw new ImpactError("INVALID_ARGUMENT", "Git revision must be a non-empty revision name");

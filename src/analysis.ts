@@ -6,7 +6,7 @@ import { traverseReverse } from "./graph";
 import { changedSeedFromChange, collectGitChanges, type GitChange } from "./git";
 import { createProjectContext, type ProjectContext } from "./project";
 import { TypeScriptProvider, type ResolvedTarget } from "./provider";
-import { loadRevision, loadWorkingTree, repositoryRoot, type SourceSnapshot } from "./snapshot";
+import { loadRevision, loadWorkingTree, loadWorkingTreeStable, repositoryRoot, type SourceSnapshot } from "./snapshot";
 import type {
   AnalysisContext,
   AnalysisScope,
@@ -166,7 +166,7 @@ export function analyzeChanged(request: ChangedImpactRequest): ImpactResult {
     const gitChanges = collectGitChanges(root, request.base, request.head, request.worktree === true);
     const baseLoaded = loadRevision(root, request.base, limits);
     const headLoaded = request.worktree === true
-      ? loadWorkingTree(root, limits)
+      ? loadWorkingTreeStable(root, limits)
       : loadRevision(root, request.head ?? "", limits);
     const baseContext = createProjectContext(baseLoaded.snapshot, request.project);
     const headContext = createProjectContext(headLoaded.snapshot, request.project);
