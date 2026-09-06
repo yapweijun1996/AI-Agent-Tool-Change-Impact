@@ -18,10 +18,16 @@ vulnerabilities), `npm run docs:check`, workflow YAML parsing, and
 diagnostic-bound regression coverage. This is local evidence; it does not substitute
 for the unrun hosted matrix or registry gates below.
 
+After the bounded source-read change in `149e0fa`, fresh Node.js `22.23.2` and
+`24.20.0` Alpine containers reran the same lockfile install and passed the 31-case
+suite, type check, dependency audit, package check, release check, installed
+API/CLI smoke, documentation check, and `git diff --check`. These are local
+containers, not hosted runner evidence.
+
 | Area | Evidence | Result |
 | --- | --- | --- |
 | Build and type safety | `npm run typecheck`; `npm test` builds with strict `tsc -p tsconfig.json`, including unused locals/parameters checks | Pass |
-| Runtime smoke/integration | `npm test` on Node.js `v23.10.0`, macOS `Darwin 25.6.0 arm64`, plus current clean copies using Node.js `v22.23.2` and `v24.20.0` Alpine runtimes | Pass: 31 tests on macOS and 31 tests on each current Linux runtime, with installed API/CLI smoke; Linux copies use the committed lockfile with fresh `npm ci` installs, followed by typecheck, pack, release, package-smoke, and docs checks |
+| Runtime smoke/integration | `npm test` on Node.js `v23.10.0`, macOS `Darwin 25.6.0 arm64`, plus fresh clean copies at `149e0fa` using Node.js `v22.23.2` and `v24.20.0` Alpine runtimes | Pass: 31 tests on macOS and 31 tests on each current Linux runtime, with installed API/CLI smoke; Linux copies use the committed lockfile with fresh `npm ci` installs, followed by typecheck, dependency audit, pack, release, package-smoke, and docs checks |
 | Draft contract | Ajv `8.20.0` validates capabilities, success, partial, and error envelopes, including effective `analysis.limits` | Pass |
 | Dependency audit | `npm audit --json` (production and development dependency graph) | Pass: 0 vulnerabilities |
 | Package contents | `npm pack --dry-run --ignore-scripts`; `npm run release:check`; `npm run pack:smoke` temporary tarball `--prefer-offline` install with `--ignore-scripts`, API/CLI smoke, and a space-containing temporary path; fsmonitor-isolation smoke; Node 22/24 Linux container tarball install/API checks | Pass locally: release metadata and 38-file tarball set agree; packaged files include the unreleased changelog; development tests/sources are excluded; packaged API and CLI loaded and configured fsmonitor helper was not executed; clean Node 22.23.2 and Node 24.20.0 Linux package-only checkouts also pass `npm ci --ignore-scripts` and `release:check`; Windows `.cmd` path handling is exercised through the quoted path fixture but hosted execution remains unrun |

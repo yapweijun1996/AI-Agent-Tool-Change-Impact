@@ -35,7 +35,9 @@ It is evidence for project-host behavior, not a performance guarantee.
    Node.js `v22.23.2` and `v24.20.0`
    Alpine runtime binaries inside a Git-capable container. Each Linux run used
    a fresh lockfile `npm ci` install, followed by cache-preferred package smoke;
-   this reproduces the dependency-install order used by CI. It does not establish
+   this reproduces the dependency-install order used by CI. The latest rerun at
+   `149e0fa` also passed dependency audit, package/release checks, and docs checks.
+   It does not establish
    Windows/hosted-matrix behavior, sustained cross-platform performance,
    cancellation latency, or memory limits. Working-tree, Git-blob, and permitted
    external declaration reads now stop at the per-file budget plus one byte before
