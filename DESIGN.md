@@ -14,6 +14,7 @@ Latest provider observation bounding: [`32fd01a`](https://github.com/yapweijun19
 Latest diagnostic collection bounding: [`a0f148b`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/a0f148b)
 Latest bounded source reads: [`149e0fa`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/149e0fa)
 Latest validated real-path reads: [`dd212e4`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/dd212e4)
+Latest bounded revision blob reads: [`2f3c482`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/2f3c482)
 Last reconciled: 2026-09-07
 
 This document owns architecture and design decisions. [SPEC.md](SPEC.md) owns
@@ -128,8 +129,11 @@ module/dynamic observations, diagnostics, and serialized output have determinist
 caps. Snapshot readers re-check the bytes actually read after the initial file-stat
 check, and bounded descriptor reads stop at `maxFileBytes + 1` so a concurrent file
 growth cannot force the full file into memory before the input budget rejects it.
-Git blobs and permitted external TypeScript declarations use the same per-file
-read bound.
+Git revision blobs are captured through a bounded binary subprocess buffer capped
+at `maxFileBytes + 1`; the byte count is checked before UTF-8 decoding and an
+overflow is reported as `FILE_BUDGET_EXCEEDED`. Permitted external TypeScript
+declarations use the descriptor reader and the same per-file budget after a
+real-path recheck.
 Defaults are depth 2, 100 nodes, 300 edges, one retained path per impact item,
 1 MiB output, 10,000 files, 2 MiB per file, 64 MiB total source, and 1,000
 diagnostics. Hard graph caps are depth 5, 5,000 nodes, and 15,000 edges; hard

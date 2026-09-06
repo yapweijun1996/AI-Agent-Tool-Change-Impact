@@ -1,7 +1,7 @@
 # Local performance findings
 
 Date: 2026-09-07
-Benchmark implementation revision: `db809f4`; latest core implementation revision: `8bb3651`; latest package verification revision: `273a344`; latest provider observation bounding: `32fd01a`; latest diagnostic collection bounding: `a0f148b`; latest bounded source reads: `149e0fa`; latest validated real-path reads: `dd212e4`
+Benchmark implementation revision: `db809f4`; latest core implementation revision: `8bb3651`; latest package verification revision: `273a344`; latest provider observation bounding: `32fd01a`; latest diagnostic collection bounding: `a0f148b`; latest bounded source reads: `149e0fa`; latest validated real-path reads: `dd212e4`; latest bounded revision blob reads: `2f3c482`
 
 This note records bounded local resource experiments on macOS and Linux
 containers. It is evidence that the configured limits stop work predictably;
@@ -94,6 +94,26 @@ was 381.9–401.3 ms with 81.9–83.3 MiB RSS delta; API-hard wall time was
 for defaults and 385.6–391.0 ms for hard caps. This is repeatability evidence,
 not a release threshold or sustained-memory guarantee.
 
+## Current post-read-hardening observation
+
+At revision `2f3c482`, the default 241-file fixture was run three consecutive
+times on the same Node.js `v23.10.0` / macOS environment after the descriptor,
+real-path, and revision-blob read changes. Semantic results were stable across
+all runs: API and CLI defaults returned `partial` with 100 nodes/99 edges and
+`NODE_LIMIT`, while hard caps returned `complete` with 241 nodes/240 edges.
+Observed ranges were:
+
+| Mode | Wall time range | API work time range | RSS delta range | Result |
+| --- | ---: | ---: | ---: | --- |
+| API default | 522.3–682.9 ms | 396.5–505.4 ms | 87.9–93.8 MiB | `partial`, 100 nodes/99 edges, `NODE_LIMIT` |
+| API hard caps | 661.0–691.2 ms | 483.9–513.2 ms | 90.7–93.6 MiB | `complete`, 241 nodes/240 edges |
+| CLI default | 690.5–776.0 ms | — | — | `partial`, 100 nodes/99 edges, `NODE_LIMIT` |
+| CLI hard caps | 674.2–750.8 ms | — | — | `complete`, 241 nodes/240 edges |
+
+These current post-hardening timings are observations for this fixture and
+machine. They do not establish a latency, throughput, memory, cancellation, or
+release-performance threshold; those remain CI-08 work.
+
 ## Linux container observations
 
 The same default 241-file fixture was run in clean Git archive checkouts using
@@ -146,7 +166,8 @@ guarantee. The script accepts `AGENT_IMPACT_DIAGNOSTIC_FILES` and
 
 At revision `149e0fa`, the same test also exercises the bounded descriptor reader
 directly: a 4 KiB file read with a 512-byte budget stops after 513 bytes and
-returns no decoded content. Working-tree, Git revision, and permitted external
-declaration reads use this same pre-decode bound and re-open validated real paths.
+returns no decoded content. Working-tree and permitted external declaration reads
+use this descriptor bound and re-open validated real paths; Git revision blobs
+use their bounded binary buffer and reject oversized output before decoding.
 This is a memory-bound and path-isolation regression check, not a sustained-memory
 or cancellation guarantee.

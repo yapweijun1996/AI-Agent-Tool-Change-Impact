@@ -1,7 +1,7 @@
 # Project-host feasibility findings
 
 Date: 2026-09-07
-Evidence implementation revision: `db809f4`; latest core implementation revision: `8bb3651`; latest package verification revision: `273a344`; latest provider observation bounding: `32fd01a`; latest diagnostic collection bounding: `a0f148b`; latest bounded source reads: `149e0fa`; latest validated real-path reads: `dd212e4`
+Evidence implementation revision: `db809f4`; latest core implementation revision: `8bb3651`; latest package verification revision: `273a344`; latest provider observation bounding: `32fd01a`; latest diagnostic collection bounding: `a0f148b`; latest bounded source reads: `149e0fa`; latest validated real-path reads: `dd212e4`; latest bounded revision blob reads: `2f3c482`
 
 This note records the bounded feasibility check that informed the first provider.
 It is evidence for project-host behavior, not a performance guarantee.
@@ -30,19 +30,23 @@ It is evidence for project-host behavior, not a performance guarantee.
    Deleted declarations remain addressable in the base context, and rename
    results retain old and new paths.
 5. The implementation enforces file, graph, unresolved-observation, diagnostic,
-   and output limits. The current 31-case smoke suite verifies behavior at the API/CLI
+   and output limits. The current 32-case smoke suite verifies behavior at the API/CLI
    boundary on the macOS runtime and in current clean-clone Linux runs using
    Node.js `v22.23.2` and `v24.20.0`
    Alpine runtime binaries inside a Git-capable container. Each Linux run used
    a fresh lockfile `npm ci` install, followed by cache-preferred package smoke;
-   this reproduces the dependency-install order used by CI. The latest rerun at
-   `149e0fa` also passed dependency audit, package/release checks, and docs checks.
+   this reproduces the dependency-install order used by CI. The latest complete
+   container rerun is recorded against `2f3c482` after the revision-blob
+   regression was added; it also passed dependency audit, package/release checks,
+   and docs checks.
    It does not establish
    Windows/hosted-matrix behavior, sustained cross-platform performance,
-   cancellation latency, or memory limits. Working-tree, Git-blob, and permitted
-   external declaration reads now stop at the per-file budget plus one byte before
-   decoding and re-open validated real paths; the direct bounded-reader regression
-   is part of the same 31-case suite.
+   cancellation latency, or memory limits. Working-tree and permitted external
+   declaration reads stop at the per-file budget plus one byte before decoding
+   and re-open validated real paths. Git revision blobs use bounded binary output
+   and classify overflow as `FILE_BUDGET_EXCEEDED` before decoding;
+   the direct bounded-reader and oversized-blob regressions are part of the same
+   32-case suite.
 
 ## Decisions and remaining questions
 

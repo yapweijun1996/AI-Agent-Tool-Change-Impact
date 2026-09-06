@@ -77,11 +77,15 @@ Diagnostic collection is now bounded before projection, with an explicit
 `DIAGNOSTIC_LIMIT` marker, a post-read file-size check, and regression coverage
 in [`a0f148b`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/a0f148b).
 Bounded descriptor reads now stop at the per-file budget plus one byte before
-decoding, and Git blobs/permitted external declarations use the same bound in
+decoding, while Git blobs and permitted external declarations receive bounded
+input handling in
 [`149e0fa`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/149e0fa).
 Validated real-path reads close the symlink replacement window for working-tree
 and permitted external declaration reads in
 [`dd212e4`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/dd212e4).
+Git revision blobs now use a bounded binary buffer and classify output-limit
+overflow as `FILE_BUDGET_EXCEEDED` before decoding in
+[`2f3c482`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/2f3c482).
 [TASK.md](TASK.md) is the authoritative status ledger.
 
 ## Work packages
@@ -156,13 +160,15 @@ explicitly rather than returning a false empty result.
 ### E-08: Verify actual work and output bounds
 
 File, graph, retained provider-observation, diagnostic, and serialized-output
-limits are enforced before projection; source descriptors, Git blobs, and
-permitted external declarations stop at their effective per-file byte budget
-plus one byte before decoding. Deterministic ordering and unchanged-Git
+limits are enforced before projection; source descriptors stop at their
+effective per-file byte budget plus one byte before decoding, while Git revision
+blobs use a bounded binary subprocess buffer and classify overflow as
+`FILE_BUDGET_EXCEEDED`. Permitted external declarations use the descriptor
+reader after a real-path recheck. Deterministic ordering and unchanged-Git
 assertions are covered locally. Unresolved module observations are capped at the
 effective edge budget, diagnostic collection is capped at `maxDiagnostics`, and
-the 31-case suite includes high-fan-out regressions for both truncation markers
-plus the bounded reader.
+the 32-case suite includes high-fan-out regressions for both truncation markers,
+the bounded reader, and oversized revision blobs.
 A bounded fan-out benchmark records default versus hard-cap behavior
 across four sizes on macOS and the 241-file fixture on Node 22/24 Linux, with
 separate API/CLI cold-start observations. A 20,000-oversized-file stress script
@@ -177,8 +183,8 @@ matrix execution still require evidence.
 Node 22/24 × Linux/macOS/Windows workflow are present. `npm pack --dry-run`,
 `npm run release:check`, `npm run pack:smoke`, and a cache-preferred install/API
 plus fsmonitor-isolation smoke
-check pass locally. The current 31-case macOS suite passes, and current Node
-22/24 Linux container copies also pass the 31-case suite, clean lockfile `npm ci`,
+check pass locally. The current 32-case macOS suite passes, and current Node
+22/24 Linux container copies also pass the 32-case suite, clean lockfile `npm ci`,
 cache-preferred package install, type checks, and package checks pass. Earlier
 clean Linux runs also pass tarball install/API smoke. The latest full run includes the
 external-helper, symlink-escape, malformed API request, out-of-range coordinate,

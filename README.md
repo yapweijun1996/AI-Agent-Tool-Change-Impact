@@ -39,7 +39,9 @@ large skipped-file inventories report `DIAGNOSTIC_LIMIT` instead of accumulating
 unbounded warnings. Bounded descriptor reads and per-file Git/external-declaration
 read limits are in `149e0fa`, so concurrent file growth is rejected before the
 full file is decoded into memory. Validated real-path reads close the symlink
-replacement window in `dd212e4`.
+replacement window in `dd212e4`. Git revision blobs now use a bounded binary
+buffer and classify output-limit overflow as `FILE_BUDGET_EXCEEDED` in
+`2f3c482`, before UTF-8 decoding.
 It is a working draft,
 not a published release: the public schema is still `0.1-draft`, local macOS
 and Linux container verification passes, the hosted cross-platform CI matrix
@@ -70,11 +72,11 @@ npm run docs:check
 The test suite creates temporary Git repositories from
 [`test/fixtures/basic`](test/fixtures/basic), then exercises the CLI and API
 without modifying the checkout. `npm test` builds TypeScript before running the
-31 smoke/integration cases, including cycle-safe traversal, deterministic
+32 smoke/integration cases, including cycle-safe traversal, deterministic
 diamond paths, an empty-impact result, malformed JavaScript API request and
 out-of-range coordinate handling, snapshot-aware diagnostics, and bounded
 high-fan-out unresolved-module and diagnostic observations.
-The same 31-case suite and package checks pass in current Node.js 22 and 24
+The same 32-case suite and package checks pass in current Node.js 22 and 24
 Linux container copies using fresh lockfile installs.
 The packaged tarball was also installed in temporary directories and its API and
 CLI were loaded successfully on the local macOS runtime and Node 22/24 Linux
@@ -127,10 +129,13 @@ unresolved observations are capped at the effective `maxEdges` value before
 projection; truncation is visible as `PROVIDER_OBSERVATION_LIMIT`. File and
 project diagnostic collection is capped at the effective `maxDiagnostics` value;
 truncation is visible as `DIAGNOSTIC_LIMIT`. Both markers make the analysis
-partial. Working-tree and Git revision reads stop at the effective per-file byte
-budget plus one byte before UTF-8 decoding; permitted external TypeScript
-declarations use the same per-file bound and re-check their real path before
-opening. Limits and partial stop reasons are included in the result.
+partial. Working-tree reads stop at the effective per-file byte budget plus one
+byte before UTF-8 decoding. Git revision blobs use a bounded binary subprocess
+buffer capped at `maxFileBytes + 1`, are checked before UTF-8 decoding, and emit
+`FILE_BUDGET_EXCEEDED` when the configured file budget is exceeded. Permitted
+external TypeScript declarations use the descriptor reader and re-check their
+real path before opening. Limits and partial stop reasons are included in the
+result.
 
 ## Boundary and limitations
 
