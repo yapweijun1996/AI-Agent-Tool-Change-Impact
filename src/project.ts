@@ -80,7 +80,7 @@ function virtualReadDirectory(snapshot: SourceSnapshot, root: string, directory:
 function makeParseHost(snapshot: SourceSnapshot): ts.ParseConfigHost {
   const root = snapshot.root;
   return {
-    useCaseSensitiveFileNames: true,
+    useCaseSensitiveFileNames: ts.sys.useCaseSensitiveFileNames,
     fileExists: (fileName) => fileExists(root, fileName, snapshot),
     readFile: (fileName) => readPermittedFile(root, fileName, snapshot),
     readDirectory: (directory, extensions) => virtualReadDirectory(snapshot, root, directory, extensions),
@@ -95,6 +95,7 @@ function makeLanguageServiceHost(snapshot: SourceSnapshot, compilerOptions: ts.C
     getScriptFileNames: () => fileNames,
     getScriptVersion: (fileName) => versions.get(fileName) ?? "0",
     getCurrentDirectory: () => root,
+    useCaseSensitiveFileNames: () => ts.sys.useCaseSensitiveFileNames,
     getDefaultLibFileName: (options) => ts.getDefaultLibFilePath(options),
     fileExists: (fileName) => fileExists(root, fileName, snapshot),
     readFile: (fileName) => readPermittedFile(root, fileName, snapshot),

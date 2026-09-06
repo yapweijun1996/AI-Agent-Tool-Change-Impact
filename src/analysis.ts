@@ -175,7 +175,10 @@ export function analyzeChanged(request: ChangedImpactRequest): ImpactResult {
       ...baseTraversal.unresolved,
       ...headTraversal.unresolved,
     ]);
-    const allDiagnostics = dedupeDiagnostics(diagnostics);
+    const allDiagnostics = dedupeDiagnostics([
+      ...diagnostics,
+      ...unresolved.map((entry) => diagnostic(entry.code, entry.detail, { snapshot: entry.snapshot, file: entry.file, range: entry.range })),
+    ]);
     const context: AnalysisContext = {
       provider: `${baseProvider.name}+${headProvider.name}`,
       providerVersion: `${baseProvider.version},${headProvider.version}`,
