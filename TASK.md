@@ -94,10 +94,10 @@ registry publication, and clean registry installation have not been verified.
 
 | ID | Work | Status | Evidence |
 | --- | --- | --- | --- |
-| DOC-01 | Inspect implementation baseline and working-tree state | Done | Git history/tree/status reconciled before and after `b57321d`/`0cdd08f`/`13e9f14`/`6b43c58`/`ca5453e`/`0169580`/`5d29c4c`/`954f6dc`/`bbfeb58`/`940effd`/`1753c22`/`e55647f`/`e51113d`/`89f5286`/`db809f4`/`143e9f7`/`d385ff5`/`798594c`/`83f398d`/`661cb4d`/`1e61baf`/`0644fda`/`343750a`/`0902d49`/`2a68521`/`1c195af`/`b248f10` |
+| DOC-01 | Inspect implementation baseline and working-tree state | Done | Git history/tree/status reconciled before and after `b57321d`/`0cdd08f`/`13e9f14`/`6b43c58`/`ca5453e`/`0169580`/`5d29c4c`/`954f6dc`/`bbfeb58`/`940effd`/`1753c22`/`e55647f`/`e51113d`/`89f5286`/`db809f4`/`143e9f7`/`d385ff5`/`798594c`/`83f398d`/`661cb4d`/`1e61baf`/`0644fda`/`343750a`/`0902d49`/`2a68521`/`1c195af`/`b248f10`/`48f102e`/`273a344`/`e3b848c`/`13e660d` |
 | DOC-02 | Review supplied product design and technical assumptions | Done | Review dispositions preserved in [DESIGN.md](DESIGN.md) |
-| DOC-03 | Maintain coordinated product/design/epic/roadmap/task docs | Done | This reconciliation updates the eight product/status Markdown documents, the feasibility note, and the performance note |
-| DOC-04 | Validate links, references, consistency, and final changes | Done | `npm run docs:check`: all 10 Markdown files, relative links/anchors, identifiers, task DAG, fences, whitespace, and `.gitattributes` preservation pass |
+| DOC-03 | Maintain coordinated product/design/epic/roadmap/task docs | Done | This reconciliation updates the eight product/status Markdown documents, the unreleased changelog, the feasibility note, and the performance note |
+| DOC-04 | Validate links, references, consistency, and final changes | Done | `npm run docs:check`: all 11 Markdown files, relative links/anchors, identifiers, task DAG, fences, whitespace, and `.gitattributes` preservation pass |
 
 ## Implementation backlog
 
@@ -111,7 +111,7 @@ registry publication, and clean registry installation have not been verified.
 | CI-06 | Add candidate-test classification and graph-linked results | Done for scope | CI-04, CI-05 | Filename candidates retain edge IDs/evidence and make no coverage claim; V-14 |
 | CI-07 | Implement two-snapshot changed-target analysis and fallback | Done for tested cases | CI-03, CI-04, CI-05 | Modification/deletion/rename/configuration/unsupported/worktree cases; V-10, V-11, V-12 |
 | CI-08 | Enforce budgets, deterministic results, isolation, and measured limits | In progress | CI-05, CI-06, CI-07 | Local limits/determinism/read-only checks and bounded fan-out API/CLI measurements across macOS and Node 22/24 Linux pass; Windows/hosted measurements, cancellation, and memory isolation remain; V-09, V-15 through V-20 |
-| CI-09 | Verify packaging, freeze contracts, and complete release gates | In progress | CI-08 | Local pack dry-run, cache-preferred `npm run pack:smoke` installed API/CLI end-to-end analysis smoke, Node 22/24 Linux container checks, and full-history/read-only workflow are committed; Windows/hosted artifact checks, schema freeze, publication remain; V-21, V-22 |
+| CI-09 | Verify packaging, freeze contracts, and complete release gates | In progress | CI-08 | Local pack dry-run includes the unreleased changelog, cache-preferred `npm run pack:smoke` installed API/CLI end-to-end analysis smoke, Node 22/24 Linux container checks, and full-history/read-only workflow are committed; Windows/hosted artifact checks, schema freeze, publication remain; V-21, V-22 |
 
 Requirements and fixture definitions are in [SPEC.md](SPEC.md) and
 [VALIDATION.md](VALIDATION.md). Work-package context is in [EPIC.md](EPIC.md).
@@ -124,7 +124,7 @@ The following commands passed after the implementation commit:
 | --- | --- |
 | `npm test` | Pass: 28 tests; build plus Node test runner |
 | `npm run typecheck` | Pass: strict TypeScript check |
-| `npm run docs:check` | Pass: Markdown links/anchors, identifiers, task DAG, fences, whitespace, Git references, and `.gitattributes` preservation |
+| `npm run docs:check` | Pass: 11 Markdown files; links/anchors, identifiers, task DAG, fences, whitespace, Git references, and `.gitattributes` preservation |
 | `npm audit --json` | Pass: 0 vulnerabilities across production and development dependencies |
 | `npm pack --dry-run --ignore-scripts` | Pass: 37 package files, no development sources/tests included |
 | `npm run pack:smoke` | Pass: local tarball installed with `npm install --prefer-offline --omit=dev --ignore-scripts`; packaged API and `agent-impact capabilities --json` both returned valid draft results |

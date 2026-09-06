@@ -14,6 +14,7 @@ Latest package/verification hardening: `273a344`.
 | [EPIC.md](EPIC.md) | Work-package deliverables, dependencies, acceptance scope | Independent duplicate task status |
 | [ROADMAP.md](ROADMAP.md) | Milestone/release order and future priorities | Published releases or delivery dates |
 | [VALIDATION.md](VALIDATION.md) | Fixture plan, evidence, verification state, release gates | A pass for an unexecuted test or remote workflow |
+| [CHANGELOG.md](CHANGELOG.md) | Unreleased package change record | A published version, tag, or registry release |
 | [`spike/PROJECT_HOST_FINDINGS.md`](spike/PROJECT_HOST_FINDINGS.md) | Local project-host feasibility observations | Cross-platform or performance guarantees |
 | [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) | Reproducible bounded fan-out performance observation | A release performance SLA |
 
@@ -30,7 +31,8 @@ claims for this package.
 
 The current source of truth is the TypeScript implementation under `src/`, the
 fixture-backed tests under `test/`, `package.json`/`package-lock.json`, and the
-draft schema under `schemas/`. The core implementation commits are `b57321d`,
+draft schema under `schemas/`. The changelog records intended release contents
+but does not establish publication. The core implementation commits are `b57321d`,
 `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`,
 `954f6dc`, `bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, `89f5286`, `db809f4`, `143e9f7`, `d385ff5`, `798594c`, `83f398d`, `661cb4d`, and `8bb3651`. Delivery hardening then added `1e61baf`, `0644fda`, `343750a`, `0902d49`, `2a68521`, `1c195af`, `b248f10`, `48f102e`, and `273a344`; runtime-floor and audit evidence are recorded in the current task ledger.
 TASK owns status; SPEC owns requirements and observable contracts; DESIGN owns

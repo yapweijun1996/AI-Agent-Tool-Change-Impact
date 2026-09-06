@@ -115,5 +115,6 @@ ownership and reading order.
 - [ROADMAP.md](ROADMAP.md): milestone order and future priorities.
 - [TASK.md](TASK.md): authoritative task ledger, evidence, blockers, and next steps.
 - [VALIDATION.md](VALIDATION.md): fixture status and exact verification evidence.
+- [CHANGELOG.md](CHANGELOG.md): unreleased `0.1.0` change record prepared for publication.
 - [`spike/PROJECT_HOST_FINDINGS.md`](spike/PROJECT_HOST_FINDINGS.md): local project-host feasibility findings.
 - [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md): bounded local resource observations.

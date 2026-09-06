@@ -13,7 +13,7 @@ Core implementation revisions: `b57321d`, `0cdd08f`, `13e9f14`, `6b43c58`, `ca54
 | Runtime smoke/integration | `npm test` on Node.js `v23.10.0`, macOS `Darwin 25.6.0 arm64`, plus temporary clean Git clones using Node.js `v22.23.2` and `v24.20.0` Alpine runtimes | Pass: 28 tests and installed API/CLI smoke on macOS and each Linux runtime; Linux clones use the committed lockfile with fresh `npm ci` installs, followed by the same checks as CI, with `NODE_OPTIONS=--max-old-space-size=1024` |
 | Draft contract | Ajv `8.20.0` validates capabilities, success, partial, and error envelopes, including effective `analysis.limits` | Pass |
 | Dependency audit | `npm audit --json` (production and development dependency graph) | Pass: 0 vulnerabilities |
-| Package contents | `npm pack --dry-run --ignore-scripts`; `npm run pack:smoke` temporary tarball `--prefer-offline` install with `--ignore-scripts`, API/CLI smoke, and a space-containing temporary path; fsmonitor-isolation smoke; Node 22/24 Linux container tarball install/API checks | Pass locally: 37 files; development tests/sources excluded; packaged API and CLI loaded and configured fsmonitor helper was not executed; Windows `.cmd` path handling is exercised through the quoted path fixture but hosted execution remains unrun |
+| Package contents | `npm pack --dry-run --ignore-scripts`; `npm run pack:smoke` temporary tarball `--prefer-offline` install with `--ignore-scripts`, API/CLI smoke, and a space-containing temporary path; fsmonitor-isolation smoke; Node 22/24 Linux container tarball install/API checks | Pass locally: packaged files include the unreleased changelog; development tests/sources are excluded; packaged API and CLI loaded and configured fsmonitor helper was not executed; Windows `.cmd` path handling is exercised through the quoted path fixture but hosted execution remains unrun |
 | Bounded resource observation | `node spike/performance-benchmark.cjs` on temporary 21-, 121-, 241-, and 501-file fan-out/depth repositories on macOS, plus the 241-file fixture on Node 22/24 Linux containers | Pass locally: default node cap stops at 100 nodes for larger fixtures; hard caps complete; API/CLI child-process timings and RSS across macOS/Linux are recorded in [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) |
 | Git/read-only behavior | Temporary repositories, revision/worktree cases, unchanged Git assertions | Pass for tested cases |
 | Cross-platform workflow | `.github/workflows/ci.yml` configured for Node 22/24 × Ubuntu/macOS/Windows, full Git history, and read-only contents permission | Configured; remote execution not yet recorded |
@@ -45,7 +45,7 @@ Node 22 and Node 24 lockfile installs.
 - Byte-identical preservation of `.gitattributes`; CI uses a full-history checkout
   because the validator verifies historical commit references.
 
-Result: **Pass** on 2026-09-06. It checked all 10 Markdown files, relative
+Result: **Pass** on 2026-09-07. It checked all 11 Markdown files, relative
 links/anchors, identifier definitions/references, an acyclic CI dependency graph,
 balanced fences, final newlines, whitespace, and byte-identical `.gitattributes`.
 A depth-1 clone reproducibly fails the historical commit check, while a full
