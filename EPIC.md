@@ -30,6 +30,8 @@ The depth-frontier regression assertion was added in
 [`e55647f`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/e55647f).
 Partial-result schema coverage was added in
 [`e51113d`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/e51113d).
+Git external-helper isolation coverage was added in
+[`89f5286`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/89f5286).
 The draft schema and local verification pass; Windows/hosted cross-platform
 execution, cancellation/isolation evidence, schema freeze, and publication
 remain open.
@@ -41,7 +43,7 @@ remain open.
 | --- | --- | --- | --- |
 | E-01: Project-host feasibility | CI-01 | Done locally | Config-bound virtual host and [`spike/PROJECT_HOST_FINDINGS.md`](spike/PROJECT_HOST_FINDINGS.md) |
 | E-02: Executable draft contracts | CI-02 | Done as draft | TypeScript contracts, draft JSON Schema, CLI/API/error fixtures |
-| E-03: Snapshot and Git boundary | CI-03 | Done for tested cases | Revision/worktree snapshots, endpoint diff, read-only flags, conflict and concurrent-content fixtures |
+| E-03: Snapshot and Git boundary | CI-03 | Done for tested cases | Revision/worktree snapshots, endpoint diff, read-only flags, conflict, concurrent-content, and external-helper fixtures |
 | E-04: TypeScript semantic provider | CI-04 | Done for scope | JS/TS/TSX targets, imports/re-exports, calls/references, extends/implements |
 | E-05: Evidence graph and impact | CI-05 | Done for scope | Reverse traversal, stable IDs, retained paths, cycle-safe depth/node/edge caps |
 | E-06: Candidate-test projection | CI-06 | Done for scope | Filename candidates linked to retained dependency edges |
@@ -71,8 +73,8 @@ payloads with Ajv. The schema is intentionally not frozen.
 checkout/reset. `src/git.ts` implements endpoint comparison, untracked files,
 old/new ranges, rename status, conflict detection, and worktree capture-change
 diagnostics. The capture signature combines status and raw tracked diffs, and
-the smoke suite exercises both conflict and concurrent-content changes in
-temporary repositories.
+the smoke suite exercises conflict, concurrent-content, and configured external
+helper isolation in temporary repositories.
 
 ### E-04: Resolve semantics without hiding scope gaps
 
@@ -115,9 +117,9 @@ matrix execution still require evidence.
 
 `package.json`, the lockfile, `LICENSE`, schema, compiled entry points, and a
 Node 22/24 × Linux/macOS/Windows workflow are present. `npm pack --dry-run` and
-an offline install/API smoke check pass locally. The 23-case suite, type check,
-package check, and tarball install/API smoke also pass in temporary Node 22 and
-Node 24 Linux containers.
+an offline install/API smoke check pass locally. The 24-case macOS suite and
+the 23-case Node 22/24 Linux baseline, plus type checks, package checks, and
+tarball install/API smoke, pass in their respective environments.
 No Windows/hosted workflow result, registry publication, clean registry
 install, or provenance is claimed.
 

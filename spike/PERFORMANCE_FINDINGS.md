@@ -1,7 +1,7 @@
 # Local performance findings
 
 Date: 2026-09-06
-Implementation revision: `e51113d`
+Implementation revision: `89f5286`
 
 This note records one bounded local resource experiment. It is evidence that
 the configured limits stop work predictably; it is not a latency, throughput,

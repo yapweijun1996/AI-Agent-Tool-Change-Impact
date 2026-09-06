@@ -1,7 +1,7 @@
 # Project-host feasibility findings
 
 Date: 2026-09-06
-Implementation revision: `e51113d`
+Implementation revision: `89f5286`
 
 This note records the bounded feasibility check that informed the first provider.
 It is evidence for project-host behavior, not a performance guarantee.
@@ -30,8 +30,9 @@ It is evidence for project-host behavior, not a performance guarantee.
    Deleted declarations remain addressable in the base context, and rename
    results retain old and new paths.
 5. The implementation enforces file, graph, observation, and output limits. The
-   current 23-case smoke suite verifies behavior at the API/CLI boundary on the
-   macOS runtime and in Node 22/24 Linux containers; it does not establish
+   current 24-case smoke suite verifies behavior at the API/CLI boundary on the
+   macOS runtime; a 23-case baseline also passes in Node 22/24 Linux containers;
+   it does not establish
    Windows/hosted-matrix behavior, cross-platform performance, cancellation
    latency, or memory limits.
 
