@@ -60,6 +60,8 @@ the package-smoke fixture now uses a space-containing temporary path to exercise
 quoting (`1c195af`) and disables install scripts during the temporary install
 (`b248f10`); cache-preferred dependency resolution is in
 [`48f102e`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/48f102e); hosted Windows execution remains open.
+Packaged API/CLI end-to-end analysis smoke was added in
+[`273a344`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/273a344).
 The draft schema and local verification pass; Windows/hosted cross-platform
 execution, cancellation/isolation evidence, schema freeze, and publication
 remain open.
@@ -149,8 +151,8 @@ Node 22/24 × Linux/macOS/Windows workflow are present. `npm pack --dry-run`,
 `npm run pack:smoke`, and a cache-preferred install/API plus fsmonitor-isolation smoke
 check pass locally. The 28-case macOS suite and
 the full 28-case Node 22/24 Linux container runs, clean lockfile `npm ci`,
-type checks, and package checks pass using the locked npm cache. Earlier clean
-Linux runs also pass tarball install/API smoke. The latest full run includes the
+cache-preferred package install, type checks, and package checks pass. Earlier
+clean Linux runs also pass tarball install/API smoke. The latest full run includes the
 external-helper, symlink-escape, malformed API request, out-of-range coordinate,
 and snapshot-aware diagnostic fixtures.
 No Windows/hosted workflow result, registry publication, clean registry

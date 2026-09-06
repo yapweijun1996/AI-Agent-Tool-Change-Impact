@@ -20,7 +20,7 @@ Its Windows `.cmd` invocation path is hardened in `2a68521`; the smoke uses a
 temporary path containing spaces to exercise that quoting boundary (`1c195af`)
 and disables install scripts during the temporary install (`b248f10`), pending
 hosted Windows execution. Cache-preferred package dependency resolution is
-recorded in `48f102e`.
+recorded in `48f102e`, and packaged API/CLI analysis smoke is in `273a344`.
 It is a working draft,
 not a published release: the public schema is still `0.1-draft`, local macOS
 and Linux container verification passes, the hosted cross-platform CI matrix

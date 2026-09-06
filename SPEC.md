@@ -3,7 +3,7 @@
 Status: implemented v0.1 draft; the executable schema and API are not frozen for
 backward compatibility.
 Last updated: 2026-09-07. Core implementation revision: `8bb3651`.
-Latest package/verification hardening: `48f102e`.
+Latest package/verification hardening: `273a344`.
 Runtime evidence is tracked in [VALIDATION.md](VALIDATION.md); task status is
 authoritative in [TASK.md](TASK.md).
 
