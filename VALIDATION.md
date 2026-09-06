@@ -17,7 +17,7 @@ reconciliation that follows this implementation revision.
 | Package contents | `npm pack --dry-run --ignore-scripts`; temporary tarball offline install/API and fsmonitor-isolation smoke; Node 22/24 Linux container tarball install/API checks | Pass locally: 37 files; development tests/sources excluded; packaged API loaded and configured fsmonitor helper was not executed |
 | Bounded resource observation | `node spike/performance-benchmark.cjs` on temporary 21-, 121-, 241-, and 501-file fan-out/depth repositories on macOS, plus the 241-file fixture on Node 22/24 Linux containers | Pass locally: default node cap stops at 100 nodes for larger fixtures; hard caps complete; API/CLI child-process timings and RSS across macOS/Linux are recorded in [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) |
 | Git/read-only behavior | Temporary repositories, revision/worktree cases, unchanged Git assertions | Pass for tested cases |
-| Cross-platform workflow | `.github/workflows/ci.yml` configured for Node 22/24 × Ubuntu/macOS/Windows | Configured; remote execution not yet recorded |
+| Cross-platform workflow | `.github/workflows/ci.yml` configured for Node 22/24 × Ubuntu/macOS/Windows, full Git history, and read-only contents permission | Configured; remote execution not yet recorded |
 | Registry release | No publish or registry install was requested or authorized | Not run |
 
 The local suite covers the core vertical slice on macOS and Linux container
@@ -36,7 +36,8 @@ isolation, project-reference support, or registry provenance.
   whitespace errors.
 - Consistent scope, graph direction, snapshot semantics, evidence/completeness
   separation, candidate-test terminology, dependencies, and release status.
-- Byte-identical preservation of `.gitattributes`.
+- Byte-identical preservation of `.gitattributes`; CI uses a full-history checkout
+  because the validator verifies historical commit references.
 
 Result: **Pass** on 2026-09-06. It checked all 10 Markdown files, relative
 links/anchors, identifier definitions/references, an acyclic CI dependency graph,

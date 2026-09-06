@@ -40,6 +40,8 @@ Use `complete` only for evidence-backed static scope. `analysis.status: partial`
 is a usable result with an explicit limitation; top-level `ok: true` does not
 mean runtime safety or workspace-wide coverage. Do not write released, published,
 cross-platform verified, or schema frozen without the corresponding evidence.
+The documentation validator checks historical commit references, so CI must use
+a full Git checkout when running `npm run docs:check`.
 Never put credentials or raw secret-bearing logs into documentation.
 
 ## Technical references
