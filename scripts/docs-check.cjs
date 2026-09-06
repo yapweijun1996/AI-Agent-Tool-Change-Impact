@@ -12,6 +12,7 @@ const requiredDocs = [
   "TASK.md",
   "VALIDATION.md",
   "DOCUMENTATION_INDEX.md",
+  "CHANGELOG.md",
   "spike/PROJECT_HOST_FINDINGS.md",
   "spike/PERFORMANCE_FINDINGS.md",
 ];
