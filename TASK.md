@@ -36,11 +36,10 @@ Schema, a CLI, a JavaScript API, a fixture-backed Node test suite, package
 metadata/lockfile, and a configured cross-platform workflow. Local verification
 on Node.js `23.10.0` / macOS `Darwin 25.6.0 arm64` passes 24 smoke/integration
 tests, including cycle-safe traversal, complete empty-impact results, and
-external-helper isolation. The full 24-case suite, type check, and package
-check also pass in temporary Node 22 and Node 24 Linux containers using the
-locked host-installed dependencies mounted read-only; an earlier clean
-`npm ci` run established the 23-case baseline and tarball API smoke in those
-containers. Bounded fan-out measurements are recorded in
+external-helper isolation. The full 24-case suite, clean `npm ci --offline`,
+type check, and package check pass in temporary Node 22 and Node 24 Linux
+checkouts using only the locked npm cache; an earlier clean run also established
+tarball API smoke in those containers. Bounded fan-out measurements are recorded in
 [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md). The schema is
 draft; Windows/hosted matrix execution, cancellation/isolation measurements,
 registry publication, and clean registry installation have not been verified.
@@ -92,7 +91,7 @@ The following commands passed after the implementation commit:
 | `npm audit --omit=dev` | Pass: 0 production vulnerabilities |
 | `npm pack --dry-run --ignore-scripts` | Pass: 37 package files, no development sources/tests included |
 | Pack-and-install smoke | Pass: local tarball installed with `npm install --offline --omit=dev`; packaged API returned `0.1-draft` |
-| Node 22/24 Linux container matrix | Pass: temporary `git archive` checkouts in `node:22-alpine` and `node:24-alpine`; the full 24-case suite, typecheck, and pack check pass with locked host dependencies mounted read-only; an earlier clean `npm ci` baseline and tarball install/API smoke passed in each; the latest full run includes the external-helper fixture |
+| Node 22/24 Linux container matrix | Pass: temporary clean `git archive` checkouts in `node:22-alpine` and `node:24-alpine`; `npm ci --offline`, the full 24-case suite, typecheck, and pack check pass using only the locked npm cache; earlier clean runs also pass tarball install/API smoke; the full run includes the external-helper fixture |
 | `node spike/performance-benchmark.cjs` | Pass locally: default 241-file fan-out plus 21/121/501-file parameterized runs; defaults stop at 100 nodes, hard caps complete within fixture size; API/CLI child-process observations recorded in [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) |
 | `git diff --check` | Pass: no whitespace errors |
 

@@ -31,10 +31,9 @@ It is evidence for project-host behavior, not a performance guarantee.
    results retain old and new paths.
 5. The implementation enforces file, graph, observation, and output limits. The
    current 24-case smoke suite verifies behavior at the API/CLI boundary on the
-   macOS runtime and in the latest Node 22/24 Linux container runs. The Linux
-   rerun used locked host-installed dependencies mounted read-only; an earlier
-   clean `npm ci` run established the 23-case baseline and tarball API smoke. It
-   does not establish
+   macOS runtime and in the latest Node 22/24 Linux container runs. Each Linux
+   run used a fresh `npm ci --offline` install from the locked npm cache; an
+   earlier clean run also established tarball API smoke. It does not establish
    Windows/hosted-matrix behavior, cross-platform performance, cancellation
    latency, or memory limits.
 

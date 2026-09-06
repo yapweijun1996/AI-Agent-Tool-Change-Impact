@@ -11,7 +11,7 @@ reconciliation that follows this implementation revision.
 | Area | Evidence | Result |
 | --- | --- | --- |
 | Build and type safety | `npm run typecheck`; `npm test` builds with `tsc -p tsconfig.json` | Pass |
-| Runtime smoke/integration | `npm test` on Node.js `v23.10.0`, macOS `Darwin 25.6.0 arm64`, plus temporary `node:22-alpine` and `node:24-alpine` Linux checkouts | Pass: 24 tests on macOS and in the latest Node 22/24 Linux runs; the Linux rerun used locked host-installed dependencies mounted read-only, while the earlier clean `npm ci` run established the 23-case baseline |
+| Runtime smoke/integration | `npm test` on Node.js `v23.10.0`, macOS `Darwin 25.6.0 arm64`, plus temporary clean `node:22-alpine` and `node:24-alpine` Linux checkouts | Pass: 24 tests on macOS and each Linux runtime; Linux uses fresh `npm ci --offline` installs from the locked npm cache, with `NODE_OPTIONS=--max-old-space-size=1024` |
 | Draft contract | Ajv `8.20.0` validates capabilities, success, partial, and error envelopes | Pass |
 | Production dependency audit | `npm audit --omit=dev` | Pass: 0 vulnerabilities |
 | Package contents | `npm pack --dry-run --ignore-scripts`; temporary tarball offline install/API smoke; Node 22/24 Linux container tarball install/API checks | Pass locally: 37 files; development tests/sources excluded; packaged API loaded |
