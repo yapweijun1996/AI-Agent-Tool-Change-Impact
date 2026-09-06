@@ -1,8 +1,7 @@
-import { readFileSync } from "node:fs";
 import { isAbsolute, join, relative, resolve, sep } from "node:path";
 import * as ts from "typescript";
 import { ImpactError } from "./errors";
-import { SourceSnapshot } from "./snapshot";
+import { readTextFileBounded, SourceSnapshot } from "./snapshot";
 import { DEFAULT_LIMITS, type Diagnostic, type Limits, type ProjectRef } from "./types";
 import { compareText, createDiagnosticCollector, normalizeRepoPath } from "./util";
 
@@ -46,7 +45,7 @@ function pathWithin(parent: string, candidate: string): boolean {
   return normalizedCandidate === normalizedParent || normalizedCandidate.startsWith(`${normalizedParent}${sep}`);
 }
 
-function readPermittedFile(root: string, fileName: string, snapshot: SourceSnapshot): string | undefined {
+function readPermittedFile(root: string, fileName: string, snapshot: SourceSnapshot, maxBytes: number): string | undefined {
   if (snapshot.fileExists(fileName)) {
     return snapshot.readFile(fileName);
   }
@@ -55,7 +54,8 @@ function readPermittedFile(root: string, fileName: string, snapshot: SourceSnaps
     return undefined;
   }
   try {
-    return readFileSync(absolute, "utf8");
+    const result = readTextFileBounded(absolute, maxBytes);
+    return result.exceeded ? undefined : result.content;
   } catch {
     return undefined;
   }
@@ -81,17 +81,17 @@ function virtualReadDirectory(snapshot: SourceSnapshot, root: string, directory:
   return results;
 }
 
-function makeParseHost(snapshot: SourceSnapshot): ts.ParseConfigHost {
+function makeParseHost(snapshot: SourceSnapshot, maxBytes: number): ts.ParseConfigHost {
   const root = snapshot.root;
   return {
     useCaseSensitiveFileNames: ts.sys.useCaseSensitiveFileNames,
     fileExists: (fileName) => fileExists(root, fileName, snapshot),
-    readFile: (fileName) => readPermittedFile(root, fileName, snapshot),
+    readFile: (fileName) => readPermittedFile(root, fileName, snapshot, maxBytes),
     readDirectory: (directory, extensions) => virtualReadDirectory(snapshot, root, directory, extensions),
   };
 }
 
-function makeLanguageServiceHost(snapshot: SourceSnapshot, compilerOptions: ts.CompilerOptions, fileNames: string[]): ts.LanguageServiceHost {
+function makeLanguageServiceHost(snapshot: SourceSnapshot, compilerOptions: ts.CompilerOptions, fileNames: string[], maxBytes: number): ts.LanguageServiceHost {
   const root = snapshot.root;
   const versions = new Map(fileNames.map((fileName) => [fileName, String(snapshot.readFile(fileName)?.length ?? 0)]));
   const host: ts.LanguageServiceHost = {
@@ -102,10 +102,10 @@ function makeLanguageServiceHost(snapshot: SourceSnapshot, compilerOptions: ts.C
     useCaseSensitiveFileNames: () => ts.sys.useCaseSensitiveFileNames,
     getDefaultLibFileName: (options) => ts.getDefaultLibFilePath(options),
     fileExists: (fileName) => fileExists(root, fileName, snapshot),
-    readFile: (fileName) => readPermittedFile(root, fileName, snapshot),
+    readFile: (fileName) => readPermittedFile(root, fileName, snapshot, maxBytes),
     readDirectory: (directory, extensions) => virtualReadDirectory(snapshot, root, directory, extensions),
     getScriptSnapshot: (fileName) => {
-      const content = readPermittedFile(root, fileName, snapshot);
+      const content = readPermittedFile(root, fileName, snapshot, maxBytes);
       return content === undefined ? undefined : ts.ScriptSnapshot.fromString(content);
     },
     getProjectVersion: () => snapshot.ref.id,
@@ -154,7 +154,7 @@ export function createProjectContext(snapshot: SourceSnapshot, requestedProject?
   if (parsed.error) {
     throw new ImpactError("PROJECT_CONFIG_INVALID", formatDiagnostic(parsed.error));
   }
-  const parseHost = makeParseHost(snapshot);
+  const parseHost = makeParseHost(snapshot, limits.maxFileBytes);
   const parsedCommandLine = ts.parseJsonConfigFileContent(parsed.config, parseHost, snapshot.root, undefined, configAbsolute);
   if (parsedCommandLine.errors.length > 0) {
     const fatal = parsedCommandLine.errors.find((entry) => entry.category === ts.DiagnosticCategory.Error);
@@ -174,7 +174,7 @@ export function createProjectContext(snapshot: SourceSnapshot, requestedProject?
     ...parsedCommandLine.options,
     ...(configPath.toLowerCase().endsWith("jsconfig.json") && parsedCommandLine.options.allowJs === undefined ? { allowJs: true } : {}),
   };
-  const host = makeLanguageServiceHost(snapshot, compilerOptions, absoluteFiles);
+  const host = makeLanguageServiceHost(snapshot, compilerOptions, absoluteFiles, limits.maxFileBytes);
   const languageService = ts.createLanguageService(host, ts.createDocumentRegistry());
   const program = languageService.getProgram();
   if (!program) {

@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { existsSync, readFileSync, realpathSync, statSync } from "node:fs";
+import { closeSync, existsSync, openSync, realpathSync, readSync, statSync } from "node:fs";
 import { isAbsolute, join, relative, resolve, sep } from "node:path";
 import { ImpactError } from "./errors";
 import type { Diagnostic, SnapshotRef } from "./types";
@@ -69,7 +69,7 @@ export class SourceSnapshot {
   }
 }
 
-function runGit(root: string, args: string[], encoding: BufferEncoding = "utf8"): string {
+function runGit(root: string, args: string[], encoding: BufferEncoding = "utf8", maxBuffer = 64 * 1024 * 1024): string {
   // A repository can configure core.fsmonitor as an executable helper. Disable
   // it so read-only analysis never runs repository-configured processes.
   const safeArgs = ["-c", "core.fsmonitor=false", ...args];
@@ -83,7 +83,7 @@ function runGit(root: string, args: string[], encoding: BufferEncoding = "utf8")
         GIT_OPTIONAL_LOCKS: "0",
         GIT_TERMINAL_PROMPT: "0",
       },
-      maxBuffer: 64 * 1024 * 1024,
+      maxBuffer,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
@@ -120,6 +120,52 @@ export function shouldIncludePath(pathName: string): boolean {
   return !segments.includes(".git") && !segments.includes("node_modules") && !segments.includes("dist") && !segments.includes("coverage");
 }
 
+export interface BoundedTextRead {
+  content: string;
+  bytes: number;
+  exceeded: false;
+}
+
+export interface ExceededTextRead {
+  content?: undefined;
+  bytes: number;
+  exceeded: true;
+}
+
+export type BoundedTextReadResult = BoundedTextRead | ExceededTextRead;
+
+/** Read UTF-8 text while never buffering more than maxBytes plus one byte. */
+export function readTextFileBounded(fileName: string, maxBytes: number): BoundedTextReadResult {
+  if (!Number.isSafeInteger(maxBytes) || maxBytes < 0) {
+    throw new TypeError("maxBytes must be a non-negative safe integer");
+  }
+  const chunks: Buffer[] = [];
+  let total = 0;
+  let descriptor: number | undefined;
+  try {
+    descriptor = openSync(fileName, "r");
+    while (true) {
+      // Once the limit is full, read one byte only to detect growth beyond it.
+      const remaining = maxBytes - total;
+      const size = remaining > 0 ? Math.min(remaining, 64 * 1024) : 1;
+      const chunk = Buffer.allocUnsafe(size);
+      const bytesRead = readSync(descriptor, chunk, 0, size, null);
+      if (bytesRead === 0) {
+        return { content: Buffer.concat(chunks, total).toString("utf8"), bytes: total, exceeded: false };
+      }
+      total += bytesRead;
+      if (total > maxBytes) {
+        return { bytes: total, exceeded: true };
+      }
+      chunks.push(chunk.subarray(0, bytesRead));
+    }
+  } finally {
+    if (descriptor !== undefined) {
+      closeSync(descriptor);
+    }
+  }
+}
+
 function parseNullList(output: string): string[] {
   return output.split("\0").filter(Boolean).map(normalizeRepoPath);
 }
@@ -154,14 +200,18 @@ function loadWorkingTreeFiles(root: string, limits: Limits): { files: Map<string
         diagnostics.add({ code: "FILE_BUDGET_EXCEEDED", message: `Skipped oversized file: ${relativePath}`, file: relativePath, severity: "warning" });
         continue;
       }
-      const content = readFileSync(absolutePath, "utf8");
-      const contentBytes = Buffer.byteLength(content);
-      if (contentBytes > limits.maxFileBytes || totalBytes + contentBytes > limits.maxTotalFileBytes) {
+      const remainingBytes = limits.maxTotalFileBytes - totalBytes;
+      if (remainingBytes <= 0) {
+        diagnostics.add({ code: "FILE_BUDGET_EXCEEDED", message: `Skipped file after reaching total byte budget: ${relativePath}`, file: relativePath, severity: "warning" });
+        continue;
+      }
+      const bounded = readTextFileBounded(absolutePath, Math.min(limits.maxFileBytes, remainingBytes));
+      if (bounded.exceeded) {
         diagnostics.add({ code: "FILE_BUDGET_EXCEEDED", message: `Skipped file after content-size check: ${relativePath}`, file: relativePath, severity: "warning" });
         continue;
       }
-      files.set(relativePath, content);
-      totalBytes += contentBytes;
+      files.set(relativePath, bounded.content);
+      totalBytes += bounded.bytes;
     } catch (error) {
       diagnostics.add({ code: "FILE_READ_FAILED", message: `Skipped unreadable file: ${relativePath}`, file: relativePath, severity: "warning" });
     }
@@ -222,8 +272,8 @@ export function loadRevision(rootInput: string | undefined, revisionInput: strin
       break;
     }
     try {
-      const content = runGit(root, ["show", `${revision}:${relativePath}`]);
-      const bytes = Buffer.byteLength(content);
+      const content = runGit(root, ["show", `${revision}:${relativePath}`], "utf8", Math.min(64 * 1024 * 1024, limits.maxFileBytes + 1));
+      const bytes = Buffer.byteLength(content, "utf8");
       if (bytes > limits.maxFileBytes || totalBytes + bytes > limits.maxTotalFileBytes) {
         diagnostics.add({ code: "FILE_BUDGET_EXCEEDED", message: `Skipped oversized revision file: ${relativePath}`, file: relativePath, severity: "warning" });
         continue;

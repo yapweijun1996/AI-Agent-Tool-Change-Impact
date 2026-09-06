@@ -5,6 +5,7 @@ const { delimiter, join } = require("node:path");
 const test = require("node:test");
 
 const api = require("../dist/index.js");
+const { readTextFileBounded } = require("../dist/snapshot.js");
 const Ajv = require("ajv/dist/2020");
 const schema = require("../schemas/result-v0.1-draft.schema.json");
 const fixtureRoot = join(__dirname, "fixtures", "basic");
@@ -290,6 +291,12 @@ test("diagnostics stay within the explicit diagnostic cap", () => {
   assert.equal(result.analysis.status, "partial");
   assert.ok(result.warnings.length <= 5);
   assert.ok(result.warnings.some((entry) => entry.code === "DIAGNOSTIC_LIMIT"));
+  const boundedPath = join(root, "bounded-read.bin");
+  writeFileSync(boundedPath, Buffer.alloc(4096, 0x78));
+  const boundedRead = readTextFileBounded(boundedPath, 512);
+  assert.equal(boundedRead.exceeded, true);
+  assert.equal(boundedRead.bytes, 513);
+  assert.equal(boundedRead.content, undefined);
 });
 
 test("ambiguous symbols fail closed and support location disambiguation", () => {
