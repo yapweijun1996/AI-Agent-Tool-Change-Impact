@@ -143,6 +143,10 @@ test("file traversal terminates on cycles and retains a deterministic diamond pa
   assert.equal(first.ok, true);
   assert.deepEqual(first, second);
   assert.ok(first.impact.transitive.some((item) => first.graph.nodes.find((node) => node.id === item.node).file === "src/diamond-a.ts"));
+  const shallow = api.analyzeFile({ root, project: "tsconfig.json", file: "src/math.ts", limits: { depth: 1 } });
+  assert.equal(shallow.ok, true);
+  assert.equal(shallow.analysis.status, "partial");
+  assert.ok(shallow.analysis.stopReasons.includes("DEPTH_LIMIT"));
 });
 
 test("analyzeFile returns a complete empty impact for an isolated target", () => {
