@@ -27,6 +27,11 @@ export interface ResolvedTarget extends DeclarationInfo {
   snapshot: ProjectContext["snapshot"]["ref"];
 }
 
+interface ModuleResolution {
+  internal?: string;
+  external?: string;
+}
+
 export class TypeScriptProvider {
   public readonly name = "typescript-language-service";
   public readonly version = ts.version;
@@ -270,6 +275,7 @@ export class TypeScriptProvider {
     const result: UnresolvedObservation[] = [];
     const observationLimit = Math.max(0, this.limits.maxEdges - 1);
     let truncated = false;
+    let truncatedFile: string | undefined;
     for (const file of this.context.project.files) {
       const sourceFile = this.context.sourceFile(file);
       if (!sourceFile) {
@@ -281,6 +287,7 @@ export class TypeScriptProvider {
           if (!ts.isStringLiteral(argument) && !ts.isNoSubstitutionTemplateLiteral(argument)) {
             if (result.length >= observationLimit) {
               truncated = true;
+              truncatedFile = file;
               return;
             }
             result.push({
@@ -297,6 +304,7 @@ export class TypeScriptProvider {
           if (!ts.isStringLiteral(argument) && !ts.isNoSubstitutionTemplateLiteral(argument)) {
             if (result.length >= observationLimit) {
               truncated = true;
+              truncatedFile = file;
               return;
             }
             result.push({
@@ -315,7 +323,7 @@ export class TypeScriptProvider {
       });
     }
     if (truncated) {
-      const file = this.context.project.files[0];
+      const file = truncatedFile ?? this.context.project.files[0];
       if (file) {
         result.push({
           code: "DYNAMIC_OBSERVATION_LIMIT",
@@ -344,45 +352,45 @@ export class TypeScriptProvider {
     const from = this.nodeForFile(file);
     const visit = (node: ts.Node): void => {
       if (ts.isImportDeclaration(node) && ts.isStringLiteral(node.moduleSpecifier)) {
-        const target = this.resolveModule(file, node.moduleSpecifier.text);
-        if (target) {
-          const to = this.nodeForFile(target);
+        const resolution = this.resolveModule(file, node.moduleSpecifier.text);
+        if (resolution.internal) {
+          const to = this.nodeForFile(resolution.internal);
           edges.push(makeEdge(from, to, "imports", this.moduleEvidence(sourceFile, node.moduleSpecifier)));
-        } else {
+        } else if (!resolution.external) {
           unresolved.push(this.moduleObservation(file, sourceFile, node.moduleSpecifier, node.moduleSpecifier.text));
         }
       } else if (ts.isExportDeclaration(node) && node.moduleSpecifier && ts.isStringLiteral(node.moduleSpecifier)) {
-        const target = this.resolveModule(file, node.moduleSpecifier.text);
-        if (target) {
-          const to = this.nodeForFile(target);
+        const resolution = this.resolveModule(file, node.moduleSpecifier.text);
+        if (resolution.internal) {
+          const to = this.nodeForFile(resolution.internal);
           edges.push(makeEdge(from, to, "reexports", this.moduleEvidence(sourceFile, node.moduleSpecifier)));
-        } else {
+        } else if (!resolution.external) {
           unresolved.push(this.moduleObservation(file, sourceFile, node.moduleSpecifier, node.moduleSpecifier.text));
         }
       } else if (ts.isImportEqualsDeclaration(node) && ts.isExternalModuleReference(node.moduleReference) && ts.isStringLiteral(node.moduleReference.expression)) {
-        const target = this.resolveModule(file, node.moduleReference.expression.text);
-        if (target) {
-          edges.push(makeEdge(from, this.nodeForFile(target), "imports", this.moduleEvidence(sourceFile, node.moduleReference.expression)));
-        } else {
+        const resolution = this.resolveModule(file, node.moduleReference.expression.text);
+        if (resolution.internal) {
+          edges.push(makeEdge(from, this.nodeForFile(resolution.internal), "imports", this.moduleEvidence(sourceFile, node.moduleReference.expression)));
+        } else if (!resolution.external) {
           unresolved.push(this.moduleObservation(file, sourceFile, node.moduleReference.expression, node.moduleReference.expression.text));
         }
       } else if (ts.isCallExpression(node) && ts.isIdentifier(node.expression) && node.expression.text === "require" && node.arguments.length > 0) {
         const argument = node.arguments[0];
         if (ts.isStringLiteral(argument) || ts.isNoSubstitutionTemplateLiteral(argument)) {
-          const target = this.resolveModule(file, argument.text);
-          if (target) {
-            edges.push(makeEdge(from, this.nodeForFile(target), "imports", this.moduleEvidence(sourceFile, argument)));
-          } else {
+          const resolution = this.resolveModule(file, argument.text);
+          if (resolution.internal) {
+            edges.push(makeEdge(from, this.nodeForFile(resolution.internal), "imports", this.moduleEvidence(sourceFile, argument)));
+          } else if (!resolution.external) {
             unresolved.push(this.moduleObservation(file, sourceFile, argument, argument.text));
           }
         }
       } else if (ts.isCallExpression(node) && node.expression.kind === ts.SyntaxKind.ImportKeyword && node.arguments.length > 0) {
         const argument = node.arguments[0];
         if (ts.isStringLiteral(argument) || ts.isNoSubstitutionTemplateLiteral(argument)) {
-          const target = this.resolveModule(file, argument.text);
-          if (target) {
-            edges.push(makeEdge(from, this.nodeForFile(target), "imports", this.moduleEvidence(sourceFile, argument)));
-          } else {
+          const resolution = this.resolveModule(file, argument.text);
+          if (resolution.internal) {
+            edges.push(makeEdge(from, this.nodeForFile(resolution.internal), "imports", this.moduleEvidence(sourceFile, argument)));
+          } else if (!resolution.external) {
             unresolved.push(this.moduleObservation(file, sourceFile, argument, argument.text));
           }
         }
@@ -391,9 +399,9 @@ export class TypeScriptProvider {
     };
     visit(sourceFile);
     for (const reference of ts.preProcessFile(sourceFile.getFullText(), true, true).referencedFiles) {
-      const target = this.resolveModule(file, reference.fileName);
-      if (target) {
-        const to = this.nodeForFile(target);
+      const resolution = this.resolveModule(file, reference.fileName);
+      if (resolution.internal) {
+        const to = this.nodeForFile(resolution.internal);
         edges.push(makeEdge(from, to, "imports", {
           provider: this.name,
           level: "resolved",
@@ -404,7 +412,7 @@ export class TypeScriptProvider {
           },
           detail: "triple-slash reference",
         }));
-      } else {
+      } else if (!resolution.external) {
         const offset = Math.max(0, sourceFile.getFullText().indexOf(reference.fileName));
         unresolved.push({
           code: "MODULE_RESOLUTION_UNRESOLVED",
@@ -424,7 +432,7 @@ export class TypeScriptProvider {
     return { edges: resultEdges, unresolved: resultUnresolved };
   }
 
-  private resolveModule(fromFile: string, moduleName: string): string | undefined {
+  private resolveModule(fromFile: string, moduleName: string): ModuleResolution {
     const resolved = ts.resolveModuleName(
       moduleName,
       this.context.absolutePath(fromFile),
@@ -435,10 +443,13 @@ export class TypeScriptProvider {
       },
     ).resolvedModule;
     if (!resolved) {
-      return undefined;
+      return {};
     }
     const repoFile = safeRepoPath(this.context, resolved.resolvedFileName);
-    return repoFile && this.context.isProjectFile(repoFile) ? repoFile : undefined;
+    if (repoFile && this.context.isProjectFile(repoFile)) {
+      return { internal: repoFile };
+    }
+    return { external: resolved.resolvedFileName };
   }
 
   private resolutionFileExists(fileName: string): boolean {
