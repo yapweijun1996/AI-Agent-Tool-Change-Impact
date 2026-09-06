@@ -23,8 +23,9 @@ hosted Windows execution. Cache-preferred package dependency resolution is
 recorded in `48f102e`, packaged API/CLI analysis smoke is in `273a344`, and
 release metadata/schema validation is in `4d770e0` (with optional tag checking
 added in `13990ce`).
-Unknown JavaScript API limit fields fail closed in `74563b1`; the latest local
-Node 22/24 release evidence is recorded in `17020ad`.
+Unknown JavaScript API limit fields fail closed in `74563b1`; Node 22/24
+package-only release-check evidence is recorded in `17020ad`, and the latest
+full 34-case runtime gate is recorded in `f9f904b`.
 CLI inline values and Git revision inputs are hardened in `ab27679`.
 Documentation and clean-install evidence were reconciled in `079acbd` and
 `1a57175`; the diagnostic-bound update is in `ad028b6` with the follow-up
