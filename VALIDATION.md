@@ -42,6 +42,8 @@ isolation, project-reference support, or registry provenance.
 Result: **Pass** on 2026-09-06. It checked all 10 Markdown files, relative
 links/anchors, identifier definitions/references, an acyclic CI dependency graph,
 balanced fences, final newlines, whitespace, and byte-identical `.gitattributes`.
+A depth-1 clone reproducibly fails the historical commit check, while a full
+history clone passes; this confirms the workflow `fetch-depth: 0` requirement.
 
 ## Fixture status
 
