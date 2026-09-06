@@ -2,7 +2,7 @@
 
 Status: implemented v0.1 draft; release gates remain open.
 Core implementation revision: [`8bb3651`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/8bb3651)
-Latest package/verification hardening: [`b248f10`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/b248f10)
+Latest package/verification hardening: [`48f102e`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/48f102e)
 Last reconciled: 2026-09-07
 
 This document owns architecture and design decisions. [SPEC.md](SPEC.md) owns

@@ -1,7 +1,7 @@
 # Local performance findings
 
 Date: 2026-09-06
-Benchmark implementation revision: `db809f4`; latest repository implementation revision: `8bb3651`
+Benchmark implementation revision: `db809f4`; latest core implementation revision: `8bb3651`; latest package verification revision: `48f102e`
 
 This note records bounded local resource experiments on macOS and Linux
 containers. It is evidence that the configured limits stop work predictably;

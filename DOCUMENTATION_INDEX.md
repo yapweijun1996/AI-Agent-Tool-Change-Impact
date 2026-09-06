@@ -1,7 +1,7 @@
 # Documentation Index
 
 Last reconciled: 2026-09-07. Core implementation revision: `8bb3651`.
-Latest package/verification hardening: `b248f10`.
+Latest package/verification hardening: `48f102e`.
 
 ## Reading order and ownership
 
@@ -32,7 +32,7 @@ The current source of truth is the TypeScript implementation under `src/`, the
 fixture-backed tests under `test/`, `package.json`/`package-lock.json`, and the
 draft schema under `schemas/`. The core implementation commits are `b57321d`,
 `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`,
-`954f6dc`, `bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, `89f5286`, `db809f4`, `143e9f7`, `d385ff5`, `798594c`, `83f398d`, `661cb4d`, and `8bb3651`. Delivery hardening then added `1e61baf`, `0644fda`, `343750a`, `0902d49`, `2a68521`, `1c195af`, and `b248f10`; runtime-floor and audit evidence are recorded in the current task ledger.
+`954f6dc`, `bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, `89f5286`, `db809f4`, `143e9f7`, `d385ff5`, `798594c`, `83f398d`, `661cb4d`, and `8bb3651`. Delivery hardening then added `1e61baf`, `0644fda`, `343750a`, `0902d49`, `2a68521`, `1c195af`, `b248f10`, and `48f102e`; runtime-floor and audit evidence are recorded in the current task ledger.
 TASK owns status; SPEC owns requirements and observable contracts; DESIGN owns
 architecture; VALIDATION owns evidence. Links connect these responsibilities
 instead of duplicating competing status tables.

@@ -19,7 +19,8 @@ The installed artifact API/CLI smoke is automated by `npm run pack:smoke` from
 Its Windows `.cmd` invocation path is hardened in `2a68521`; the smoke uses a
 temporary path containing spaces to exercise that quoting boundary (`1c195af`)
 and disables install scripts during the temporary install (`b248f10`), pending
-hosted Windows execution.
+hosted Windows execution. Cache-preferred package dependency resolution is
+recorded in `48f102e`.
 It is a working draft,
 not a published release: the public schema is still `0.1-draft`, local macOS
 and Linux container verification passes, the hosted cross-platform CI matrix
