@@ -5,7 +5,7 @@ gates; implementation status is authoritative in [TASK.md](TASK.md).
 
 ## Current evidence
 
-Implementation revisions: `b57321d`, `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`, `954f6dc`, `bbfeb58`, `940effd`, `1753c22`, and `e55647f`, plus the documentation
+Implementation revisions: `b57321d`, `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`, `954f6dc`, `bbfeb58`, `940effd`, `1753c22`, `e55647f`, and `e51113d`, plus the documentation
 reconciliation that follows this implementation revision.
 
 | Area | Evidence | Result |
@@ -38,7 +38,7 @@ An inline Python validator was run after this reconciliation for:
   separation, candidate-test terminology, dependencies, and release status.
 - Byte-identical preservation of `.gitattributes`.
 
-Result: **Pass** on 2026-09-06. It checked 10 Markdown files, 86 link/anchor
+Result: **Pass** on 2026-09-06. It checked 10 Markdown files, 88 link/anchor
 references, all identifier definitions/references, an acyclic CI dependency graph,
 balanced fences, final newlines, whitespace, and byte-identical `.gitattributes`.
 The previous eight-file baseline had 37 links; the increase reflects the

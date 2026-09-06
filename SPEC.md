@@ -2,7 +2,7 @@
 
 Status: implemented v0.1 draft; the executable schema and API are not frozen for
 backward compatibility.
-Last updated: 2026-09-06. Implementation revision: `e55647f`.
+Last updated: 2026-09-06. Implementation revision: `e51113d`.
 Runtime evidence is tracked in [VALIDATION.md](VALIDATION.md); task status is
 authoritative in [TASK.md](TASK.md).
 

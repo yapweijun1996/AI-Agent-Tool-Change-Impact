@@ -1,7 +1,7 @@
 # Design
 
 Status: implemented v0.1 draft; release gates remain open.
-Implementation revision: [`e55647f`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/e55647f)
+Implementation revision: [`e51113d`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/e51113d)
 Last reconciled: 2026-09-06
 
 This document owns architecture and design decisions. [SPEC.md](SPEC.md) owns

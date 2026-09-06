@@ -28,6 +28,8 @@ Cycle-safe graph traversal and empty-impact regression coverage were added in
 [`1753c22`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/1753c22).
 The depth-frontier regression assertion was added in
 [`e55647f`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/e55647f).
+Partial-result schema coverage was added in
+[`e51113d`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/e51113d).
 The draft schema and local verification pass; Windows/hosted cross-platform
 execution, cancellation/isolation evidence, schema freeze, and publication
 remain open.
