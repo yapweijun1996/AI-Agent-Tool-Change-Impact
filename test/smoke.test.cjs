@@ -1,6 +1,6 @@
 const assert = require("node:assert/strict");
 const { execFileSync, spawnSync } = require("node:child_process");
-const { chmodSync, cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } = require("node:fs");
+const { chmodSync, cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } = require("node:fs");
 const { delimiter, join } = require("node:path");
 const test = require("node:test");
 
@@ -354,6 +354,26 @@ test("worktree content changes during capture are reported as partial", () => {
   assert.equal(result.ok, true);
   assert.equal(result.analysis.status, "partial");
   assert.ok(result.warnings.some((warning) => warning.code === "WORKTREE_CHANGED_DURING_CAPTURE"));
+});
+
+test("changed analysis disables configured external diff and textconv helpers", () => {
+  const root = createRepo();
+  const marker = join(root, "helper-ran");
+  const helper = join(root, "diff-helper.sh");
+  writeFileSync(helper, `#!/bin/sh\nprintf 'executed\\n' > '${marker}'\nexit 0\n`);
+  chmodSync(helper, 0o755);
+  writeFileSync(join(root, ".gitattributes"), "*.ts diff=fixture\n");
+  git(root, ["add", ".gitattributes"]);
+  git(root, ["commit", "-qm", "configure-diff-driver"]);
+  git(root, ["config", "diff.external", helper]);
+  git(root, ["config", "diff.fixture.textconv", helper]);
+  const base = git(root, ["rev-parse", "HEAD"]);
+  const mathPath = join(root, "src", "math.ts");
+  writeFileSync(mathPath, readFileSync(mathPath, "utf8").replace("value * 2", "value * 6"));
+  const result = api.analyzeChanged({ root, project: "tsconfig.json", base, worktree: true });
+  assert.equal(result.ok, true);
+  assert.ok(result.changed.some((entry) => entry.path === "src/math.ts"));
+  assert.equal(existsSync(marker), false);
 });
 
 test("output and argument limits fail with machine-readable errors", () => {
