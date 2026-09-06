@@ -7,6 +7,7 @@ Latest package/verification hardening: `273a344`.
 Latest release metadata validation: `4d770e0`.
 Latest API limit validation: `74563b1`.
 Latest local release evidence: `17020ad`.
+Latest CLI/revision input hardening: `ab27679`.
 Runtime evidence is tracked in [VALIDATION.md](VALIDATION.md); task status is
 authoritative in [TASK.md](TASK.md).
 
@@ -76,6 +77,8 @@ Unknown CLI flags and unknown JavaScript API limit fields fail with
 `INVALID_ARGUMENT`. Repository-relative paths are canonicalized before lookup: dot and empty
 segments are removed, while parent segments and NUL bytes return
 `FILE_OUTSIDE_ROOT`.
+Inline CLI values preserve embedded `=` characters. Comparison revisions are
+trimmed consistently and NUL-containing revisions fail with `INVALID_ARGUMENT`.
 
 ## JavaScript API and result model
 

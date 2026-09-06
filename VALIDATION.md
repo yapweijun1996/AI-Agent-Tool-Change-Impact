@@ -5,14 +5,15 @@ gates; implementation status is authoritative in [TASK.md](TASK.md).
 
 ## Current evidence
 
-Core implementation revisions: `b57321d`, `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`, `954f6dc`, `bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, `89f5286`, `db809f4`, `143e9f7`, `d385ff5`, `798594c`, `83f398d`, and `8bb3651`; path normalization is in `661cb4d`, its NUL-byte regression is in `1e61baf`, installed API/CLI artifact smoke is in `0902d49`, Windows `.cmd` invocation hardening is in `2a68521`, the space-containing path fixture is in `1c195af`, install scripts are disabled in `b248f10`, cache-preferred dependency resolution is in `48f102e`, packaged API/CLI analysis is in `273a344`, stable two-read worktree capture is in `c4dca94`, unknown API limit fields are rejected in `74563b1`, release metadata validation is in `2262658`, optional tag validation is in `13990ce`, schema metadata validation is in `4d770e0`, repeated resource observations are recorded in `aeef862`, Linux release checks are recorded in `17020ad`, the CI dependency audit is in `850f106`, the limit evidence reconciliation is in `beb003e`, and lifecycle-safe CI installs are in `f64fbb6`.
+Core implementation revisions: `b57321d`, `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`, `954f6dc`, `bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, `89f5286`, `db809f4`, `143e9f7`, `d385ff5`, `798594c`, `83f398d`, and `8bb3651`; path normalization is in `661cb4d`, its NUL-byte regression is in `1e61baf`, installed API/CLI artifact smoke is in `0902d49`, Windows `.cmd` invocation hardening is in `2a68521`, the space-containing path fixture is in `1c195af`, install scripts are disabled in `b248f10`, cache-preferred dependency resolution is in `48f102e`, packaged API/CLI analysis is in `273a344`, stable two-read worktree capture is in `c4dca94`, unknown API limit fields are rejected in `74563b1`, release metadata validation is in `2262658`, optional tag validation is in `13990ce`, schema metadata validation is in `4d770e0`, repeated resource observations are recorded in `aeef862`, Linux release checks are recorded in `17020ad`, the CI dependency audit is in `850f106`, the limit evidence reconciliation is in `beb003e`, lifecycle-safe CI installs are in `f64fbb6`, and CLI/revision input hardening is in `ab27679`.
 
-Final local gate run on 2026-09-07 at `f64fbb6` used Node.js `v23.10.0` on
-macOS `Darwin 25.6.0 arm64`. `npm test` (28/28), `npm run typecheck`,
+Final local gate run on 2026-09-07 at `ab27679` used Node.js `v23.10.0` on
+macOS `Darwin 25.6.0 arm64`. `npm test` (29/29), `npm run typecheck`,
 `npm run pack:check` (38 files), `npm run release:check` with and without the
 matching tag, `npm run pack:smoke`, `npm audit --audit-level=low --json` (zero
 vulnerabilities), `npm run docs:check`, workflow YAML parsing, and
-`git diff --check` all passed. This is local evidence; it does not substitute
+`git diff --check` all passed. The test count is now 29/29 after the CLI and
+revision-input regression coverage. This is local evidence; it does not substitute
 for the unrun hosted matrix or registry gates below.
 
 | Area | Evidence | Result |
@@ -88,7 +89,7 @@ open. “Not run” means no evidence is available.
 | V-17 | Identical snapshots/config/dependencies/provider; changed provider/resolution input | Partial | Repeated identical API payloads compare equal; cross-provider/input invalidation is untested |
 | V-18 | External diff/textconv/fsmonitor, executable plugin/config, automatic type acquisition | Pass for tested cases | Marker-based external diff/textconv/fsmonitor helper fixture confirms configured helpers are not executed on macOS and Node 22/24 Linux; broader executable-config and automatic-type-acquisition matrix remains |
 | V-19 | Symlink escape, workspace symlink, external declarations, source/Git snapshots | Pass for tested cases | Symlink escapes are skipped and reported on macOS and Node 22/24 Linux; snapshot IDs, old/new evidence, and read boundaries pass; workspace symlink and broader external-input matrix remain |
-| V-20 | CLI/API success, partial, validation/operation errors, malformed requests, coordinate handoff | Pass for tested cases | CLI JSON/exit behavior, API parity, malformed JavaScript API requests including unknown limits, line-bounded `--at`, partials, and coordinate handoff pass; UTF-16/old-coordinate cases remain |
+| V-20 | CLI/API success, partial, validation/operation errors, malformed requests, coordinate handoff | Pass for tested cases | CLI JSON/exit behavior, API parity, malformed JavaScript API requests including unknown limits, line-bounded `--at`, inline values containing `=`, trimmed/NUL-rejected revisions, partials, and coordinate handoff pass; UTF-16/old-coordinate cases remain |
 | V-21 | Packaged artifact outside checkout on Node 22/24 and Linux/macOS/Windows | Partial | Node 23/macOS and Node 22/24 Linux pass tests, typecheck, pack checks, and installed API/CLI end-to-end analysis smoke; Windows and hosted matrix remain unrun |
 | V-22 | Authorized publication and clean registry installation | Not run | Publication requires explicit release authorization and registry credentials |
 

@@ -25,6 +25,7 @@ release metadata/schema validation is in `4d770e0` (with optional tag checking
 added in `13990ce`).
 Unknown JavaScript API limit fields fail closed in `74563b1`; the latest local
 Node 22/24 release evidence is recorded in `17020ad`.
+CLI inline values and Git revision inputs are hardened in `ab27679`.
 It is a working draft,
 not a published release: the public schema is still `0.1-draft`, local macOS
 and Linux container verification passes, the hosted cross-platform CI matrix
@@ -55,7 +56,7 @@ npm run docs:check
 The test suite creates temporary Git repositories from
 [`test/fixtures/basic`](test/fixtures/basic), then exercises the CLI and API
 without modifying the checkout. `npm test` builds TypeScript before running the
-28 smoke/integration cases, including cycle-safe traversal, deterministic
+29 smoke/integration cases, including cycle-safe traversal, deterministic
 diamond paths, an empty-impact result, malformed JavaScript API request and
 out-of-range coordinate handling, and snapshot-aware diagnostics.
 The packaged tarball was also installed in temporary directories and its API and

@@ -168,6 +168,8 @@ install, or provenance is claimed.
 
 The current workflow uses full-history checkout, read-only contents permission,
 and `npm ci --ignore-scripts`; this policy is recorded in [`f64fbb6`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/f64fbb6).
+The CLI preserves inline values containing `=` and normalizes/rejects unsafe
+Git revision inputs; regression coverage is in [`ab27679`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/ab27679).
 
 ## Completion gate
 

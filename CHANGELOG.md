@@ -12,3 +12,4 @@ pass.
 - Add Git/worktree snapshot safety checks for conflicts, concurrent content changes, symlink escapes, and configured external helper isolation.
 - Add package, documentation, Linux container, and installed API/CLI smoke verification.
 - Run CI and release-check dependency installs with lifecycle scripts disabled to keep verification read-only and reproducible.
+- Harden CLI inline-value parsing and Git revision validation, with regression coverage for embedded `=` values, whitespace, and NUL input.

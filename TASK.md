@@ -80,6 +80,8 @@ and the latest limit-validation reconciliation is in
 [`beb003e`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/beb003e);
 lifecycle-safe CI installs are in
 [`f64fbb6`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/f64fbb6);
+CLI inline-value and Git revision input hardening is in
+[`ab27679`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/ab27679);
 documentation reconciliation follows the implementation revision above.
 
 ## Current situation
@@ -87,7 +89,7 @@ documentation reconciliation follows the implementation revision above.
 The repository now contains a CommonJS TypeScript implementation, a draft JSON
 Schema, a CLI, a JavaScript API, a fixture-backed Node test suite, package
 metadata/lockfile, and a configured cross-platform workflow. Local verification
-on Node.js `23.10.0` / macOS `Darwin 25.6.0 arm64` passes 28 smoke/integration
+on Node.js `23.10.0` / macOS `Darwin 25.6.0 arm64` passes 29 smoke/integration
 tests, including cycle-safe traversal, complete empty-impact results, and
 external-helper, symlink-escape isolation, malformed API request validation, and
 snapshot-aware diagnostics. The full 28-case suite, clean lockfile installs,
@@ -124,7 +126,7 @@ registry publication, and clean registry installation have not been verified.
 | ID | Work | Status | Depends on | Acceptance/evidence |
 | --- | --- | --- | --- | --- |
 | CI-01 | Run a configured TypeScript project-host feasibility spike | Done locally | None | Config-bound host and [`spike/PROJECT_HOST_FINDINGS.md`](spike/PROJECT_HOST_FINDINGS.md); V-02, V-03, V-06, V-15 local subset |
-| CI-02 | Define executable draft result/CLI/API contracts and fixtures | Done as draft | CI-01 | `src/types.ts`, draft schema, CLI/API runtime validation including unknown limit rejection, effective analysis limits, canonical repository paths, line-bounded coordinate handling, and Ajv fixtures; V-04, V-05, V-08, V-13, V-16, V-20 local subset |
+| CI-02 | Define executable draft result/CLI/API contracts and fixtures | Done as draft | CI-01 | `src/types.ts`, draft schema, CLI/API runtime validation including unknown limit rejection, effective analysis limits, canonical repository paths, line-bounded coordinate handling, inline `=` values, revision trimming/NUL rejection, and Ajv fixtures; V-04, V-05, V-08, V-13, V-16, V-20 local subset |
 | CI-03 | Implement bounded snapshot access and local Git comparison | Done for tested cases | CI-02 | Git trees/worktree, two-read content-hashed capture, untracked/read-only, deletion/rename, conflict, concurrent-content, external-helper, and symlink-escape fixtures pass; nested/internal symlink and exhaustive staged/unstaged matrices remain; V-01, V-10, V-11, V-18, V-19 |
 | CI-04 | Implement the context-bound TypeScript semantic provider | Done for scope | CI-01, CI-02, CI-03 | JS/TS/TSX targets, imports/re-exports, references/calls, extends/implements; project references deferred; V-02 through V-07 |
 | CI-05 | Implement evidence graph traversal and result projection | Done for scope | CI-02, CI-04 | Reverse BFS, stable IDs, paths, per-seed cycle termination, graph caps, and complete empty impacts; one path per target; V-08, V-09, V-13 |
@@ -152,11 +154,11 @@ release action as completed evidence.
 ## Verified local commands
 
 The following commands passed in the final local gate run on 2026-09-07 at
-`f64fbb6` using Node.js `v23.10.0` on macOS `Darwin 25.6.0 arm64`:
+`ab27679` using Node.js `v23.10.0` on macOS `Darwin 25.6.0 arm64`:
 
 | Command | Result |
 | --- | --- |
-| `npm test` | Pass: 28 tests; build plus Node test runner |
+| `npm test` | Pass: 29 tests; build plus Node test runner |
 | `npm run typecheck` | Pass: strict TypeScript check |
 | `npm run docs:check` | Pass: 11 Markdown files; links/anchors, identifiers, task DAG, fences, whitespace, Git references, and `.gitattributes` preservation |
 | `npm audit --json` | Pass: 0 vulnerabilities across production and development dependencies |

@@ -6,6 +6,7 @@ Latest release metadata validation: `4d770e0`.
 Latest API limit validation: `74563b1`.
 Latest local release evidence: `17020ad`.
 Latest lifecycle-safe CI install policy: `f64fbb6`.
+Latest CLI/revision input hardening: `ab27679`.
 
 ## Reading order and ownership
 
@@ -38,7 +39,7 @@ fixture-backed tests under `test/`, `package.json`/`package-lock.json`, and the
 draft schema under `schemas/`. The changelog records intended release contents
 but does not establish publication. The core implementation commits are `b57321d`,
 `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`,
-`954f6dc`, `bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, `89f5286`, `db809f4`, `143e9f7`, `d385ff5`, `798594c`, `83f398d`, `661cb4d`, and `8bb3651`. Delivery hardening then added `1e61baf`, `0644fda`, `343750a`, `0902d49`, `2a68521`, `1c195af`, `b248f10`, `48f102e`, `273a344`, `c4dca94`, `74563b1`, `2262658`, `13990ce`, `4d770e0`, `17020ad`, `850f106`, `beb003e`, and `f64fbb6`; runtime-floor, audit, release metadata, stable-capture, API-validation, and lifecycle-safe installation evidence are recorded in the current task ledger.
+`954f6dc`, `bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, `89f5286`, `db809f4`, `143e9f7`, `d385ff5`, `798594c`, `83f398d`, `661cb4d`, and `8bb3651`. Delivery hardening then added `1e61baf`, `0644fda`, `343750a`, `0902d49`, `2a68521`, `1c195af`, `b248f10`, `48f102e`, `273a344`, `c4dca94`, `74563b1`, `2262658`, `13990ce`, `4d770e0`, `17020ad`, `850f106`, `beb003e`, `f64fbb6`, and `ab27679`; runtime-floor, audit, release metadata, stable-capture, API-validation, lifecycle-safe installation, and CLI/revision-input evidence are recorded in the current task ledger.
 TASK owns status; SPEC owns requirements and observable contracts; DESIGN owns
 architecture; VALIDATION owns evidence. Links connect these responsibilities
 instead of duplicating competing status tables.
