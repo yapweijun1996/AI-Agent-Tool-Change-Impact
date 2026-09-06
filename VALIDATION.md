@@ -32,6 +32,13 @@ and repository-root-symlink regression coverage.
 This is local evidence; it does not substitute
 for the unrun hosted matrix or registry gates below.
 
+The latest macOS-only full gate at documentation revision `5578c82` reran
+`npm test` (36/36), typecheck, JSON dependency audit (zero vulnerabilities),
+pack/release checks, installed API/CLI package smoke, documentation checks, and
+`git diff --check` after the formatted-output and test-fixture-cleanup changes.
+This run does not replace the `f9f904b` cross-runtime evidence; it confirms the
+current tree after the latest local changes.
+
 After the bounded source-read change in `149e0fa`, fresh Node.js `22.23.2` and
 `24.20.0` Alpine containers reran the same lockfile install and passed the 31-case
 suite, type check, dependency audit, package check, release check, installed

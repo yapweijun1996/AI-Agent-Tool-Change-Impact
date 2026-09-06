@@ -199,16 +199,15 @@ release action as completed evidence.
 
 ## Verified local commands
 
-The following commands passed in the final local gate run on 2026-09-07 at code
-revision `f9f904b`; documentation reconciliation is recorded in `ad028b6` and
-the post-change benchmark note in `f032986`
-using Node.js
-`v23.10.0` on macOS `Darwin 25.6.0 arm64`. A fresh dependency install with
-`npm ci --ignore-scripts --no-audit --no-fund` completed before the test run:
+The latest macOS-only full gate passed on 2026-09-07 at documentation revision
+`5578c82`, with implementation behavior from `c6296e4` and test-fixture cleanup
+from `55a10bb`, using Node.js `v23.10.0` on macOS `Darwin 25.6.0 arm64`.
+The latest complete cross-runtime gate remains `f9f904b`; its Node 22/24 Linux
+container evidence is retained below.
 
 | Command | Result |
 | --- | --- |
-| `npm test` | Pass: 34 tests in the complete `f9f904b` gate; the latest `c6296e4` macOS rerun passes 36/36, including provider-resolution and formatted-output regressions |
+| `npm test` | Pass: 36/36 on the latest macOS-only gate; the complete `f9f904b` cross-runtime gate remains 34/34, including provider-resolution and formatted-output regressions in the current macOS run |
 | `npm run typecheck` | Pass: strict TypeScript check with unused locals/parameters rejected |
 | `npm run docs:check` | Pass: 11 Markdown files; links/anchors, identifiers, task DAG, fences, whitespace, Git references, and `.gitattributes` preservation |
 | `npm audit --json` | Pass: 0 vulnerabilities across production and development dependencies |
