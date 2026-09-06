@@ -1,57 +1,50 @@
 # Roadmap
 
-Status date: 2026-09-06. Current phase: documentation/design baseline; no runtime
-implementation or release is verified. This document owns delivery order, while
-[TASK.md](TASK.md) owns detailed task status. Version labels below are targets,
-not published versions or delivery dates.
+Status date: 2026-09-06. Current phase: **v0.1 implementation and release-candidate
+hardening**. Version labels are targets, not published releases or delivery
+dates. Detailed status belongs in [TASK.md](TASK.md).
 
 ## Before v0.1
 
-| Milestone | Required outcome | Gate |
-| --- | --- | --- |
-| M-00: Documentation baseline | Consistent design, requirements, task ledger, and verification plan reflecting an empty implementation | Documentation checks in VALIDATION.md |
-| M-01: Feasibility and contract draft | Explicit project-host boundary and representative executable result fixtures | CI-01, CI-02 |
-| M-02: Static target analysis | Snapshot access plus file/symbol relationships and evidence paths | CI-03, CI-04, CI-05 |
-| M-03: Change analysis and candidate tests | Two-snapshot changes, configuration/module fallback, honest related-test projection | CI-06, CI-07 |
-| M-04: Verified release candidate | Bounded work/output, stable results, platform tests, validated packaged artifact | CI-08 and pre-publication CI-09 gates |
+| Milestone | Required outcome | Status | Gate |
+| --- | --- | --- | --- |
+| M-00: Documentation baseline | Consistent design, requirements, task ledger, and validation plan | Done | Documentation checks in [VALIDATION.md](VALIDATION.md) |
+| M-01: Feasibility and contract draft | Config-bound project host and executable draft result fixtures | Done locally | CI-01, CI-02; local Node test evidence |
+| M-02: Static target analysis | Snapshot access, file/symbol relationships, and evidence paths | Done for supported scope | CI-03, CI-04, CI-05; local smoke tests |
+| M-03: Change analysis and candidate tests | Two snapshots, deletion/rename/configuration handling, candidate tests | Done for tested cases | CI-06, CI-07; local smoke tests |
+| M-04: Verified release candidate | Bounded work/output, stable results, platform checks, packaged artifact | In progress | CI-08 and pre-publication CI-09 |
 
-M-00's documentation gate is complete; its evidence is recorded in
-[VALIDATION.md](VALIDATION.md). Milestones M-01 through M-04 are pending.
-File/symbol analysis is an internal vertical slice; it does not satisfy the
-complete v0.1 target without `changed`.
+M-00 through M-03 are implemented in commits `b57321d`, `0cdd08f`, `13e9f14`, and `6b43c58`. M-04 is
+intentionally open while the configured workflow, stress/cancellation measurements, schema
+freeze, and artifact/platform evidence are outstanding.
 
 ## Release targets
 
 | Target | Intended scope | Entry condition |
 | --- | --- | --- |
 | v0.1 | Configured JS/TS/TSX file, symbol, and Git-change impact; candidate tests; CLI/JS API; evidence paths; explicit limitations | All in-scope validation and release gates pass |
-| v0.2 | Dedicated `why` presentation; CFML provider feasibility is the next domain investigation | Verified v0.1 and evidence that the next capability is useful and implementable |
+| v0.2 | Dedicated `why` presentation and CFML provider feasibility | Verified v0.1 plus evidence that the next capability is useful and implementable |
 | Later, unscheduled | CFML implementation, Python evaluation, SCIP ingestion, broader project coverage, public-surface analysis, optional Test Scope composition | Separate provider/scope contracts and validation evidence |
-| v1.0 | Mature compatibility policy and sufficient provider/runtime evidence for a stable product | Demonstrated compatibility and operational quality, not a fixed feature count |
+| v1.0 | Mature compatibility policy and stable provider/runtime evidence | Demonstrated compatibility and operational quality |
 
-The dedicated `why` command is consistently targeted at v0.2. Evidence paths are
-required in v0.1; they are not postponed with the convenience command. CFML remains
-the next domain priority, but CFML and Python are not promised together in v0.2.
+The current package is `0.1.0` but the result contract remains
+`0.1-draft`; package numbering alone does not signal release readiness. The
+dedicated `why` command stays targeted at v0.2 because v0.1 already retains
+evidence paths needed by downstream agents.
 
-The v0.1 result schema should freeze only after implementation fixtures pass.
-A package version below 1.0 is not permission to silently break that frozen schema.
-A broader stable provider API can wait until there is more than a speculative
-second provider.
+## Sequencing constraints
 
-## Decisions that constrain sequencing
-
-- Solve project/snapshot ownership before building an impact graph on top of it.
-- Keep old-version evidence before attempting deletion/rename support.
-- Establish graph, completeness, and position contracts before downstream composition.
-- Measure source/provider work; a small JSON response alone is not a performance gate.
-- Verify language constructs and project arrangements individually before labeling
-  an entire language or workspace mode supported.
+- Keep project and snapshot ownership ahead of graph conclusions.
+- Preserve old-version evidence before claiming deletion or rename support.
+- Establish graph direction, completeness, and coordinate contracts before integrations.
+- Measure provider work, not only serialized response size.
+- Verify language constructs and project arrangements separately before widening capabilities.
 - Expand providers only after the initial capability proves useful on real changes.
 
 ## Release evidence policy
 
-CI success, local package installation, registry installation, and a published
-release are different evidence stages. Record them separately in
-[TASK.md](TASK.md) and [VALIDATION.md](VALIDATION.md). None has runtime evidence yet.
-No release credentials, package ownership, or CI availability are assumed from
-the existence of this repository.
+Local tests, a local package dry-run, remote CI, registry installation, and a
+published release are separate evidence stages. Record each separately in
+[TASK.md](TASK.md) and [VALIDATION.md](VALIDATION.md). Publishing or pushing is
+not part of the current authorized work. Cross-platform workflow execution and
+registry provenance remain the next external release actions.

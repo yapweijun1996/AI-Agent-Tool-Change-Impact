@@ -1,67 +1,96 @@
 # Agent Change Impact
 
-Planned: a local, read-only utility that gives AI coding agents a bounded,
-evidence-backed view of what may depend on a proposed or actual code change.
+Agent Change Impact is a local, read-only utility that gives AI coding agents a
+bounded, evidence-backed view of what may depend on a file, symbol, or Git
+change. It returns repository-relative locations and directed relationships so a
+downstream reader such as [Agent Code Slice](https://github.com/yapweijun1996/AI-Agent-Tool-Code-Slice)
+can inspect the relevant code.
 
 ## Current state
 
-As of 2026-09-06, this repository is at the documentation and design stage.
-The implementation baseline is commit `081cb63` (`Initial commit`), which
-contains only `.gitattributes`. The documentation baseline was added after
-reviewing the initial product proposal.
+The implementation was introduced in `b57321d`; provider-boundary, Git endpoint,
+and conflict-coverage fixes are in `0cdd08f`, `13e9f14`, and `6b43c58`. It is a working draft,
+not a published release: the public schema is still `0.1-draft`, local macOS verification passes, the cross-platform
+CI matrix is configured but has not run here, and no npm publication has been
+performed.
 
-There is no application source, package manifest, dependency lockfile, CLI,
-JavaScript API, executable JSON schema, test suite, or CI workflow in this
-checkout. No runtime capability, performance result, or release is verified
-by this repository. The npm registry and remote release state have not been
-audited as part of this documentation work.
+| Surface | Current state |
+| --- | --- |
+| npm package name | `agent-change-impact` (`0.1.0`, local package only) |
+| CLI | `agent-impact` via `dist/cli.js` |
+| JavaScript API | `dist/index.js` exports `capabilities`, `analyzeFile`, `analyzeSymbol`, and `analyzeChanged` |
+| Supported source | JavaScript, TypeScript, and TSX in one selected `tsconfig.json` or `jsconfig.json` project |
+| Provider | TypeScript `5.9.3` Language Service plus AST inspection |
+| Runtime floor | Node.js `22` or newer according to `package.json`; only Node.js `23.10.0` has been run locally |
+| Release state | Draft schema; not published |
 
-| Identity | Intended value | Status |
-| --- | --- | --- |
-| Repository | `AI-Agent-Tool-Change-Impact` | Current repository |
-| npm package | `agent-change-impact` | Proposed; availability/publication unverified |
-| CLI | `agent-impact` | Planned; not implemented |
-| Initial language scope | JavaScript, TypeScript, TSX | Planned; not verified |
+## Install and verify from a checkout
 
-## Product boundary
+```sh
+npm ci
+npm test
+npm run typecheck
+npm run pack:check
+```
 
-Change Impact is intended to answer: **What else may depend on this target,
-and what evidence connects it?**
+The test suite creates temporary Git repositories from
+[`test/fixtures/basic`](test/fixtures/basic), then exercises the CLI and API
+without modifying the checkout. `npm test` builds TypeScript before running the
+18 smoke/integration cases.
+The packaged tarball was also installed offline in a temporary directory and
+loaded successfully on the local macOS runtime.
 
-[Agent Code Slice](https://github.com/yapweijun1996/AI-Agent-Tool-Code-Slice)
-extracts the code at a known location. Change Impact is intended to return
-locations and relationships that an agent can inspect with Code Slice or
-another reader. This composition is a design goal, not a tested integration
-or an installed dependency.
+## CLI
 
-Planned inputs are a file, a symbol, or a Git comparison. Planned outputs
-include static dependency/reference edges, evidence locations, candidate
-related tests, and explicit analysis limitations. A dependency is not proof
-of a behavioral regression, and an empty result is not a safety guarantee.
+After `npm run build`, the executable can be invoked directly:
 
-The tool will not edit code, run tests, select test commands, install
-dependencies, execute repository code, perform runtime tracing, or use an LLM.
-No UI, persistent database, server, or MCP adapter is required for the initial
-design.
+```sh
+node dist/cli.js capabilities --json
+node dist/cli.js file src/invoice.ts --root /path/to/repo --project tsconfig.json --json
+node dist/cli.js symbol src/invoice.ts calculateTotal --root /path/to/repo --project tsconfig.json --at 20:1 --json
+node dist/cli.js changed --root /path/to/repo --base origin/main --head HEAD --project tsconfig.json --json
+node dist/cli.js changed --root /path/to/repo --base HEAD --worktree --project tsconfig.json --json
+```
+
+`--project` is repository-relative. If it is omitted, exactly one
+`tsconfig.json` or `jsconfig.json` must be discoverable. `changed` requires a
+base revision and exactly one of `--head` or `--worktree`. JSON mode writes one
+JSON document to stdout; exit code `0` means a usable complete or partial result,
+`2` means invalid invocation, and `1` means an operation failure.
+
+The graph stores edges from consumer to dependency and reports reverse impact
+paths. `resolved` evidence means a static binding in the selected project;
+dynamic or missing module targets are retained as unresolved observations.
+`analysis.status` describes completeness of the bounded static analysis and is
+separate from the top-level `ok` flag. Candidate tests are filename-based
+classifications with their actual graph edges; they do not prove coverage or
+test execution.
+
+The default limits are depth 2, 100 nodes, 300 edges, one path per impact item,
+1 MiB serialized output, 10,000 files, 2 MiB per file, and 64 MiB total source.
+Hard graph caps are depth 5, 5,000 nodes, and 15,000 edges. Limits and partial
+stop reasons are included in the result.
+
+## Boundary and limitations
+
+Analysis reads Git objects and the current working tree; it never checks out,
+resets, writes source, installs dependencies, runs repository code, runs tests,
+loads executable configuration, invokes external diff/textconv helpers, or
+uses a network service. Historical snapshots may use the current local
+`node_modules` and TypeScript standard library for resolution, so historical
+dependency fidelity is reported as a limitation. Project references, multiple
+workspace projects, full data-flow/runtime dispatch, heuristic matching, Python,
+CFML, SCIP, and a dedicated `why` command are outside this draft.
 
 ## Documentation
 
 Start with [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) for document
 ownership and reading order.
 
-- [SPEC.md](SPEC.md): planned behavior, requirements, and draft contracts.
-- [DESIGN.md](DESIGN.md): architecture, decisions, and review dispositions.
-- [EPIC.md](EPIC.md): implementation work packages and dependencies.
-- [ROADMAP.md](ROADMAP.md): delivery order and release gates.
-- [TASK.md](TASK.md): authoritative current task status and next steps.
-- [VALIDATION.md](VALIDATION.md): required evidence and planned fixtures.
-
-There are deliberately no installation instructions yet. Commands in
-[SPEC.md](SPEC.md#draft-cli) are proposed interfaces, not runnable examples.
-
-## Next step
-
-The first implementation task is a bounded TypeScript project-host feasibility
-spike, followed by executable contract fixtures. Git snapshot analysis and
-the public JSON schema must pass their correctness gates before a v0.1 release.
-See [TASK.md](TASK.md#next-steps) for the ordered work.
+- [SPEC.md](SPEC.md): implemented draft behavior, requirements, CLI/API, and result semantics.
+- [DESIGN.md](DESIGN.md): implemented architecture, decisions, and known boundaries.
+- [EPIC.md](EPIC.md): work-package outcomes and release gate status.
+- [ROADMAP.md](ROADMAP.md): milestone order and future priorities.
+- [TASK.md](TASK.md): authoritative task ledger, evidence, blockers, and next steps.
+- [VALIDATION.md](VALIDATION.md): fixture status and exact verification evidence.
+- [`spike/PROJECT_HOST_FINDINGS.md`](spike/PROJECT_HOST_FINDINGS.md): local project-host feasibility findings.

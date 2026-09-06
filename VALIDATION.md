@@ -1,115 +1,109 @@
 # Validation Plan and Evidence
 
-Last updated: 2026-09-06. Runtime evidence status: **not run; no implementation or
-test harness exists**. This document owns verification requirements and evidence
-state, not implementation status (see [TASK.md](TASK.md)).
+Last updated: 2026-09-06. This document owns verification evidence and release
+gates; implementation status is authoritative in [TASK.md](TASK.md).
 
 ## Current evidence
 
-The initial local checkout was clean on `main`; commit `081cb63` contained only
-`.gitattributes`. Root inventory and tracked-file inspection found no source,
-package manifest, lockfile, schema, test, or CI workflow. The present changes
-establish documentation only.
+Implementation revisions: `b57321d`, `0cdd08f`, `13e9f14`, and `6b43c58`, plus the documentation
+reconciliation in the current worktree.
 
-No lint, typecheck, application build, unit/integration test, benchmark, package
-installation, runtime-network check, or release check has been executed for this
-product. No passing runtime result can be inferred from the documentation checks.
+| Area | Evidence | Result |
+| --- | --- | --- |
+| Build and type safety | `npm run typecheck`; `npm test` builds with `tsc -p tsconfig.json` | Pass |
+| Runtime smoke/integration | `npm test` on Node.js `v23.10.0`, macOS `Darwin 25.6.0 arm64` | Pass: 18 tests |
+| Draft contract | Ajv `8.20.0` validates capabilities, success, partial, and error envelopes | Pass |
+| Production dependency audit | `npm audit --omit=dev` | Pass: 0 vulnerabilities |
+| Package contents | `npm pack --dry-run --ignore-scripts`; temporary tarball offline install/API smoke | Pass locally: 37 files; development tests/sources excluded; packaged API loaded |
+| Git/read-only behavior | Temporary repositories, revision/worktree cases, unchanged Git assertions | Pass for tested cases |
+| Cross-platform workflow | `.github/workflows/ci.yml` configured for Node 22/24 × Ubuntu/macOS/Windows | Configured; remote execution not yet recorded |
+| Registry release | No publish or registry install was requested or authorized | Not run |
+
+The local suite covers the core vertical slice. It does not establish
+cross-platform behavior, performance thresholds, cancellation latency, memory
+isolation, project-reference support, or registry provenance.
 
 ## Documentation checks
 
-The eight Markdown files were checked for:
+An inline Python validator was run after this reconciliation for:
 
-- Required-document presence and internal relative links/anchors.
-- Balanced fenced blocks and consistent requirement, decision, task, epic, and
-  fixture references.
-- Clear separation of observed implementation, planned behavior, and completed
-  documentation work.
-- Consistent initial project scope, Git snapshot semantics, graph direction,
-  evidence/completeness separation, candidate-test terminology, and roadmap.
-- Final whitespace/diff review and preservation of `.gitattributes`.
+- Required-document presence and all relative links/anchors.
+- Consistent requirement (`R-*`), fixture (`V-*`), task (`CI-*`/`DOC-*`),
+  decision (`D-*`), and epic (`E-*`) definitions/references.
+- Acyclic task prerequisites, balanced fenced blocks, final newlines, and no
+  whitespace errors.
+- Consistent scope, graph direction, snapshot semantics, evidence/completeness
+  separation, candidate-test terminology, dependencies, and release status.
+- Byte-identical preservation of `.gitattributes`.
 
-Status: passed for this documentation update on 2026-09-06.
+Result: **Pass** on 2026-09-06. It checked 9 Markdown files, 64 local links or
+anchors, all identifier definitions/references, an acyclic CI dependency graph,
+balanced fences, final newlines, whitespace, and byte-identical `.gitattributes`.
+The previous eight-file baseline had 37 links; the increase reflects the
+implementation and feasibility-note links added in this update.
 
-| Check | Recorded result |
-| --- | --- |
-| Required files and relative links/anchors | Eight Markdown documents present; 37 local links/anchors resolve |
-| Identifier definitions and references | 14 requirements, 22 fixture definitions, 9 implementation tasks, 4 documentation tasks, 10 decisions, and 9 epic work packages are internally consistent |
-| Task prerequisites | Nine implementation tasks checked; no missing prerequisite or dependency cycle |
-| Markdown structure | Fenced blocks balanced; final newlines present; technical artifacts reviewed in English |
-| Added-file diff checks | No whitespace diagnostics from per-file `git diff --no-index --check` |
-| Baseline preservation | `.gitattributes` is byte-identical to `HEAD:.gitattributes`; only eight new Markdown files are in the task scope |
-| Manual consistency review | Planning/runtime status, project scope, snapshots, evidence direction, partial results, test candidates, dependencies, and roadmap reconciled |
+## Fixture status
 
-These checks used a temporary, inline Python validator and Git inspection; no
-permanent checker or runtime test suite was added. For a new file, a no-index diff
-exit code of 1 without diagnostics denotes content differences, not a whitespace
-failure. This interpretation was checked against clean and trailing-space samples.
-External references were consulted during the design review; the link validation
-here checks local documentation destinations, not continuing remote availability.
+The executable cases live in [`test/smoke.test.cjs`](test/smoke.test.cjs) and use
+temporary Git repositories copied from [`test/fixtures/basic`](test/fixtures/basic).
+“Pass” below means the scoped behavior was exercised locally. “Partial” means
+some behavior is implemented or covered but the full fixture scenario remains
+open. “Not run” means no evidence is available.
 
-## Planned runtime fixtures
+| ID | Scenario | Status | Current evidence/limitation |
+| --- | --- | --- | --- |
+| V-01 | Repository root, nested invocation, tracked/untracked/ignored inventory | Partial | Worktree test covers untracked/ignored; nested invocation and large inventory are untested |
+| V-02 | Configured TS, JS/allowJs, TSX; production/test split; project references | Partial | JS/TS/TSX and test split pass; project references remain deferred |
+| V-03 | Missing/invalid configuration, absent declarations, parse failures, unsupported arrangement | Partial | Structured missing-root/target/endpoint errors pass; config parse/reference matrix is untested |
+| V-04 | Same-named methods, aliases, overloads, merged declarations, anonymous export | Partial | Ambiguous name and `--at` disambiguation pass; overload/merge cases remain open |
+| V-05 | Missing target, invalid/mismatched selector, unsupported language, invalid flags | Pass for tested cases | Invalid CLI invocation, missing target, selector, and root/endpoint validation pass |
+| V-06 | Named/default/namespace imports, re-export chains, literal require, calls, JSX, type-only edges, extends/implements | Partial | Imports/re-exports/calls/JSX/implements pass; full construct matrix remains open |
+| V-07 | Dynamic import, computed property, callback forwarding, dispatch ambiguity, unrelated same-named symbol | Partial | Dynamic and missing literal modules become unresolved; data-flow/dispatch cases are not implemented |
+| V-08 | Direct/transitive dependencies, widening, multiple changed seeds | Pass for tested cases | File/symbol direct/transitive paths and changed seeds pass; widening policy is intentionally conservative |
+| V-09 | Cycles, diamond paths, duplicate aliases, tied sort keys, repeated requests | Partial | Repeated requests are deterministic and traversal is cycle-safe by construction; dedicated graph fixtures remain |
+| V-10 | Two commits, non-current head, deleted symbol/file, removed export, rename/move | Pass for tested cases | Modification, deleted symbol, and rename old/new snapshot tests pass; removed-file/export matrix remains |
+| V-11 | Staged/unstaged edits, untracked files, missing ref, conflict, concurrent edit | Partial | Worktree/untracked/read-only, missing endpoint, and conflict checks pass; concurrent-content-change fixture remains |
+| V-12 | Top-level side effects, tsconfig/package changes, unsupported asset | Partial | Configuration change and unsupported-file projection are implemented; side-effect/package matrix remains |
+| V-13 | Empty complete, partial, unresolved observations elsewhere in scope | Partial | Complete and dynamic partial results pass; explicit empty/irrelevant-observation fixture remains |
+| V-14 | Test imports/type-only/unused/mock/skipped/unrelated/external test project | Partial | Filename candidate and dependency separation pass; negative test matrix remains |
+| V-15 | Large files/projects, fan-out/deep graph, cancellation, repeated sessions | Partial | Deterministic input/provider/graph caps are implemented; benchmarks, cancellation, and memory evidence are not run |
+| V-16 | Long paths, many diagnostics, tight byte budget, invalid budget, oversized graph | Pass for tested cases | Output/argument limits and valid JSON error behavior pass; long-path/diagnostic stress remains |
+| V-17 | Identical snapshots/config/dependencies/provider; changed provider/resolution input | Partial | Repeated identical API payloads compare equal; cross-provider/input invalidation is untested |
+| V-18 | External diff/textconv, executable plugin/config, automatic type acquisition | Partial | Git disables external helpers and no code is executed in tests; adversarial helper fixture remains |
+| V-19 | Symlink escape, workspace symlink, external declarations, source/Git snapshots | Partial | Snapshot IDs, old/new evidence, and read boundaries are implemented; symlink/external-input fixture remains |
+| V-20 | CLI/API success, partial, validation/operation errors, coordinate handoff | Pass for tested cases | CLI JSON/exit behavior, API parity, partials, and `--at` pass; UTF-16/old-coordinate cases remain |
+| V-21 | Packaged artifact outside checkout on Node 22/24 and Linux/macOS/Windows | Partial | Local tarball offline install/API smoke passes on Node 23/macOS; maintained matrix remains unrun |
+| V-22 | Authorized publication and clean registry installation | Not run | Publication requires explicit release authorization and registry credentials |
 
-Every row below is **Planned / not run**. These are acceptance scenarios, not files
-or tests that already exist. SPEC requirement IDs map to these fixture IDs.
-
-| ID | Scenario | Required observation |
-| --- | --- | --- |
-| V-01 | Repository root, nested invocation, tracked/untracked/ignored inventory | Correct candidate scope; no accidental discovery in metadata or third-party directories |
-| V-02 | Configured TS, JS/allowJs, TSX; production/test split; project references | Declared project membership; separate/out-of-scope projects disclosed; no fabricated workspace completeness |
-| V-03 | Missing/invalid configuration, absent declarations, parse failures, unsupported project arrangement | Actionable error or explicitly partial scope, never an ordinary empty complete result |
-| V-04 | Same-named methods, aliases, overloads, merged declarations, anonymous export | Deterministic selection or bounded ambiguity candidates; retry selector identifies the intended declaration |
-| V-05 | Missing target, invalid/mismatched selector, unsupported language, invalid flags | Stable structured errors and no silent first-match selection |
-| V-06 | Named/default/namespace imports, re-export chains, literal require, call sites, JSX, type-only edges, extends/implements | Exact expected static edges for each declared supported construct; locations and relation classes match source |
-| V-07 | Dynamic import, computed property, callback forwarding, dispatch ambiguity, unrelated same-named symbol | Unknown targets remain unknown; syntactic evidence is not promoted to confirmed runtime calls; unrelated bindings excluded |
-| V-08 | Direct and transitive dependencies, symbol-to-module widening, multiple changed seeds | Every impact has a correctly directed supporting path and seed attribution; widened results retain their coarser meaning |
-| V-09 | Cycles, diamond paths, duplicate aliases, tied sort keys, repeated requests | Termination, stable IDs/order/path selection, no duplicate or dangling evidence, no unsupported distance shortcuts |
-| V-10 | Two commits, non-current head, deleted symbol/file, removed export, rename/move | Base evidence survives; old/new coordinates and source identities stay separate; checkout remains unchanged |
-| V-11 | Staged plus unstaged edits, untracked files, missing ref, unresolved conflict, concurrent edit | Declared net worktree semantics; explicit untracked inclusion; conflict/input-change/missing-ref handling without fetch |
-| V-12 | Top-level side effects, tsconfig path change, package export change, unsupported changed asset | Module/configuration fallback or explicit limitation; no silent loss of non-symbol changes |
-| V-13 | Empty complete result, partial result, unresolved observations elsewhere in scope | Empty is distinguishable from incomplete; unrelated dynamic observations do not become invented target edges |
-| V-14 | Test imports, type-only/unused import, mock, skipped test, unrelated matching filename, external test project | Candidate role and dependency basis remain separate; no asserted test coverage or runtime execution |
-| V-15 | Large files/projects, high fan-out, deep graph, cancellation, repeated sessions | Input/provider/traversal budgets and disposal verified; measured cold-start/memory behavior with declared conditions |
-| V-16 | Long paths, many diagnostics, tight byte budget, invalid budget, oversized graph | Valid bounded JSON or bounded structured error; retained impacts keep paths; unknown totals stay unknown |
-| V-17 | Identical declared snapshots/config/dependencies/provider; changed provider or resolution input | Byte-stable completed semantic output under controlled inputs; changed context invalidates any reused result |
-| V-18 | External diff/textconv configuration, executable project plugin/config, automatic type acquisition | No external helper/repository-code execution or automatic installation/network; ordinary analysis still works within scope |
-| V-19 | Symlink escape, workspace symlink, external declaration input, source/Git-state snapshots | Read policy enforced on actual paths; workspace identity preserved; no source/checkout/index mutation |
-| V-20 | Real CLI/API success, partial result, validation error, operation failure, coordinate handoff | Exactly one JSON document for handled JSON-mode operations; exit/error parity; UTF-16 and old-snapshot locations interpreted correctly |
-| V-21 | Packaged artifact outside checkout on Windows/macOS/Linux and selected Node 22/24 versions | Entrypoints, declared engines, package contents, and offline runtime behavior pass without development-only files |
-| V-22 | Authorized publication and subsequent clean registry installation | Actual registry artifact, package/tag/release/changelog identity, and provenance verified; dry run is not publication proof |
-
-Keep each fixture's expected files, declarations, relations, paths, and limitations
-explicit. Include unrelated consumers as negative cases. A stable result can still
-be consistently wrong; deterministic snapshots must be checked against independent
-expected relationships, not only compared with themselves.
-
-Fixtures for callbacks/dynamic dispatch should verify honest limitations, not force
-v0.1 to implement full data-flow analysis. Unsupported features must be excluded
-from capability claims and handled visibly rather than silently counted as passes.
+Fixtures for callbacks and dynamic dispatch should continue to verify honest
+limitations. Unsupported features must remain absent from capability claims and
+visible in scope/diagnostics rather than counted as complete coverage.
 
 ## Measurement and regression policy
 
-Measure CLI cold start separately from reused Language Service sessions. Record
+Measure CLI cold start separately from any reused Language Service session. Record
 repository size, project configuration, dependency state, provider/Node versions,
-hardware, and budget options with each benchmark. Select practical release
-thresholds after CI-01/CI-08 measurements; no latency/memory guarantee exists yet.
+hardware, and limits with each benchmark. Select practical release thresholds
+only after CI-01/CI-08 measurements; no latency or memory guarantee exists yet.
 
-Graph limits and output-byte checks must include diagnostics and errors. Test
-where selection stops, not merely the size of the final JSON. Use deterministic
-work budgets for reproducible cutoffs and separate process deadlines as resource
-failure handling.
+Graph limits and output-byte checks include diagnostics and errors. Test where
+selection stops, not only the final JSON size. Deterministic work caps provide
+reproducible cutoffs; process deadlines and worker cancellation are separate
+resource-failure behavior.
 
-Before expanding languages or project modes, evaluate representative real changes
-against manually reviewed expected static relationships. Record missed and
-extraneous candidates within the declared scope. Reduced context size alone does
-not prove that an agent missed fewer dependencies or made a safer edit.
+Before expanding languages or project modes, compare manually reviewed expected
+relationships with representative real changes and record missed and extraneous
+candidates. Smaller context alone does not prove safer impact decisions.
 
 ## Release evidence
 
-Store concise evidence tied to the exact implementation revision and package
-artifact: commands/workflow IDs, fixture versions, environment, pass/fail/partial
-outcomes, and unresolved limitations. Do not retain secrets or large raw logs in
-documentation. Artifact installation and registry installation are separate gates.
+Store concise evidence tied to the implementation revision and package artifact:
+commands/workflow IDs, fixture versions, environment, pass/partial outcomes, and
+known limitations. Do not retain secrets or large raw logs. Local package
+installation, remote CI, registry installation, and publication are separate
+gates.
 
-The public schema cannot be frozen until result fixtures, scope/uncertainty cases,
-and output-limit behavior pass. Any unsupported requirement must be resolved or
-explicitly removed from the release scope before a release-ready claim.
+The schema remains draft until result fixtures, scope/uncertainty cases,
+output-limit behavior, and platform/artifact checks pass. Any unsupported
+requirement must be resolved or explicitly removed from the release scope before
+claiming release readiness.

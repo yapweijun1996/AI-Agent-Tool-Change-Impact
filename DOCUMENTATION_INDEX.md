@@ -1,60 +1,57 @@
 # Documentation Index
 
-Last reconciled: 2026-09-06. Implementation baseline: `081cb63`.
+Last reconciled: 2026-09-06. Current implementation revision: `6b43c58`.
 
 ## Reading order and ownership
 
 | Document | Owns | Does not establish |
 | --- | --- | --- |
-| [README.md](README.md) | Product identity, current availability, entry points | Runtime support without evidence |
+| [README.md](README.md) | Product identity, current availability, entry points, quick usage | Runtime support without evidence |
 | [TASK.md](TASK.md) | Current status, completed/pending work, blockers, next steps | A planned task as implemented behavior |
-| [SPEC.md](SPEC.md) | Planned observable requirements and draft CLI/result contracts | A frozen or executable schema |
-| [DESIGN.md](DESIGN.md) | Intended architecture, ownership, decisions, review disposition | An implemented architecture |
+| [SPEC.md](SPEC.md) | Implemented draft behavior, requirements, CLI/API/result contracts | A frozen compatibility contract |
+| [DESIGN.md](DESIGN.md) | Implemented architecture, ownership, decisions, review dispositions | Features outside the advertised provider boundary |
 | [EPIC.md](EPIC.md) | Work-package deliverables, dependencies, acceptance scope | Independent duplicate task status |
 | [ROADMAP.md](ROADMAP.md) | Milestone/release order and future priorities | Published releases or delivery dates |
-| [VALIDATION.md](VALIDATION.md) | Fixture plan, evidence rules, verification state | A pass for an unexecuted test |
+| [VALIDATION.md](VALIDATION.md) | Fixture plan, evidence, verification state, release gates | A pass for an unexecuted test or remote workflow |
+| [`spike/PROJECT_HOST_FINDINGS.md`](spike/PROJECT_HOST_FINDINGS.md) | Local project-host feasibility observations | Cross-platform or performance guarantees |
 
 For implementation work, read TASK, SPEC, DESIGN, then the relevant epic and
 validation rows. For product orientation, begin with README.
 
 ## Source-of-truth rules
 
-Verified local code, executable contracts, and scoped runtime evidence establish
-what is implemented. Git history/tree/status establish the local repository state.
-The supplied proposal and review establish planning context, not runtime truth.
-External documentation supports technical decisions, not proof that this tool
-implements those decisions.
+Verified source code, executable contracts, and scoped runtime evidence establish
+what exists. Git history/tree/status establish repository state. The supplied
+proposal and review establish planning context; they do not prove runtime
+behavior. External references support technical decisions, not compatibility
+claims for this package.
 
-Currently there is no application code to reconcile against beyond the initial
-`.gitattributes` baseline. Therefore all runtime architecture, commands, dependency
-choices, and acceptance fixtures are explicitly planned/draft.
+The current source of truth is the TypeScript implementation under `src/`, the
+fixture-backed tests under `test/`, `package.json`/`package-lock.json`, and the
+draft schema under `schemas/`. The local implementation commits are `b57321d`,
+`0cdd08f`, `13e9f14`, and `6b43c58`.
+TASK owns status; SPEC owns requirements and observable contracts; DESIGN owns
+architecture; VALIDATION owns evidence. Links connect these responsibilities
+instead of duplicating competing status tables.
 
-When implementation appears, reconcile requirements and observed behavior rather
-than silently treating a mismatch as either intended behavior or stale prose.
-Keep TASK authoritative for status, SPEC for requirements, DESIGN for architecture,
-and VALIDATION for evidence. Link between them instead of copying raw logs or
-maintaining competing status tables.
-
-Do not write `Verified`, `PASS`, installed, released, or published without the
-corresponding scoped evidence. Documentation completion alone proves none of those
-runtime claims. Do not put credentials or raw secret-bearing logs into any document.
+Use `complete` only for evidence-backed static scope. `analysis.status: partial`
+is a usable result with an explicit limitation; top-level `ok: true` does not
+mean runtime safety or workspace-wide coverage. Do not write released, published,
+cross-platform verified, or schema frozen without the corresponding evidence.
+Never put credentials or raw secret-bearing logs into documentation.
 
 ## Technical references
 
-These official sources were consulted during the design review. They do not
-establish dependency versions or compatibility for this unimplemented tool.
+These primary references informed the implementation and design; they do not
+replace local tests:
 
 | Source | Relevant decision |
 | --- | --- |
-| [TypeScript Language Service API](https://github.com/microsoft/TypeScript-wiki/blob/main/Using-the-Language-Service-API.md) | Host owns input context; service state is project-specific; on-demand processing is not a repository coverage guarantee |
-| [TypeScript project references](https://www.typescriptlang.org/docs/handbook/project-references.html) | Referenced projects, declaration outputs, and source redirects need explicit handling |
-| [TypeScript module resolution](https://www.typescriptlang.org/docs/handbook/modules/reference.html) | Configuration, package metadata, declarations, and workspace links affect resolution |
-| [Git diff](https://git-scm.com/docs/git-diff) | Endpoint versus merge-base semantics; external diff/textconv behavior |
+| [TypeScript Language Service API](https://github.com/microsoft/TypeScript-wiki/blob/main/Using-the-Language-Service-API.md) | Host owns input context; a service instance is project-specific |
+| [TypeScript project references](https://www.typescriptlang.org/docs/handbook/project-references.html) | Referenced projects and source redirects need explicit handling |
+| [TypeScript module resolution](https://www.typescriptlang.org/docs/handbook/modules/reference.html) | Configuration, package metadata, declarations, and links affect resolution |
+| [Git diff](https://git-scm.com/docs/git-diff) | Endpoint versus merge-base semantics and external diff/textconv behavior |
 | [CodeQL JavaScript call graph](https://codeql.github.com/docs/codeql-language-guides/codeql-library-for-javascript/#call-graph) | Static call analysis can be incomplete or imprecise |
-| [Node.js releases](https://nodejs.org/en/about/previous-releases) | Node 18/20 are EOL as of 2026-09-06; planned maintained targets are 22/24 |
-| [SCIP repository](https://github.com/scip-code/scip) | Future index-provider direction only; no adapter or indexer is included |
+| [Node.js releases](https://nodejs.org/en/about/previous-releases) | Node 22/24 are maintained targets; local verification uses Node 23.10.0 |
+| [SCIP repository](https://github.com/scip-code/scip) | Future index-provider direction only |
 | [Agent Code Slice](https://github.com/yapweijun1996/AI-Agent-Tool-Code-Slice) | Complementary location-to-code workflow; integration remains unverified |
-
-The original proposal is summarized and corrected in this documentation set.
-Local attachment paths are deliberately not repository dependencies; the documents
-must remain understandable when cloned onto another machine.
