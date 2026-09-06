@@ -7,16 +7,16 @@ const { join } = require("node:path");
 const { tmpdir } = require("node:os");
 
 const root = join(__dirname, "..");
-const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
-const shellOptions = process.platform === "win32" ? { shell: true } : {};
+const npmCli = process.env.npm_execpath;
+const npmCommand = npmCli ? process.execPath : process.platform === "win32" ? "npm.cmd" : "npm";
+const npmPrefixArgs = npmCli ? [npmCli] : [];
 const tempRoot = mkdtempSync(join(tmpdir(), "agent-impact-pack-smoke-"));
 
 function runNpm(args, cwd) {
-  return execFileSync(npmCommand, args, {
+  return execFileSync(npmCommand, [...npmPrefixArgs, ...args], {
     cwd,
     encoding: "utf8",
     stdio: ["ignore", "pipe", "pipe"],
-    ...shellOptions,
   });
 }
 
@@ -38,10 +38,12 @@ try {
   assert.equal(apiProbe, "");
 
   const cliName = process.platform === "win32" ? "agent-impact.cmd" : "agent-impact";
-  const cliOutput = execFileSync(join(appDirectory, "node_modules", ".bin", cliName), ["capabilities", "--json"], {
+  const cliPath = join(appDirectory, "node_modules", ".bin", cliName);
+  const cliCommand = process.platform === "win32" ? `"${cliPath}"` : cliPath;
+  const cliOutput = execFileSync(cliCommand, ["capabilities", "--json"], {
     cwd: appDirectory,
     encoding: "utf8",
-    ...shellOptions,
+    ...(process.platform === "win32" ? { shell: true } : {}),
   });
   const cliResult = JSON.parse(cliOutput);
   assert.equal(cliResult.ok, true);
