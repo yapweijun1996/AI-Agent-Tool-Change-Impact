@@ -1,6 +1,6 @@
 import { execFileSync } from "node:child_process";
-import { existsSync, lstatSync, readFileSync, realpathSync, statSync } from "node:fs";
-import { isAbsolute, join, relative, resolve } from "node:path";
+import { existsSync, readFileSync, realpathSync, statSync } from "node:fs";
+import { isAbsolute, join, relative, resolve, sep } from "node:path";
 import { ImpactError } from "./errors";
 import type { Diagnostic, SnapshotRef } from "./types";
 import { DEFAULT_LIMITS, type Limits, type SnapshotKind } from "./types";
@@ -112,7 +112,7 @@ export function repositoryRoot(inputRoot?: string): string {
   }
 }
 
-function shouldIncludePath(pathName: string): boolean {
+export function shouldIncludePath(pathName: string): boolean {
   const segments = pathName.split("/");
   return !segments.includes(".git") && !segments.includes("node_modules") && !segments.includes("dist") && !segments.includes("coverage");
 }
@@ -136,12 +136,13 @@ function loadWorkingTreeFiles(root: string, limits: Limits): { files: Map<string
     }
     const absolutePath = join(root, ...relativePath.split("/"));
     try {
-      const stat = lstatSync(absolutePath);
+      const stat = statSync(absolutePath);
       if (!stat.isFile()) {
         continue;
       }
       const real = realpathSync(absolutePath);
-      const outside = relative(root, real) === ".." || relative(root, real).startsWith("../");
+      const relativeReal = relative(root, real);
+      const outside = relativeReal === ".." || relativeReal.startsWith(`..${sep}`) || isAbsolute(relativeReal);
       if (outside) {
         diagnostics.push({ code: "PATH_OUTSIDE_ROOT", message: `Skipped symlink outside root: ${relativePath}`, file: relativePath, severity: "warning" });
         continue;

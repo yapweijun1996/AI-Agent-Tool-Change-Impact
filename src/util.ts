@@ -4,6 +4,17 @@ import type { Diagnostic, Limits, Position, TextRange } from "./types";
 import { DEFAULT_LIMITS } from "./types";
 import { ImpactError } from "./errors";
 
+export const HARD_LIMITS: Readonly<Limits> = {
+  depth: 5,
+  maxNodes: 5000,
+  maxEdges: 15000,
+  maxPathsPerTarget: 8,
+  maxOutputBytes: 16 * 1024 * 1024,
+  maxFiles: 100000,
+  maxFileBytes: 16 * 1024 * 1024,
+  maxTotalFileBytes: 512 * 1024 * 1024,
+};
+
 export function normalizeRepoPath(input: string): string {
   const normalized = input.replaceAll("\\", "/").replace(/^\.\//, "");
   if (!normalized || normalized.startsWith("/") || normalized.split("/").includes("..")) {
@@ -68,8 +79,17 @@ export function mergeLimits(input: Partial<Limits> | undefined): Limits {
       throw new ImpactError("INVALID_ARGUMENT", `Limit ${name} must be a positive integer`);
     }
   }
-  if (merged.depth > 5 || merged.maxNodes > 5000 || merged.maxEdges > 15000) {
-    throw new ImpactError("INVALID_ARGUMENT", "Requested graph limit exceeds the supported hard cap");
+  if (
+    merged.depth > HARD_LIMITS.depth
+    || merged.maxNodes > HARD_LIMITS.maxNodes
+    || merged.maxEdges > HARD_LIMITS.maxEdges
+    || merged.maxPathsPerTarget > HARD_LIMITS.maxPathsPerTarget
+    || merged.maxOutputBytes > HARD_LIMITS.maxOutputBytes
+    || merged.maxFiles > HARD_LIMITS.maxFiles
+    || merged.maxFileBytes > HARD_LIMITS.maxFileBytes
+    || merged.maxTotalFileBytes > HARD_LIMITS.maxTotalFileBytes
+  ) {
+    throw new ImpactError("INVALID_ARGUMENT", "Requested limit exceeds the supported hard cap");
   }
   if (merged.maxOutputBytes < 256) {
     throw new ImpactError("INVALID_ARGUMENT", "maxOutputBytes must be at least 256 bytes");

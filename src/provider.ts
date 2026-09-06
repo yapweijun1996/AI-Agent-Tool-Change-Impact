@@ -30,6 +30,7 @@ export interface ResolvedTarget extends DeclarationInfo {
 interface ModuleResolution {
   internal?: string;
   external?: string;
+  outOfScope?: string;
 }
 
 export class TypeScriptProvider {
@@ -349,14 +350,21 @@ export class TypeScriptProvider {
     }
     const edges: GraphEdge[] = [];
     const unresolved: UnresolvedObservation[] = [];
+    let edgeTruncated = false;
     const from = this.nodeForFile(file);
     const visit = (node: ts.Node): void => {
+      if (edges.length >= this.limits.maxEdges) {
+        edgeTruncated = true;
+        return;
+      }
       if (ts.isImportDeclaration(node) && ts.isStringLiteral(node.moduleSpecifier)) {
         const resolution = this.resolveModule(file, node.moduleSpecifier.text);
         if (resolution.internal) {
           const to = this.nodeForFile(resolution.internal);
           edges.push(makeEdge(from, to, "imports", this.moduleEvidence(sourceFile, node.moduleSpecifier)));
-        } else if (!resolution.external) {
+        } else if (resolution.outOfScope) {
+          unresolved.push(this.moduleObservation(file, sourceFile, node.moduleSpecifier, node.moduleSpecifier.text, "PROJECT_BOUNDARY_OUT_OF_SCOPE", `Resolved module ${node.moduleSpecifier.text} is outside the selected project`));
+        } else {
           unresolved.push(this.moduleObservation(file, sourceFile, node.moduleSpecifier, node.moduleSpecifier.text));
         }
       } else if (ts.isExportDeclaration(node) && node.moduleSpecifier && ts.isStringLiteral(node.moduleSpecifier)) {
@@ -364,14 +372,18 @@ export class TypeScriptProvider {
         if (resolution.internal) {
           const to = this.nodeForFile(resolution.internal);
           edges.push(makeEdge(from, to, "reexports", this.moduleEvidence(sourceFile, node.moduleSpecifier)));
-        } else if (!resolution.external) {
+        } else if (resolution.outOfScope) {
+          unresolved.push(this.moduleObservation(file, sourceFile, node.moduleSpecifier, node.moduleSpecifier.text, "PROJECT_BOUNDARY_OUT_OF_SCOPE", `Resolved module ${node.moduleSpecifier.text} is outside the selected project`));
+        } else {
           unresolved.push(this.moduleObservation(file, sourceFile, node.moduleSpecifier, node.moduleSpecifier.text));
         }
       } else if (ts.isImportEqualsDeclaration(node) && ts.isExternalModuleReference(node.moduleReference) && ts.isStringLiteral(node.moduleReference.expression)) {
         const resolution = this.resolveModule(file, node.moduleReference.expression.text);
         if (resolution.internal) {
           edges.push(makeEdge(from, this.nodeForFile(resolution.internal), "imports", this.moduleEvidence(sourceFile, node.moduleReference.expression)));
-        } else if (!resolution.external) {
+        } else if (resolution.outOfScope) {
+          unresolved.push(this.moduleObservation(file, sourceFile, node.moduleReference.expression, node.moduleReference.expression.text, "PROJECT_BOUNDARY_OUT_OF_SCOPE", `Resolved module ${node.moduleReference.expression.text} is outside the selected project`));
+        } else {
           unresolved.push(this.moduleObservation(file, sourceFile, node.moduleReference.expression, node.moduleReference.expression.text));
         }
       } else if (ts.isCallExpression(node) && ts.isIdentifier(node.expression) && node.expression.text === "require" && node.arguments.length > 0) {
@@ -380,7 +392,9 @@ export class TypeScriptProvider {
           const resolution = this.resolveModule(file, argument.text);
           if (resolution.internal) {
             edges.push(makeEdge(from, this.nodeForFile(resolution.internal), "imports", this.moduleEvidence(sourceFile, argument)));
-          } else if (!resolution.external) {
+          } else if (resolution.outOfScope) {
+            unresolved.push(this.moduleObservation(file, sourceFile, argument, argument.text, "PROJECT_BOUNDARY_OUT_OF_SCOPE", `Resolved module ${argument.text} is outside the selected project`));
+          } else {
             unresolved.push(this.moduleObservation(file, sourceFile, argument, argument.text));
           }
         }
@@ -390,7 +404,9 @@ export class TypeScriptProvider {
           const resolution = this.resolveModule(file, argument.text);
           if (resolution.internal) {
             edges.push(makeEdge(from, this.nodeForFile(resolution.internal), "imports", this.moduleEvidence(sourceFile, argument)));
-          } else if (!resolution.external) {
+          } else if (resolution.outOfScope) {
+            unresolved.push(this.moduleObservation(file, sourceFile, argument, argument.text, "PROJECT_BOUNDARY_OUT_OF_SCOPE", `Resolved module ${argument.text} is outside the selected project`));
+          } else {
             unresolved.push(this.moduleObservation(file, sourceFile, argument, argument.text));
           }
         }
@@ -399,6 +415,10 @@ export class TypeScriptProvider {
     };
     visit(sourceFile);
     for (const reference of ts.preProcessFile(sourceFile.getFullText(), true, true).referencedFiles) {
+      if (edges.length >= this.limits.maxEdges) {
+        edgeTruncated = true;
+        break;
+      }
       const resolution = this.resolveModule(file, reference.fileName);
       if (resolution.internal) {
         const to = this.nodeForFile(resolution.internal);
@@ -412,19 +432,24 @@ export class TypeScriptProvider {
           },
           detail: "triple-slash reference",
         }));
-      } else if (!resolution.external) {
+      } else if (resolution.outOfScope) {
         const offset = Math.max(0, sourceFile.getFullText().indexOf(reference.fileName));
-        unresolved.push({
-          code: "MODULE_RESOLUTION_UNRESOLVED",
-          snapshot: this.context.snapshot.ref,
-          file,
-          range: toRange(sourceFile.getFullText(), offset, reference.fileName.length),
-          detail: `Could not resolve module ${reference.fileName}`,
-        });
+        unresolved.push(this.moduleObservationAt(file, sourceFile, offset, reference.fileName.length, reference.fileName, "PROJECT_BOUNDARY_OUT_OF_SCOPE", `Resolved module ${reference.fileName} is outside the selected project`));
+      } else {
+        const offset = Math.max(0, sourceFile.getFullText().indexOf(reference.fileName));
+        unresolved.push(this.moduleObservationAt(file, sourceFile, offset, reference.fileName.length, reference.fileName));
       }
     }
     const allDynamic = this.dynamicObservations().filter((observation) => observation.file === file);
     unresolved.push(...allDynamic);
+    if (edgeTruncated) {
+      unresolved.push({
+        code: "PROVIDER_EDGE_LIMIT",
+        snapshot: this.context.snapshot.ref,
+        file,
+        detail: `File dependency collection stopped after ${this.limits.maxEdges} edges`,
+      });
+    }
     const resultEdges = dedupeEdges(edges);
     const resultUnresolved = dedupeUnresolved(unresolved);
     this.fileEdgesCache.set(file, resultEdges);
@@ -449,6 +474,9 @@ export class TypeScriptProvider {
     if (repoFile && this.context.isProjectFile(repoFile)) {
       return { internal: repoFile };
     }
+    if (repoFile) {
+      return { outOfScope: repoFile };
+    }
     return { external: resolved.resolvedFileName };
   }
 
@@ -471,13 +499,17 @@ export class TypeScriptProvider {
     return this.resolutionFileExists(fileName) ? ts.sys.readFile(resolve(fileName)) : undefined;
   }
 
-  private moduleObservation(file: string, sourceFile: ts.SourceFile, node: ts.Node, moduleName: string): UnresolvedObservation {
+  private moduleObservation(file: string, sourceFile: ts.SourceFile, node: ts.Node, moduleName: string, code = "MODULE_RESOLUTION_UNRESOLVED", detail = `Could not resolve module ${moduleName}`): UnresolvedObservation {
+    return this.moduleObservationAt(file, sourceFile, node.getStart(sourceFile), node.getWidth(sourceFile), moduleName, code, detail);
+  }
+
+  private moduleObservationAt(file: string, sourceFile: ts.SourceFile, offset: number, length: number, moduleName: string, code = "MODULE_RESOLUTION_UNRESOLVED", detail = `Could not resolve module ${moduleName}`): UnresolvedObservation {
     return {
-      code: "MODULE_RESOLUTION_UNRESOLVED",
+      code,
       snapshot: this.context.snapshot.ref,
       file,
-      range: toRange(sourceFile.getFullText(), node.getStart(sourceFile), node.getWidth(sourceFile)),
-      detail: `Could not resolve module ${moduleName}`,
+      range: toRange(sourceFile.getFullText(), offset, length),
+      detail,
     };
   }
 

@@ -33,6 +33,10 @@ export function traverseReverse(seeds: readonly GraphNode[], query: GraphQuery, 
   const queue: QueueEntry[] = [];
 
   for (const seed of [...seeds].sort((a, b) => compareText(a.id, b.id))) {
+    if (nodes.size >= limits.maxNodes) {
+      stopReasons.add("NODE_LIMIT");
+      break;
+    }
     nodes.set(seed.id, seed);
     queue.push({ node: seed, seed: seed.id, distance: 0, path: [seed.id], edgePath: [] });
     visited.add(`${seed.id}|${seed.id}`);

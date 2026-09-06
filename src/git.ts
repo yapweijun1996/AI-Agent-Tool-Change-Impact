@@ -1,6 +1,6 @@
 import type { ChangedSeed, Diagnostic, TextRange } from "./types";
 import { ImpactError } from "./errors";
-import { gitOutput, repositoryRoot } from "./snapshot";
+import { gitOutput, repositoryRoot, shouldIncludePath } from "./snapshot";
 import { compareText, normalizeRepoPath } from "./util";
 
 export interface GitChange {
@@ -55,7 +55,7 @@ export function collectGitChanges(rootInput: string | undefined, baseInput: stri
     }
   }
   const diagnostics: Diagnostic[] = [];
-  const hasConflictStatus = raw.split("\0").some((token) => /^U/.test(token));
+  const hasConflictStatus = hasUnmergedStatus(raw);
   let hasIndexConflict = false;
   if (worktree) {
     try {
@@ -89,6 +89,7 @@ function parseUntracked(root: string): string[] {
     .split("\0")
     .filter(Boolean)
     .map(normalizeRepoPath)
+    .filter(shouldIncludePath)
     .filter((path) => !path.split("/").includes("node_modules"));
 }
 
@@ -109,6 +110,18 @@ function parseNameStatus(raw: string): GitChange[] {
     changes.push({ status: mapped, path, oldRanges: [], newRanges: [] });
   }
   return changes;
+}
+
+function hasUnmergedStatus(raw: string): boolean {
+  const tokens = raw.split("\0").filter(Boolean);
+  for (let index = 0; index < tokens.length;) {
+    const statusToken = tokens[index++];
+    if (/^U/.test(statusToken)) {
+      return true;
+    }
+    index += statusToken[0] === "R" || statusToken[0] === "C" ? 2 : 1;
+  }
+  return false;
 }
 
 interface RangePair {

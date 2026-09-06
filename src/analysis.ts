@@ -78,6 +78,9 @@ export function analyzeFile(request: FileImpactRequest): ImpactResult {
 
 export function analyzeSymbol(request: SymbolImpactRequest): ImpactResult {
   try {
+    if (!request.name || !request.name.trim()) {
+      throw new ImpactError("INVALID_ARGUMENT", "A non-empty symbol name is required");
+    }
     const limits = mergeLimits(request.limits);
     const { context, provider, diagnostics } = loadCurrentProvider(request.root, request.project, limits);
     const file = context.snapshot.toRepoPath(request.file);
@@ -130,8 +133,8 @@ export function analyzeChanged(request: ChangedImpactRequest): ImpactResult {
       const oldSymbols = oldDeclarations.map((declaration) => declaration.name);
       const newSymbols = newDeclarations.map((declaration) => declaration.name);
       const snapshots = [
-        ...(oldDeclarations.length > 0 || baseLoaded.snapshot.fileExists(oldFile) ? [baseLoaded.snapshot.ref] : []),
-        ...(newDeclarations.length > 0 || headLoaded.snapshot.fileExists(change.path) ? [headLoaded.snapshot.ref] : []),
+        ...(change.status !== "added" ? [baseLoaded.snapshot.ref] : []),
+        ...(change.status !== "deleted" ? [headLoaded.snapshot.ref] : []),
       ];
       const seed = changedSeedFromChange(change, oldSymbols, newSymbols, snapshots);
       changed.push(seed);
@@ -187,7 +190,7 @@ export function analyzeChanged(request: ChangedImpactRequest): ImpactResult {
       snapshots: [baseLoaded.snapshot.ref, headLoaded.snapshot.ref],
       resolution: "local-project-with-external-fallback",
     };
-    const analysis = makeAnalysisScope(headContext, merged.status, [...merged.stopReasons, ...allDiagnostics.map((entry) => entry.code), ...(unresolved.length > 0 ? ["UNRESOLVED_OBSERVATIONS"] : [])], merged, allDiagnostics, unresolved);
+    const analysis = makeAnalysisScope(headContext, merged.status, [...merged.stopReasons, ...allDiagnostics.filter((entry) => entry.severity === "warning").map((entry) => entry.code), ...(unresolved.length > 0 ? ["UNRESOLVED_OBSERVATIONS"] : [])], merged, allDiagnostics, unresolved);
     const envelope: ResultEnvelope = {
       schemaVersion: "0.1-draft",
       ok: true,
@@ -222,7 +225,7 @@ function loadCurrentProvider(rootInput: string | undefined, project: string | un
 }
 
 function assertSupportedSource(file: string): void {
-  if (!/\.(?:[cm]?js|[cm]?ts|tsx)$/i.test(file)) {
+  if (!/\.(?:[cm]?js|jsx|[cm]?ts|tsx)$/i.test(file)) {
     throw new ImpactError("LANGUAGE_UNSUPPORTED", `Only JavaScript, TypeScript, and TSX source files are supported: ${file}`);
   }
 }
@@ -330,7 +333,7 @@ function makeAnalysisScope(context: ProjectContext, traversalStatus: "complete" 
     limitations.add("Graph traversal stopped at a configured limit");
   }
   return {
-    status: traversalStatus === "complete" && diagnostics.length === 0 && unresolved.length === 0 ? "complete" : "partial",
+    status: traversalStatus === "complete" && !diagnostics.some((entry) => entry.severity === "warning") && unresolved.length === 0 ? "complete" : "partial",
     project: context.project,
     includedFiles,
     excludedFiles,

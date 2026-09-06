@@ -182,14 +182,17 @@ test("configuration changes remain visible and produce a partial analysis", () =
 
 test("worktree includes non-ignored untracked source and does not mutate Git", () => {
   const root = createRepo();
+  writeFileSync(join(root, ".gitignore"), "ignored.ts\n");
+  git(root, ["add", ".gitignore"]);
+  git(root, ["commit", "-qm", "ignore-setup"]);
   const base = git(root, ["rev-parse", "HEAD"]);
   mkdirSync(join(root, "src", "new"));
   writeFileSync(join(root, "src", "new", "feature.ts"), "export function feature() { return 1; }\n");
-  writeFileSync(join(root, ".gitignore"), "ignored.ts\n");
   writeFileSync(join(root, "ignored.ts"), "export const ignored = 1;\n");
   const before = git(root, ["status", "--porcelain"]);
   const result = api.analyzeChanged({ root, project: "tsconfig.json", base, worktree: true });
   assert.equal(result.ok, true);
+  assert.equal(result.analysis.status, "complete");
   assert.ok(result.changed.some((entry) => entry.path === "src/new/feature.ts"));
   assert.ok(!result.changed.some((entry) => entry.path === "ignored.ts"));
   assert.equal(git(root, ["status", "--porcelain"]), before);
@@ -221,6 +224,9 @@ test("output and argument limits fail with machine-readable errors", () => {
   const output = api.analyzeFile({ root, project: "tsconfig.json", file: "src/math.ts", limits: { maxOutputBytes: 256 } });
   assert.equal(output.ok, false);
   assert.equal(output.error.code, "OUTPUT_LIMIT_EXCEEDED");
+  const invalidLimit = api.analyzeFile({ root, project: "tsconfig.json", file: "src/math.ts", limits: { maxFiles: 100001 } });
+  assert.equal(invalidLimit.ok, false);
+  assert.equal(invalidLimit.error.code, "INVALID_ARGUMENT");
   const cli = spawnSync(process.execPath, [join(__dirname, "..", "dist", "cli.js"), "file", "src/math.ts", "--root", root, "--project", "tsconfig.json", "--json"], { encoding: "utf8" });
   assert.equal(cli.status, 0);
   assert.equal(cli.stderr, "");
