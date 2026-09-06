@@ -1,6 +1,6 @@
 # Roadmap
 
-Status date: 2026-09-06. Current phase: **v0.1 implementation and release-candidate
+Status date: 2026-09-07. Current phase: **v0.1 implementation and release-candidate
 hardening**. Version labels are targets, not published releases or delivery
 dates. Detailed status belongs in [TASK.md](TASK.md).
 
@@ -14,7 +14,7 @@ dates. Detailed status belongs in [TASK.md](TASK.md).
 | M-03: Change analysis and candidate tests | Two snapshots, deletion/rename/configuration handling, candidate tests | Done for tested cases | CI-06, CI-07; local smoke tests |
 | M-04: Verified release candidate | Bounded work/output, stable results, platform checks, packaged artifact | In progress | CI-08 and pre-publication CI-09 |
 
-M-00 through M-03 are implemented in commits `b57321d`, `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`, `954f6dc`, `bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, `89f5286`, `db809f4`, `143e9f7`, `d385ff5`, `798594c`, `83f398d`, and `661cb4d`; the NUL-byte regression is in `1e61baf`. M-04 hardening includes `0644fda`, `343750a`, `0902d49`, and `2a68521`. M-04 is intentionally open while cancellation/isolation measurements, schema freeze, and artifact/platform evidence are outstanding.
+M-00 through M-03 are implemented in commits `b57321d`, `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`, `954f6dc`, `bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, `89f5286`, `db809f4`, `143e9f7`, `d385ff5`, `798594c`, `83f398d`, and `661cb4d`; the NUL-byte regression is in `1e61baf`. M-04 hardening includes `0644fda`, `343750a`, `0902d49`, `2a68521`, `1c195af`, and `b248f10`. M-04 is intentionally open while cancellation/isolation measurements, schema freeze, and artifact/platform evidence are outstanding.
 
 ## Release targets
 

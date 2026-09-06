@@ -55,7 +55,8 @@ Installed API/CLI artifact smoke was automated in
 Windows `.cmd` invocation handling was hardened in
 [`2a68521`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/2a68521);
 the package-smoke fixture now uses a space-containing temporary path to exercise
-quoting; hosted Windows execution remains open.
+quoting (`1c195af`) and disables install scripts during the temporary install
+(`b248f10`); hosted Windows execution remains open.
 The draft schema and local verification pass; Windows/hosted cross-platform
 execution, cancellation/isolation evidence, schema freeze, and publication
 remain open.

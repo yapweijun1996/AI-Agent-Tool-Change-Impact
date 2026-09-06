@@ -1,6 +1,6 @@
 # Task Status
 
-Status date: 2026-09-06. This is the authoritative execution ledger. The
+Status date: 2026-09-07. This is the authoritative execution ledger. The
 implementation commits are [`b57321d`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/b57321d)
 and [`0cdd08f`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/0cdd08f),
 with Git endpoint validation in
@@ -49,7 +49,10 @@ installed API/CLI artifact smoke is automated in
 [`0902d49`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/0902d49);
 Windows `.cmd` package-smoke invocation handling is hardened in
 [`2a68521`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/2a68521),
-and the smoke fixture now exercises space-containing temporary paths;
+and the smoke fixture now exercises space-containing temporary paths in
+[`1c195af`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/1c195af)
+and disables install scripts during temporary installation in
+[`b248f10`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/b248f10);
 Windows runner execution remains unverified;
 documentation reconciliation follows the implementation revision above.
 
@@ -84,7 +87,7 @@ registry publication, and clean registry installation have not been verified.
 
 | ID | Work | Status | Evidence |
 | --- | --- | --- | --- |
-| DOC-01 | Inspect implementation baseline and working-tree state | Done | Git history/tree/status reconciled before and after `b57321d`/`0cdd08f`/`13e9f14`/`6b43c58`/`ca5453e`/`0169580`/`5d29c4c`/`954f6dc`/`bbfeb58`/`940effd`/`1753c22`/`e55647f`/`e51113d`/`89f5286`/`db809f4`/`143e9f7`/`d385ff5`/`798594c`/`83f398d`/`661cb4d`/`1e61baf`/`0644fda`/`343750a`/`0902d49`/`2a68521` |
+| DOC-01 | Inspect implementation baseline and working-tree state | Done | Git history/tree/status reconciled before and after `b57321d`/`0cdd08f`/`13e9f14`/`6b43c58`/`ca5453e`/`0169580`/`5d29c4c`/`954f6dc`/`bbfeb58`/`940effd`/`1753c22`/`e55647f`/`e51113d`/`89f5286`/`db809f4`/`143e9f7`/`d385ff5`/`798594c`/`83f398d`/`661cb4d`/`1e61baf`/`0644fda`/`343750a`/`0902d49`/`2a68521`/`1c195af`/`b248f10` |
 | DOC-02 | Review supplied product design and technical assumptions | Done | Review dispositions preserved in [DESIGN.md](DESIGN.md) |
 | DOC-03 | Maintain coordinated product/design/epic/roadmap/task docs | Done | This reconciliation updates the eight product/status Markdown documents, the feasibility note, and the performance note |
 | DOC-04 | Validate links, references, consistency, and final changes | Done | `npm run docs:check`: all 10 Markdown files, relative links/anchors, identifiers, task DAG, fences, whitespace, and `.gitattributes` preservation pass |
