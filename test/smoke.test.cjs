@@ -1,7 +1,7 @@
 const assert = require("node:assert/strict");
 const { execFileSync, spawnSync } = require("node:child_process");
-const { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } = require("node:fs");
-const { join } = require("node:path");
+const { chmodSync, cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } = require("node:fs");
+const { delimiter, join } = require("node:path");
 const test = require("node:test");
 
 const api = require("../dist/index.js");
@@ -25,6 +25,63 @@ function createRepo(options = {}) {
   git(root, ["add", "."]);
   git(root, ["commit", "-qm", "fixture"]);
   return root;
+}
+
+function withGitMutation(root, target, callback) {
+  const bin = mkdtempSync(join(require("node:os").tmpdir(), "agent-impact-git-wrapper-"));
+  const marker = join(bin, "mutation-complete");
+  const realGit = execFileSync(process.platform === "win32" ? "where.exe" : "which", ["git"], { encoding: "utf8" }).split(/\r?\n/).find(Boolean).trim();
+  if (process.platform === "win32") {
+    writeFileSync(join(bin, "git.cmd"), [
+      "@echo off",
+      "\"%IMPACT_REAL_GIT%\" %*",
+      "set \"code=%ERRORLEVEL%\"",
+      "if \"%~1\"==\"diff\" if \"%~2\"==\"--raw\" if not exist \"%IMPACT_CAPTURE_MARKER%\" (",
+      "  >>\"%IMPACT_CAPTURE_TARGET%\" echo // concurrent edit",
+      "  type nul > \"%IMPACT_CAPTURE_MARKER%\"",
+      ")",
+      "exit /b %code%",
+      "",
+    ].join("\r\n"));
+  } else {
+    const wrapper = [
+      "#!/bin/sh",
+      "\"$IMPACT_REAL_GIT\" \"$@\"",
+      "code=$?",
+      "if [ \"$1\" = \"diff\" ] && [ \"$2\" = \"--raw\" ] && [ ! -e \"$IMPACT_CAPTURE_MARKER\" ]; then",
+      "  printf '\\n// concurrent edit\\n' >> \"$IMPACT_CAPTURE_TARGET\"",
+      "  : > \"$IMPACT_CAPTURE_MARKER\"",
+      "fi",
+      "exit \"$code\"",
+      "",
+    ].join("\n");
+    const executable = join(bin, "git");
+    writeFileSync(executable, wrapper);
+    chmodSync(executable, 0o755);
+  }
+  const previous = {
+    path: process.env.PATH,
+    realGit: process.env.IMPACT_REAL_GIT,
+    target: process.env.IMPACT_CAPTURE_TARGET,
+    marker: process.env.IMPACT_CAPTURE_MARKER,
+  };
+  process.env.PATH = `${bin}${delimiter}${previous.path ?? ""}`;
+  process.env.IMPACT_REAL_GIT = realGit;
+  process.env.IMPACT_CAPTURE_TARGET = target;
+  process.env.IMPACT_CAPTURE_MARKER = marker;
+  try {
+    return callback();
+  } finally {
+    if (previous.path === undefined) delete process.env.PATH;
+    else process.env.PATH = previous.path;
+    if (previous.realGit === undefined) delete process.env.IMPACT_REAL_GIT;
+    else process.env.IMPACT_REAL_GIT = previous.realGit;
+    if (previous.target === undefined) delete process.env.IMPACT_CAPTURE_TARGET;
+    else process.env.IMPACT_CAPTURE_TARGET = previous.target;
+    if (previous.marker === undefined) delete process.env.IMPACT_CAPTURE_MARKER;
+    else process.env.IMPACT_CAPTURE_MARKER = previous.marker;
+    rmSync(bin, { recursive: true, force: true });
+  }
 }
 
 test("capabilities are explicit and read-only", () => {
@@ -217,6 +274,16 @@ test("conflicted worktrees are reported as partial", () => {
   assert.equal(result.ok, true);
   assert.equal(result.analysis.status, "partial");
   assert.ok(result.warnings.some((warning) => warning.code === "GIT_CONFLICT_STATE"));
+});
+
+test("worktree content changes during capture are reported as partial", () => {
+  const root = createRepo();
+  const base = git(root, ["rev-parse", "HEAD"]);
+  const target = join(root, "src", "math.ts");
+  const result = withGitMutation(root, target, () => api.analyzeChanged({ root, project: "tsconfig.json", base, worktree: true }));
+  assert.equal(result.ok, true);
+  assert.equal(result.analysis.status, "partial");
+  assert.ok(result.warnings.some((warning) => warning.code === "WORKTREE_CHANGED_DURING_CAPTURE"));
 });
 
 test("output and argument limits fail with machine-readable errors", () => {

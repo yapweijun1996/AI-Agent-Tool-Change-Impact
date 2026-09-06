@@ -32,7 +32,7 @@ export function collectGitChanges(rootInput: string | undefined, baseInput: stri
   if (!worktree && (!head || head.startsWith("-"))) {
     throw new ImpactError("INVALID_ARGUMENT", "A valid head revision is required when worktree is false");
   }
-  const captureBefore = worktree ? gitOutput(root, ["status", "--porcelain=v1", "-z"]) : undefined;
+  const captureBefore = worktree ? worktreeCaptureSignature(root, base) : undefined;
   const endpoint = worktree ? undefined : head;
   const args = ["diff", "--name-status", "-z", "--find-renames", "--no-ext-diff", "--no-textconv", base];
   if (endpoint) {
@@ -75,13 +75,19 @@ export function collectGitChanges(rootInput: string | undefined, baseInput: stri
   }
   changes.sort((a, b) => compareText(`${a.path}:${a.oldPath ?? ""}`, `${b.path}:${b.oldPath ?? ""}`));
   if (worktree) {
-    const captureAfter = gitOutput(root, ["status", "--porcelain=v1", "-z"]);
+    const captureAfter = worktreeCaptureSignature(root, base);
     if (captureBefore !== captureAfter) {
-      diagnostics.push({ code: "WORKTREE_CHANGED_DURING_CAPTURE", message: "Working-tree status changed while the snapshot was being captured; results are partial", severity: "warning" });
+      diagnostics.push({ code: "WORKTREE_CHANGED_DURING_CAPTURE", message: "Working-tree contents or status changed while the snapshot was being captured; results are partial", severity: "warning" });
     }
     diagnostics.push({ code: "WORKTREE_SNAPSHOT", message: "Working-tree analysis includes tracked net changes and non-ignored untracked files", severity: "info" });
   }
   return { root, base, head: endpoint, changes, diagnostics };
+}
+
+function worktreeCaptureSignature(root: string, base: string): string {
+  const status = gitOutput(root, ["status", "--porcelain=v1", "-z"]);
+  const rawDiff = gitOutput(root, ["diff", "--raw", "-z", "--no-ext-diff", "--no-textconv", base]);
+  return `${status}\0${rawDiff}`;
 }
 
 function parseUntracked(root: string): string[] {
