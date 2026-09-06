@@ -116,6 +116,19 @@ registry publication, and clean registry installation have not been verified.
 Requirements and fixture definitions are in [SPEC.md](SPEC.md) and
 [VALIDATION.md](VALIDATION.md). Work-package context is in [EPIC.md](EPIC.md).
 
+## Remaining gate slices
+
+These slices make the unfinished work explicit without treating an intended
+release action as completed evidence.
+
+| Gate slice | Parent | Status | Acceptance criterion | Current blocker or next input |
+| --- | --- | --- | --- | --- |
+| Local artifact and changelog integrity | CI-09 | Done locally | `npm pack --dry-run` contains the versioned package, schema, compiled entry points, `CHANGELOG.md`, and no development sources; installed API/CLI analysis passes | Re-run in the hosted matrix for the release candidate |
+| Hosted platform matrix | CI-09 | Blocked by external state | Six Node 22/24 jobs on Ubuntu, macOS, and Windows pass typecheck, tests, package checks, pack smoke, and docs check with captured job IDs | Requires an authorized push or workflow run against this commit and hosted runners |
+| Provider cancellation and isolation | CI-08 | Pending architecture decision | A documented cancellation/timeout contract interrupts or contains bounded provider work, with repeatable latency and memory-isolation evidence | Decide whether to add a worker boundary and public query budget before implementation |
+| Schema/API freeze | CI-09 | Pending contract review | Reviewed fixtures validate a strict versioned schema and the implementation, CLI, types, and changelog use the same frozen contract | Requires product/API review of draft fields and enums |
+| Registry release and provenance | CI-09 | Blocked by authorization | Package version, Git tag, GitHub Release, changelog, registry tarball, clean install, and provenance metadata match | Requires release credentials and explicit publication authorization |
+
 ## Verified local commands
 
 The following commands passed after the implementation commit:
