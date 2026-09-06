@@ -209,6 +209,20 @@ test("dynamic dependencies are reported as unresolved observations", () => {
   assert.equal(result.analysis.status, "partial");
 });
 
+test("changed analysis preserves snapshot identity on unresolved diagnostics", () => {
+  const root = createRepo({ includeDynamic: true });
+  const base = git(root, ["rev-parse", "HEAD"]);
+  const mathPath = join(root, "src", "math.ts");
+  writeFileSync(mathPath, readFileSync(mathPath, "utf8").replace("value * 2", "value * 8"));
+  git(root, ["add", "src/math.ts"]);
+  git(root, ["commit", "-qm", "change-math"]);
+  const head = git(root, ["rev-parse", "HEAD"]);
+  const result = api.analyzeChanged({ root, project: "tsconfig.json", base, head });
+  assert.equal(result.ok, true);
+  const warnings = result.warnings.filter((warning) => warning.code === "DYNAMIC_DEPENDENCY_UNRESOLVED");
+  assert.equal(new Set(warnings.map((warning) => warning.snapshot?.id)).size, 2);
+});
+
 test("unresolved literal modules are visible instead of becoming an empty edge set", () => {
   const root = createRepo();
   writeFileSync(join(root, "src", "missing-import.ts"), "import { absent } from './does-not-exist';\nexport const value = absent;\n");

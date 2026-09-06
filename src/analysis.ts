@@ -494,9 +494,14 @@ function dedupeUnresolved(values: readonly UnresolvedObservation[]): UnresolvedO
 function dedupeDiagnostics(values: readonly Diagnostic[]): Diagnostic[] {
   const map = new Map<string, Diagnostic>();
   for (const value of values) {
-    map.set(`${value.code}:${value.file ?? ""}:${value.message}`, value);
+    const snapshot = value.snapshot?.id ?? "";
+    const range = value.range ? `${value.range.start.line}:${value.range.start.column}` : "";
+    map.set(`${value.code}:${snapshot}:${value.file ?? ""}:${range}:${value.message}`, value);
   }
-  return [...map.values()].sort((a, b) => compareText(`${a.code}:${a.file ?? ""}`, `${b.code}:${b.file ?? ""}`));
+  return [...map.values()].sort((a, b) => compareText(
+    `${a.snapshot?.id ?? ""}:${a.file ?? ""}:${a.range?.start.line ?? 0}:${a.range?.start.column ?? 0}:${a.code}:${a.message}`,
+    `${b.snapshot?.id ?? ""}:${b.file ?? ""}:${b.range?.start.line ?? 0}:${b.range?.start.column ?? 0}:${b.code}:${b.message}`,
+  ));
 }
 
 function errorEnvelope(error: unknown): ErrorEnvelope {
