@@ -115,7 +115,7 @@ The following commands passed after the implementation commit:
 | `npm test` | Pass: 28 tests; build plus Node test runner |
 | `npm run typecheck` | Pass: strict TypeScript check |
 | `npm run docs:check` | Pass: Markdown links/anchors, identifiers, task DAG, fences, whitespace, Git references, and `.gitattributes` preservation |
-| `npm audit --omit=dev` | Pass: 0 production vulnerabilities |
+| `npm audit --json` | Pass: 0 vulnerabilities across production and development dependencies |
 | `npm pack --dry-run --ignore-scripts` | Pass: 37 package files, no development sources/tests included |
 | `npm run pack:smoke` | Pass: local tarball installed with `npm install --offline --omit=dev`; packaged API and `agent-impact capabilities --json` both returned valid draft results |
 | Pack-and-install smoke | Pass: local tarball installed with `npm install --offline --omit=dev`; packaged API returned `0.1-draft`, and packaged `analyzeChanged` did not execute a configured fsmonitor marker |
