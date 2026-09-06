@@ -17,7 +17,7 @@ Latest bounded source reads: `149e0fa`.
 Latest validated real-path reads: `dd212e4`.
 Latest bounded revision blob reads: `2f3c482`.
 Latest snapshot diagnostic identity: `0c8a130`.
-Latest internal symlink coverage: `f8a580e`.
+Latest internal symlink coverage: `f9f904b`.
 Runtime evidence is tracked in [VALIDATION.md](VALIDATION.md); task status is
 authoritative in [TASK.md](TASK.md).
 
@@ -161,6 +161,7 @@ matching name.
   install, source write, external diff, textconv, or `core.fsmonitor` helper is
   performed. A symlink is included only when its resolved real path remains
   inside the repository root; an escaping symlink is skipped with a diagnostic.
+  The API also accepts a repository root supplied through an internal symlink.
 
 ## Limits, errors, and dependencies
 

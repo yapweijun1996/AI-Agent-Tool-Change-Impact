@@ -104,6 +104,8 @@ snapshot before changed-result deduplication in
 [`0c8a130`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/0c8a130);
 repository-internal symlinked source files retain in-root analysis coverage in
 [`f8a580e`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/f8a580e);
+repository-root access through an internal symlink is covered in
+[`f9f904b`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/f9f904b);
 documentation reconciliation is recorded in
 [`3a7bc99`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/3a7bc99),
 [`079acbd`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/079acbd),
@@ -117,15 +119,16 @@ and the follow-up benchmark note is in
 The repository now contains a CommonJS TypeScript implementation, a draft JSON
 Schema, a CLI, a JavaScript API, a fixture-backed Node test suite, package
 metadata/lockfile, and a configured cross-platform workflow. Local verification
-on Node.js `23.10.0` / macOS `Darwin 25.6.0 arm64` passes 33 smoke/integration
+on Node.js `23.10.0` / macOS `Darwin 25.6.0 arm64` passes 34 smoke/integration
 tests, including cycle-safe traversal, complete empty-impact results,
 external-helper and symlink-escape isolation, malformed API request validation,
 snapshot-aware diagnostics, bounded high-fan-out unresolved-module observations,
-and bounded high-fan-out diagnostic collection. Internal symlinked sources stay
-inside the repository boundary while escaping symlinks are skipped. Source,
+and bounded high-fan-out diagnostic collection. Internal symlinked sources and
+repository-root aliases stay inside the repository boundary while escaping
+symlinks are skipped. Source,
 Git-blob, and permitted
 external-declaration reads are bounded before UTF-8 decoding. Current Node 22/24 Linux
-container copies also pass the 33-case
+container copies also pass the 34-case
 suite and clean lockfile installs, type check, and package checks. Snapshot
 file-read loader and project diagnostics retain their producing snapshot IDs
 before changed-result deduplication. The package
@@ -151,7 +154,7 @@ registry publication, and clean registry installation have not been verified.
 
 | ID | Work | Status | Evidence |
 | --- | --- | --- | --- |
-| DOC-01 | Inspect implementation baseline and working-tree state | Done | Git history/tree/status reconciled before and after `b57321d`/`0cdd08f`/`13e9f14`/`6b43c58`/`ca5453e`/`0169580`/`5d29c4c`/`954f6dc`/`bbfeb58`/`940effd`/`1753c22`/`e55647f`/`e51113d`/`89f5286`/`db809f4`/`143e9f7`/`d385ff5`/`798594c`/`83f398d`/`661cb4d`/`1e61baf`/`0644fda`/`343750a`/`0902d49`/`2a68521`/`1c195af`/`b248f10`/`48f102e`/`273a344`/`e3b848c`/`13e660d`/`d959fc1`/`33ed211`/`e2cc13e`/`2262658`/`aeef862`/`3693612`/`c4dca94`/`d9f777c`/`13990ce`/`4d770e0`/`17020ad`/`850f106`/`beb003e`/`f64fbb6`/`7970752`/`ab27679`/`3a7bc99`/`b1f6477`/`32fd01a`/`a0f148b`/`149e0fa`/`2f3c482`/`0c8a130`/`f8a580e` |
+| DOC-01 | Inspect implementation baseline and working-tree state | Done | Git history/tree/status reconciled before and after `b57321d`/`0cdd08f`/`13e9f14`/`6b43c58`/`ca5453e`/`0169580`/`5d29c4c`/`954f6dc`/`bbfeb58`/`940effd`/`1753c22`/`e55647f`/`e51113d`/`89f5286`/`db809f4`/`143e9f7`/`d385ff5`/`798594c`/`83f398d`/`661cb4d`/`1e61baf`/`0644fda`/`343750a`/`0902d49`/`2a68521`/`1c195af`/`b248f10`/`48f102e`/`273a344`/`e3b848c`/`13e660d`/`d959fc1`/`33ed211`/`e2cc13e`/`2262658`/`aeef862`/`3693612`/`c4dca94`/`d9f777c`/`13990ce`/`4d770e0`/`17020ad`/`850f106`/`beb003e`/`f64fbb6`/`7970752`/`ab27679`/`3a7bc99`/`b1f6477`/`32fd01a`/`a0f148b`/`149e0fa`/`2f3c482`/`0c8a130`/`f8a580e`/`f9f904b` |
 | DOC-02 | Review supplied product design and technical assumptions | Done | Review dispositions preserved in [DESIGN.md](DESIGN.md) |
 | DOC-03 | Maintain coordinated product/design/epic/roadmap/task docs | Done | This reconciliation updates the coordinated product/status Markdown documents, the unreleased changelog, the feasibility note, and the performance note |
 | DOC-04 | Validate links, references, consistency, and final changes | Done | `npm run docs:check`: all 11 Markdown files, relative links/anchors, identifiers, task DAG, fences, whitespace, and `.gitattributes` preservation pass |
@@ -162,7 +165,7 @@ registry publication, and clean registry installation have not been verified.
 | --- | --- | --- | --- | --- |
 | CI-01 | Run a configured TypeScript project-host feasibility spike | Done locally | None | Config-bound host and [`spike/PROJECT_HOST_FINDINGS.md`](spike/PROJECT_HOST_FINDINGS.md); V-02, V-03, V-06, V-15 local subset |
 | CI-02 | Define executable draft result/CLI/API contracts and fixtures | Done as draft | CI-01 | `src/types.ts`, draft schema, strict TypeScript unused-code checks, CLI/API runtime validation including required fields, unknown limit rejection, effective analysis limits including `maxDiagnostics`, canonical repository paths, line-bounded coordinate handling, inline `=` values, revision trimming/NUL rejection, and Ajv fixtures; V-04, V-05, V-08, V-13, V-16, V-20 local subset |
-| CI-03 | Implement bounded snapshot access and local Git comparison | Done for tested cases | CI-02 | Git trees/worktree, two-read content-hashed capture, bounded descriptor/Git-blob reads with pre-decode overflow classification, validated real-path reads, snapshot-tagged file-read loader diagnostics, post-read byte checks, untracked/read-only, deletion/rename, conflict, concurrent-content, internal/external symlink, and helper-isolation fixtures pass; broader workspace symlink and exhaustive staged/unstaged matrices remain; V-01, V-10, V-11, V-18, V-19 |
+| CI-03 | Implement bounded snapshot access and local Git comparison | Done for tested cases | CI-02 | Git trees/worktree, two-read content-hashed capture, bounded descriptor/Git-blob reads with pre-decode overflow classification, validated real-path reads, snapshot-tagged file-read loader diagnostics, post-read byte checks, untracked/read-only, deletion/rename, conflict, concurrent-content, internal source/root and external symlink, and helper-isolation fixtures pass; broader workspace symlink and exhaustive staged/unstaged matrices remain; V-01, V-10, V-11, V-18, V-19 |
 | CI-04 | Implement the context-bound TypeScript semantic provider | Done for scope | CI-01, CI-02, CI-03 | JS/TS/TSX targets, imports/re-exports, references/calls, extends/implements, and bounded unresolved provider observations; project references deferred; V-02 through V-07 |
 | CI-05 | Implement evidence graph traversal and result projection | Done for scope | CI-02, CI-04 | Reverse BFS, stable IDs, paths, per-seed cycle termination, graph caps, and complete empty impacts; one path per target; V-08, V-09, V-13 |
 | CI-06 | Add candidate-test classification and graph-linked results | Done for scope | CI-04, CI-05 | Filename candidates retain edge IDs/evidence and make no coverage claim; V-14 |
@@ -189,7 +192,7 @@ release action as completed evidence.
 ## Verified local commands
 
 The following commands passed in the final local gate run on 2026-09-07 at code
-revision `f8a580e`; documentation reconciliation is recorded in `ad028b6` and
+revision `f9f904b`; documentation reconciliation is recorded in `ad028b6` and
 the post-change benchmark note in `f032986`
 using Node.js
 `v23.10.0` on macOS `Darwin 25.6.0 arm64`. A fresh dependency install with
@@ -197,7 +200,7 @@ using Node.js
 
 | Command | Result |
 | --- | --- |
-| `npm test` | Pass: 33 tests; build plus Node test runner |
+| `npm test` | Pass: 34 tests; build plus Node test runner |
 | `npm run typecheck` | Pass: strict TypeScript check with unused locals/parameters rejected |
 | `npm run docs:check` | Pass: 11 Markdown files; links/anchors, identifiers, task DAG, fences, whitespace, Git references, and `.gitattributes` preservation |
 | `npm audit --json` | Pass: 0 vulnerabilities across production and development dependencies |
@@ -206,7 +209,7 @@ using Node.js
 | `npm run pack:smoke` | Pass: local tarball installed with `npm install --prefer-offline --omit=dev --ignore-scripts`; packaged API and `agent-impact capabilities --json` both returned valid draft results |
 | Node 22/24 package-only release check | Pass: clean Node.js `v22.23.2` and `v24.20.0` Alpine copies install the lockfile with `npm ci --ignore-scripts` and pass `npm run release:check` |
 | Pack-and-install smoke | Pass: local tarball installed with cache-preferred dependency resolution and install scripts disabled; packaged API returned `0.1-draft`, and packaged `analyzeChanged` did not execute a configured fsmonitor marker |
-| Node 22/24 Linux container matrix | Pass at `f8a580e`: current clean copies using Node.js `v22.23.2` and `v24.20.0` Alpine runtimes inside Git-capable Linux containers; after fresh lockfile `npm ci`, dependency audit, the 33-case suite, typecheck, pack check, installed API/CLI smoke, both release checks, docs check, and `git diff --check` pass; the run includes external-helper, symlink-escape, internal-symlink, malformed API request, out-of-range coordinate, NUL path rejection, effective analysis limits, provider-observation cap, diagnostic-limit, pre-decode bounded-reader, oversized revision-blob, and distinct base/head diagnostic-snapshot fixtures |
+| Node 22/24 Linux container matrix | Pass at `f9f904b`: current clean copies using Node.js `v22.23.2` and `v24.20.0` Alpine runtimes inside Git-capable Linux containers; after fresh lockfile `npm ci`, dependency audit, the 34-case suite, typecheck, pack check, installed API/CLI smoke, both release checks, docs check, and `git diff --check` pass; the run includes external-helper, symlink-escape, internal source/root symlink, malformed API request, out-of-range coordinate, NUL path rejection, effective analysis limits, provider-observation cap, diagnostic-limit, pre-decode bounded-reader, oversized revision-blob, and distinct base/head diagnostic-snapshot fixtures |
 | `node spike/performance-benchmark.cjs` | Pass locally: default 241-file fan-out plus 21/121/501-file parameterized runs on macOS, default 241-file API/CLI runs on Node 22/24 Linux, and three repeated 241-file macOS cold starts; defaults stop at 100 nodes, hard caps complete within fixture size, and repeated semantic counts/stop reasons remain stable; observations are recorded in [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) |
 | High-fan-out unresolved-provider reproduction | Pass locally: a temporary file with 12,000 missing imports under default limits returns a usable partial result with 299 unresolved observations, `PROVIDER_OBSERVATION_LIMIT`, and a 163,378-byte JSON envelope |
 | High-fan-out diagnostic reproduction | Pass locally: `node spike/diagnostic-limit.cjs` creates 20,000 oversized files; default limits return a partial result with 1,000 warnings, `DIAGNOSTIC_LIMIT`, and a 154,605-byte JSON envelope |
