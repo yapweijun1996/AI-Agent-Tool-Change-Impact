@@ -164,7 +164,7 @@ registry publication, and clean registry installation have not been verified.
 
 | ID | Work | Status | Evidence |
 | --- | --- | --- | --- |
-| DOC-01 | Inspect implementation baseline and working-tree state | Done | Git history/tree/status reconciled before and after `b57321d`/`0cdd08f`/`13e9f14`/`6b43c58`/`ca5453e`/`0169580`/`5d29c4c`/`954f6dc`/`bbfeb58`/`940effd`/`1753c22`/`e55647f`/`e51113d`/`89f5286`/`db809f4`/`143e9f7`/`d385ff5`/`798594c`/`83f398d`/`661cb4d`/`1e61baf`/`0644fda`/`343750a`/`0902d49`/`2a68521`/`1c195af`/`b248f10`/`48f102e`/`273a344`/`e3b848c`/`13e660d`/`d959fc1`/`33ed211`/`e2cc13e`/`2262658`/`aeef862`/`3693612`/`c4dca94`/`d9f777c`/`13990ce`/`4d770e0`/`17020ad`/`850f106`/`beb003e`/`f64fbb6`/`7970752`/`ab27679`/`3a7bc99`/`b1f6477`/`32fd01a`/`a0f148b`/`149e0fa`/`2f3c482`/`0c8a130`/`f8a580e`/`f9f904b`/`ba0538a`/`c6296e4`/`55a10bb` |
+| DOC-01 | Inspect implementation baseline and working-tree state | Done | Git history/tree/status reconciled before and after `b57321d`/`0cdd08f`/`13e9f14`/`6b43c58`/`ca5453e`/`0169580`/`5d29c4c`/`954f6dc`/`bbfeb58`/`940effd`/`1753c22`/`e55647f`/`e51113d`/`89f5286`/`db809f4`/`143e9f7`/`d385ff5`/`798594c`/`83f398d`/`661cb4d`/`1e61baf`/`0644fda`/`343750a`/`0902d49`/`2a68521`/`1c195af`/`b248f10`/`48f102e`/`273a344`/`e3b848c`/`13e660d`/`d959fc1`/`33ed211`/`e2cc13e`/`2262658`/`aeef862`/`3693612`/`c4dca94`/`d9f777c`/`13990ce`/`4d770e0`/`17020ad`/`850f106`/`beb003e`/`f64fbb6`/`7970752`/`ab27679`/`3a7bc99`/`b1f6477`/`32fd01a`/`a0f148b`/`149e0fa`/`2f3c482`/`0c8a130`/`f8a580e`/`f9f904b`/`ba0538a`/`c6296e4`/`55a10bb`/`3472b13` |
 | DOC-02 | Review supplied product design and technical assumptions | Done | Review dispositions preserved in [DESIGN.md](DESIGN.md) |
 | DOC-03 | Maintain coordinated product/design/epic/roadmap/task docs | Done | This reconciliation updates the coordinated product/status Markdown documents, the unreleased changelog, the feasibility note, and the performance note |
 | DOC-04 | Validate links, references, consistency, and final changes | Done | `npm run docs:check`: all 11 Markdown files, relative links/anchors, identifiers, task DAG, fences, whitespace, and `.gitattributes` preservation pass |
@@ -201,9 +201,11 @@ release action as completed evidence.
 
 ## Verified local commands
 
-The latest macOS-only full gate passed on 2026-09-07 at documentation revision
-`5578c82`, with implementation behavior from `c6296e4` and test-fixture cleanup
+The latest macOS-only full gate passed on 2026-09-07 on the tree at revision
+`b87e268`, with implementation behavior from `3472b13` and test-fixture cleanup
 from `55a10bb`, using Node.js `v23.10.0` on macOS `Darwin 25.6.0 arm64`.
+The documentation-only reconciliation after that gate does not change source
+behavior.
 The latest complete cross-runtime gate remains `f9f904b`; its Node 22/24 Linux
 container evidence is retained below.
 

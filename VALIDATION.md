@@ -19,27 +19,28 @@ CLI formatted output is checked against the final serialized-byte budget in
 Installed package smoke repeats the compact-versus-pretty assertion through the
 packaged CLI in `3472b13`.
 
-Final local gate run on 2026-09-07 at code revision `f9f904b` used Node.js
+The complete cross-runtime baseline at code revision `f9f904b` used Node.js
 `v23.10.0` on macOS `Darwin 25.6.0 arm64`. After a fresh
 `npm ci --ignore-scripts --no-audit --no-fund`, `npm test` (34/34), `npm run typecheck`,
 `npm run pack:check` (38 files), `npm run release:check` with and without the
 matching tag, `npm run pack:smoke`, `npm audit --audit-level=low --json` (zero
 vulnerabilities), `npm run docs:check`, workflow YAML parsing, and
-`git diff --check` all passed. The latest macOS rerun at `c6296e4` reports 36/36
-tests, including provider-resolution and formatted-output regressions. The f9f904b
-gate remains the latest complete cross-runtime run; the test count there is 34/34
+`git diff --check` all passed. The earlier macOS rerun at `c6296e4` reported 36/36
+tests, including provider-resolution and formatted-output regressions. The
+`f9f904b` gate remains the latest complete cross-runtime run; the test count there is 34/34
 after provider-,
 diagnostic-, revision-blob-bound, snapshot-identity, internal-source-symlink,
 and repository-root-symlink regression coverage.
 This is local evidence; it does not substitute
 for the unrun hosted matrix or registry gates below.
 
-The latest macOS-only full gate at documentation revision `5578c82` reran
+The latest macOS-only full gate ran on the tree at revision `b87e268` and passed
 `npm test` (36/36), typecheck, JSON dependency audit (zero vulnerabilities),
-pack/release checks, installed API/CLI package smoke, documentation checks, and
-`git diff --check` after the formatted-output and test-fixture-cleanup changes.
-This run does not replace the `f9f904b` cross-runtime evidence; it confirms the
-current tree after the latest local changes.
+pack/release checks, installed API/CLI package smoke including the packaged
+formatted-output limit, documentation checks, and `git diff --check` after the
+formatted-output, test-fixture-cleanup, and artifact-smoke changes. The
+documentation-only reconciliation after that gate does not replace the
+`f9f904b` cross-runtime evidence or change source behavior.
 
 After the bounded source-read change in `149e0fa`, fresh Node.js `22.23.2` and
 `24.20.0` Alpine containers reran the same lockfile install and passed the 31-case
@@ -72,7 +73,7 @@ hosted or registry evidence is inferred from either local run.
 | Area | Evidence | Result |
 | --- | --- | --- |
 | Build and type safety | `npm run typecheck`; `npm test` builds with strict `tsc -p tsconfig.json`, including unused locals/parameters checks | Pass |
-| Runtime smoke/integration | `npm test` on Node.js `v23.10.0`, macOS `Darwin 25.6.0 arm64` at `c6296e4`, plus fresh clean copies at `f9f904b` using Node.js `v22.23.2` and `v24.20.0` Alpine runtimes | Pass: 36 tests on the latest macOS rerun; 34 tests on each current Linux runtime at `f9f904b`, with installed API/CLI smoke; Linux copies use the committed lockfile with fresh `npm ci` installs, followed by typecheck, dependency audit, pack, release, package-smoke, and docs checks |
+| Runtime smoke/integration | `npm test` on Node.js `v23.10.0`, macOS `Darwin 25.6.0 arm64` at `b87e268`, plus fresh clean copies at `f9f904b` using Node.js `v22.23.2` and `v24.20.0` Alpine runtimes | Pass: 36 tests on the latest macOS gate; 34 tests on each current Linux runtime at `f9f904b`, with installed API/CLI smoke; Linux copies use the committed lockfile with fresh `npm ci` installs, followed by typecheck, dependency audit, pack, release, package-smoke, and docs checks |
 | Draft contract | Ajv `8.20.0` validates capabilities, success, partial, and error envelopes, including effective `analysis.limits` | Pass |
 | Dependency audit | `npm audit --json` (production and development dependency graph) | Pass: 0 vulnerabilities |
 | Package contents | `npm pack --dry-run --ignore-scripts`; `npm run release:check`; `npm run pack:smoke` temporary tarball `--prefer-offline` install with `--ignore-scripts`, API/CLI smoke, formatted-output limit assertion, and a space-containing temporary path; fsmonitor-isolation smoke; Node 22/24 Linux container tarball install/API checks | Pass locally: release metadata and 38-file tarball set agree; packaged files include the unreleased changelog; development tests/sources are excluded; packaged API and CLI loaded, analysis completed, and pretty output was rejected with `OUTPUT_LIMIT_EXCEEDED` when it exceeded the selected budget; configured fsmonitor helper was not executed; clean Node 22.23.2 and Node 24.20.0 Linux package-only checkouts also pass `npm ci --ignore-scripts` and `release:check`; Windows `.cmd` path handling is exercised through the quoted path fixture but hosted execution remains unrun |
