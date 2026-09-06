@@ -54,7 +54,8 @@ diamond paths, an empty-impact result, malformed JavaScript API request and
 out-of-range coordinate handling, and snapshot-aware diagnostics.
 The packaged tarball was also installed in temporary directories and its API and
 CLI were loaded successfully on the local macOS runtime and Node 22/24 Linux
-containers; the installs used the offline npm cache.
+containers; the smoke prefers the npm cache, permits registry fallback for
+missing dependency metadata, and disables install scripts.
 The bounded fan-out benchmark in
 [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) records local
 API/CLI cold-start and limit behavior without making a performance guarantee.

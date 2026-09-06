@@ -31,7 +31,7 @@ try {
   const tarballs = readdirSync(packDirectory).filter((entry) => entry.endsWith(".tgz"));
   assert.equal(tarballs.length, 1, "pack should produce exactly one tarball");
   runNpm(["init", "-y"], appDirectory);
-  runNpm(["install", "--offline", "--omit=dev", "--ignore-scripts", join(packDirectory, tarballs[0])], appDirectory);
+  runNpm(["install", "--prefer-offline", "--omit=dev", "--ignore-scripts", "--no-audit", "--no-fund", join(packDirectory, tarballs[0])], appDirectory);
 
   const apiProbe = execFileSync(process.execPath, [
     "-e",

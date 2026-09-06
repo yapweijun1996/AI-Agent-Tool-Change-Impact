@@ -66,7 +66,7 @@ metadata/lockfile, and a configured cross-platform workflow. Local verification
 on Node.js `23.10.0` / macOS `Darwin 25.6.0 arm64` passes 28 smoke/integration
 tests, including cycle-safe traversal, complete empty-impact results, and
 external-helper, symlink-escape isolation, malformed API request validation, and
-snapshot-aware diagnostics. The full 28-case suite, clean `npm ci --offline`,
+snapshot-aware diagnostics. The full 28-case suite, clean lockfile installs,
 type check, and package check pass in temporary Node 22 and Node 24 Linux
 checkouts using only the locked npm cache; the latest clean clone rerun after
 `1e61baf` also passed the documentation check, and an earlier clean run
@@ -122,9 +122,9 @@ The following commands passed after the implementation commit:
 | `npm run docs:check` | Pass: Markdown links/anchors, identifiers, task DAG, fences, whitespace, Git references, and `.gitattributes` preservation |
 | `npm audit --json` | Pass: 0 vulnerabilities across production and development dependencies |
 | `npm pack --dry-run --ignore-scripts` | Pass: 37 package files, no development sources/tests included |
-| `npm run pack:smoke` | Pass: local tarball installed with `npm install --offline --omit=dev`; packaged API and `agent-impact capabilities --json` both returned valid draft results |
-| Pack-and-install smoke | Pass: local tarball installed with `npm install --offline --omit=dev`; packaged API returned `0.1-draft`, and packaged `analyzeChanged` did not execute a configured fsmonitor marker |
-| Node 22/24 Linux container matrix | Pass: latest clean Git clones using Node.js `v22.23.2` and `v24.20.0` Alpine runtimes inside a Git-capable Linux container; after `1e61baf`, `npm ci --offline`, the full 28-case suite, typecheck, pack check, installed API/CLI smoke, and docs check pass using only the locked npm cache; earlier clean runs also pass tarball install/API smoke; the full run includes external-helper, symlink-escape, malformed API request, out-of-range coordinate, NUL path rejection, and snapshot-aware diagnostic fixtures |
+| `npm run pack:smoke` | Pass: local tarball installed with `npm install --prefer-offline --omit=dev --ignore-scripts`; packaged API and `agent-impact capabilities --json` both returned valid draft results |
+| Pack-and-install smoke | Pass: local tarball installed with cache-preferred dependency resolution and install scripts disabled; packaged API returned `0.1-draft`, and packaged `analyzeChanged` did not execute a configured fsmonitor marker |
+| Node 22/24 Linux container matrix | Pass: latest clean Git clones using Node.js `v22.23.2` and `v24.20.0` Alpine runtimes inside a Git-capable Linux container; after a fresh lockfile `npm ci`, the full 28-case suite, typecheck, pack check, cache-preferred installed API/CLI smoke, and docs check pass; the full run includes external-helper, symlink-escape, malformed API request, out-of-range coordinate, NUL path rejection, effective analysis limits, and snapshot-aware diagnostic fixtures |
 | `node spike/performance-benchmark.cjs` | Pass locally: default 241-file fan-out plus 21/121/501-file parameterized runs on macOS, and default 241-file API/CLI runs on Node 22/24 Linux; defaults stop at 100 nodes, hard caps complete within fixture size; observations are recorded in [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) |
 | `git diff --check` | Pass: no whitespace errors |
 
