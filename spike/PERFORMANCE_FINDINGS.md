@@ -29,10 +29,10 @@ for the default run; provider TypeScript `5.9.3`.
 
 | Mode | Process | Wall time | API work time | RSS delta | Result |
 | --- | --- | ---: | ---: | ---: | --- |
-| Defaults | API child | 1,320.4 ms | 1,024.3 ms | 84.6 MiB | `partial`, 100 nodes/99 edges, `NODE_LIMIT` |
-| Hard caps | API child | 1,402.9 ms | 1,070.5 ms | 83.0 MiB | `complete`, 241 nodes/240 edges |
-| Defaults | CLI child | 3,109.4 ms | — | — | `partial`, 100 nodes/99 edges, `NODE_LIMIT` |
-| Hard caps | CLI child | 2,968.7 ms | — | — | `complete`, 241 nodes/240 edges |
+| Defaults | API child | 1,343.3 ms | 1,104.3 ms | 84.6 MiB | `partial`, 100 nodes/99 edges, `NODE_LIMIT` |
+| Hard caps | API child | 1,352.5 ms | 1,021.2 ms | 89.3 MiB | `complete`, 241 nodes/240 edges |
+| Defaults | CLI child | 1,390.6 ms | — | — | `partial`, 100 nodes/99 edges, `NODE_LIMIT` |
+| Hard caps | CLI child | 1,390.2 ms | — | — | `complete`, 241 nodes/240 edges |
 
 The same run shape was repeated with bounded sizes. Returned counts are stable
 even though timing and RSS vary by process state.
