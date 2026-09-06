@@ -2,7 +2,7 @@
 
 Status: implemented v0.1 draft; the executable schema and API are not frozen for
 backward compatibility.
-Last updated: 2026-09-06. Implementation revision: `83f398d`.
+Last updated: 2026-09-06. Implementation revision: `661cb4d`.
 Runtime evidence is tracked in [VALIDATION.md](VALIDATION.md); task status is
 authoritative in [TASK.md](TASK.md).
 
@@ -68,6 +68,9 @@ and impossible limits return a machine-readable `INVALID_ARGUMENT` error.
 be discoverable. Missing or multiple configurations fail with an actionable
 error. A project reference or separate test project is outside the selected
 context and is disclosed rather than treated as workspace-wide coverage.
+Repository-relative paths are canonicalized before lookup: dot and empty
+segments are removed, while parent segments and NUL bytes return
+`FILE_OUTSIDE_ROOT`.
 
 ## JavaScript API and result model
 

@@ -1,7 +1,7 @@
 # Project-host feasibility findings
 
 Date: 2026-09-06
-Evidence implementation revision: `db809f4`; latest implementation revision: `83f398d`
+Evidence implementation revision: `db809f4`; latest implementation revision: `661cb4d`
 
 This note records the bounded feasibility check that informed the first provider.
 It is evidence for project-host behavior, not a performance guarantee.

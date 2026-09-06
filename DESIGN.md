@@ -1,7 +1,7 @@
 # Design
 
 Status: implemented v0.1 draft; release gates remain open.
-Implementation revision: [`83f398d`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/83f398d)
+Implementation revision: [`661cb4d`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/661cb4d)
 Last reconciled: 2026-09-06
 
 This document owns architecture and design decisions. [SPEC.md](SPEC.md) owns
@@ -97,7 +97,9 @@ claim coverage, assertion reachability, or test execution.
 
 Git supplies tracked files and non-ignored untracked files; project membership
 then narrows the analysis set. `.git`, `node_modules`, `dist`, and `coverage`
-are excluded from source inventory. Symlink escapes are skipped. TypeScript
+are excluded from source inventory. Repository-relative paths are canonicalized
+before lookup; dot and empty segments are removed, while parent segments and
+NUL bytes are rejected. Symlink escapes are skipped. TypeScript
 standard-library files and local `node_modules` may be read for static
 resolution, but repository modules, config code, plugins, test runners,
 automatic type acquisition, external diff drivers, textconv filters, and
@@ -147,6 +149,7 @@ as follows:
 | Language Service ownership is overstated | D-02 | Config-bound host and feasibility note in [`spike/PROJECT_HOST_FINDINGS.md`](spike/PROJECT_HOST_FINDINGS.md) |
 | Graph loses direction or paths | D-04 | Reverse file/symbol impact assertions, cycle/diamond traversal fixtures, and draft schema validation |
 | Location selectors silently cross line boundaries | D-09 | Out-of-range columns return `TARGET_NOT_FOUND`; location disambiguation and boundary regression fixtures |
+| Repository paths are not canonical or escape the root | D-07 | Dot/repeated-separator paths normalize to one repository-relative form; parent and NUL segments fail with `FILE_OUTSIDE_ROOT` |
 | Evidence strength is confused with completeness | D-05 | Dynamic/missing module cases produce `partial` with observations |
 | Imports are presented as test coverage | D-06 | Candidate role and dependency edge IDs are separate fields |
 | Output caps do not bound work | D-08 | File/graph/provider/output limits are enforced; bounded fan-out observations exist, while stress/cancellation measurements remain open |

@@ -37,6 +37,10 @@ snapshot-aware diagnostic deduplication is in
 [`798594c`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/798594c);
 out-of-range location selectors now fail closed in
 [`83f398d`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/83f398d);
+repository-relative paths are canonicalized in
+[`661cb4d`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/661cb4d);
+NUL-byte path rejection is covered in
+[`1e61baf`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/1e61baf);
 documentation reconciliation follows the implementation revision above.
 
 ## Current situation
@@ -69,7 +73,7 @@ registry publication, and clean registry installation have not been verified.
 
 | ID | Work | Status | Evidence |
 | --- | --- | --- | --- |
-| DOC-01 | Inspect implementation baseline and working-tree state | Done | Git history/tree/status reconciled before and after `b57321d`/`0cdd08f`/`13e9f14`/`6b43c58`/`ca5453e`/`0169580`/`5d29c4c`/`954f6dc`/`bbfeb58`/`940effd`/`1753c22`/`e55647f`/`e51113d`/`89f5286`/`db809f4`/`d385ff5`/`798594c`/`83f398d` |
+| DOC-01 | Inspect implementation baseline and working-tree state | Done | Git history/tree/status reconciled before and after `b57321d`/`0cdd08f`/`13e9f14`/`6b43c58`/`ca5453e`/`0169580`/`5d29c4c`/`954f6dc`/`bbfeb58`/`940effd`/`1753c22`/`e55647f`/`e51113d`/`89f5286`/`db809f4`/`143e9f7`/`d385ff5`/`798594c`/`83f398d`/`661cb4d` |
 | DOC-02 | Review supplied product design and technical assumptions | Done | Review dispositions preserved in [DESIGN.md](DESIGN.md) |
 | DOC-03 | Maintain coordinated product/design/epic/roadmap/task docs | Done | This reconciliation updates the eight product/status Markdown documents, the feasibility note, and the performance note |
 | DOC-04 | Validate links, references, consistency, and final changes | Done | `npm run docs:check`: all 10 Markdown files, relative links/anchors, identifiers, task DAG, fences, whitespace, and `.gitattributes` preservation pass |
@@ -79,7 +83,7 @@ registry publication, and clean registry installation have not been verified.
 | ID | Work | Status | Depends on | Acceptance/evidence |
 | --- | --- | --- | --- | --- |
 | CI-01 | Run a configured TypeScript project-host feasibility spike | Done locally | None | Config-bound host and [`spike/PROJECT_HOST_FINDINGS.md`](spike/PROJECT_HOST_FINDINGS.md); V-02, V-03, V-06, V-15 local subset |
-| CI-02 | Define executable draft result/CLI/API contracts and fixtures | Done as draft | CI-01 | `src/types.ts`, draft schema, CLI/API runtime validation, line-bounded coordinate handling, and Ajv fixtures; V-04, V-05, V-08, V-13, V-16, V-20 local subset |
+| CI-02 | Define executable draft result/CLI/API contracts and fixtures | Done as draft | CI-01 | `src/types.ts`, draft schema, CLI/API runtime validation, canonical repository paths, line-bounded coordinate handling, and Ajv fixtures; V-04, V-05, V-08, V-13, V-16, V-20 local subset |
 | CI-03 | Implement bounded snapshot access and local Git comparison | Done for tested cases | CI-02 | Git trees/worktree, untracked/read-only, deletion/rename, conflict, concurrent-content, external-helper, and symlink-escape fixtures pass; nested/internal symlink and exhaustive staged/unstaged matrices remain; V-01, V-10, V-11, V-18, V-19 |
 | CI-04 | Implement the context-bound TypeScript semantic provider | Done for scope | CI-01, CI-02, CI-03 | JS/TS/TSX targets, imports/re-exports, references/calls, extends/implements; project references deferred; V-02 through V-07 |
 | CI-05 | Implement evidence graph traversal and result projection | Done for scope | CI-02, CI-04 | Reverse BFS, stable IDs, paths, per-seed cycle termination, graph caps, and complete empty impacts; one path per target; V-08, V-09, V-13 |

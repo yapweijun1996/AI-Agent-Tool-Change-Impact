@@ -5,7 +5,7 @@ gates; implementation status is authoritative in [TASK.md](TASK.md).
 
 ## Current evidence
 
-Implementation revisions: `b57321d`, `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`, `954f6dc`, `bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, `89f5286`, `db809f4`, `d385ff5`, `798594c`, and `83f398d`, plus the documentation
+Implementation revisions: `b57321d`, `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`, `954f6dc`, `bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, `89f5286`, `db809f4`, `143e9f7`, `d385ff5`, `798594c`, and `83f398d`; path normalization is in `661cb4d` and its NUL-byte regression is in `1e61baf`, plus the documentation
 reconciliation that follows this implementation revision.
 
 | Area | Evidence | Result |
@@ -52,7 +52,7 @@ open. “Not run” means no evidence is available.
 
 | ID | Scenario | Status | Current evidence/limitation |
 | --- | --- | --- | --- |
-| V-01 | Repository root, nested invocation, tracked/untracked/ignored inventory | Partial | Worktree test covers untracked/ignored; nested invocation and large inventory are untested |
+| V-01 | Repository root, nested invocation, tracked/untracked/ignored inventory | Partial | Worktree test covers untracked/ignored and canonical dot/repeated-separator paths; parent/NUL paths fail closed; nested invocation and large inventory are untested |
 | V-02 | Configured TS, JS/allowJs, TSX; production/test split; project references | Partial | JS/TS/TSX and test split pass; project references remain deferred |
 | V-03 | Missing/invalid configuration, absent declarations, parse failures, unsupported arrangement | Partial | Structured missing-root/target/endpoint errors pass; config parse/reference matrix is untested |
 | V-04 | Same-named methods, aliases, overloads, merged declarations, anonymous export | Partial | Ambiguous name and `--at` disambiguation pass; overload/merge cases remain open |

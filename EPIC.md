@@ -42,6 +42,10 @@ Snapshot-aware diagnostic deduplication was added in
 [`798594c`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/798594c).
 Out-of-range location selectors now fail closed in
 [`83f398d`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/83f398d).
+Repository-relative paths are canonicalized and traversal segments rejected in
+[`661cb4d`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/661cb4d).
+NUL-byte path rejection is covered by a regression assertion in
+[`1e61baf`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/1e61baf).
 The draft schema and local verification pass; Windows/hosted cross-platform
 execution, cancellation/isolation evidence, schema freeze, and publication
 remain open.
@@ -53,13 +57,13 @@ remain open.
 | --- | --- | --- | --- |
 | E-01: Project-host feasibility | CI-01 | Done locally | Config-bound virtual host and [`spike/PROJECT_HOST_FINDINGS.md`](spike/PROJECT_HOST_FINDINGS.md) |
 | E-02: Executable draft contracts | CI-02 | Done as draft | TypeScript contracts, draft JSON Schema, CLI/API runtime validation, and error fixtures |
-| E-03: Snapshot and Git boundary | CI-03 | Done for tested cases | Revision/worktree snapshots, endpoint diff, read-only flags, conflict, concurrent-content, and external diff/textconv/fsmonitor helper fixtures |
+| E-03: Snapshot and Git boundary | CI-03 | Done for tested cases | Revision/worktree snapshots, canonical repository paths, endpoint diff, read-only flags, conflict, concurrent-content, and external diff/textconv/fsmonitor helper fixtures |
 | E-04: TypeScript semantic provider | CI-04 | Done for scope | JS/TS/TSX targets, imports/re-exports, calls/references, extends/implements |
 | E-05: Evidence graph and impact | CI-05 | Done for scope | Reverse traversal, stable IDs, retained paths, cycle-safe depth/node/edge caps |
 | E-06: Candidate-test projection | CI-06 | Done for scope | Filename candidates linked to retained dependency edges |
 | E-07: Changed-target orchestration | CI-07 | Done for tested cases | Modification, deletion, rename, configuration, unsupported-file, worktree projections |
 | E-08: Resource and correctness hardening | CI-08 | In progress | Deterministic limits/read-only checks and bounded fan-out measurements across four sizes are present; cancellation, isolation, and platform runs remain |
-| E-09: Package and release gates | CI-09 | In progress | Local pack dry-run and CI workflow are present; schema freeze, cross-platform artifact checks, and registry evidence remain |
+| E-09: Package and release gates | CI-09 | In progress | Local pack dry-run and CI workflow with `contents: read` permissions are present; schema freeze, cross-platform artifact checks, and registry evidence remain |
 
 ## Acceptance by work package
 
