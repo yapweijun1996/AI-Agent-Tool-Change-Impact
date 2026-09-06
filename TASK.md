@@ -85,7 +85,7 @@ The following commands passed after the implementation commit:
 | `npm audit --omit=dev` | Pass: 0 production vulnerabilities |
 | `npm pack --dry-run --ignore-scripts` | Pass: 37 package files, no development sources/tests included |
 | Pack-and-install smoke | Pass: local tarball installed with `npm install --offline --omit=dev`; packaged API returned `0.1-draft` |
-| Node 22/24 Linux container matrix | Pass: temporary `git archive` checkouts in `node:22-alpine` and `node:24-alpine`; `npm ci`, 23 tests, typecheck, and pack check passed in each |
+| Node 22/24 Linux container matrix | Pass: temporary `git archive` checkouts in `node:22-alpine` and `node:24-alpine`; `npm ci`, 23 tests, typecheck, pack check, tarball install outside checkout, and packaged API smoke passed in each |
 | `node spike/performance-benchmark.cjs` | Pass locally: default 241-file fan-out plus 21/121/501-file parameterized runs; defaults stop at 100 nodes, hard caps complete within fixture size; API/CLI child-process observations recorded in [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) |
 | `git diff --check` | Pass: no whitespace errors |
 

@@ -14,7 +14,7 @@ reconciliation that follows this implementation revision.
 | Runtime smoke/integration | `npm test` on Node.js `v23.10.0`, macOS `Darwin 25.6.0 arm64`, plus temporary `node:22-alpine` and `node:24-alpine` Linux checkouts | Pass: 23 tests on each runtime |
 | Draft contract | Ajv `8.20.0` validates capabilities, success, partial, and error envelopes | Pass |
 | Production dependency audit | `npm audit --omit=dev` | Pass: 0 vulnerabilities |
-| Package contents | `npm pack --dry-run --ignore-scripts`; temporary tarball offline install/API smoke; Node 22/24 Linux container pack checks | Pass locally: 37 files; development tests/sources excluded; packaged API loaded |
+| Package contents | `npm pack --dry-run --ignore-scripts`; temporary tarball offline install/API smoke; Node 22/24 Linux container tarball install/API checks | Pass locally: 37 files; development tests/sources excluded; packaged API loaded |
 | Bounded resource observation | `node spike/performance-benchmark.cjs` on temporary 21-, 121-, 241-, and 501-file fan-out/depth repositories | Pass locally: default node cap stops at 100 nodes for larger fixtures; hard caps complete; API/CLI child-process timings and RSS are recorded in [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) |
 | Git/read-only behavior | Temporary repositories, revision/worktree cases, unchanged Git assertions | Pass for tested cases |
 | Cross-platform workflow | `.github/workflows/ci.yml` configured for Node 22/24 × Ubuntu/macOS/Windows | Configured; remote execution not yet recorded |
@@ -75,7 +75,7 @@ open. “Not run” means no evidence is available.
 | V-18 | External diff/textconv, executable plugin/config, automatic type acquisition | Partial | Git disables external helpers and no code is executed in tests; adversarial helper fixture remains |
 | V-19 | Symlink escape, workspace symlink, external declarations, source/Git snapshots | Partial | Snapshot IDs, old/new evidence, and read boundaries are implemented; symlink/external-input fixture remains |
 | V-20 | CLI/API success, partial, validation/operation errors, coordinate handoff | Pass for tested cases | CLI JSON/exit behavior, API parity, partials, and `--at` pass; UTF-16/old-coordinate cases remain |
-| V-21 | Packaged artifact outside checkout on Node 22/24 and Linux/macOS/Windows | Partial | Temporary Node 22/24 Linux checkouts and Node 23/macOS pass tests, typecheck, and pack checks; Windows and hosted matrix remain unrun |
+| V-21 | Packaged artifact outside checkout on Node 22/24 and Linux/macOS/Windows | Partial | Temporary Node 22/24 Linux checkouts and Node 23/macOS pass tests, typecheck, pack checks, and packaged API smoke; Windows and hosted matrix remain unrun |
 | V-22 | Authorized publication and clean registry installation | Not run | Publication requires explicit release authorization and registry credentials |
 
 Fixtures for callbacks and dynamic dispatch should continue to verify honest

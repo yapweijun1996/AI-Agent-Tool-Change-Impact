@@ -40,8 +40,9 @@ The test suite creates temporary Git repositories from
 without modifying the checkout. `npm test` builds TypeScript before running the
 23 smoke/integration cases, including cycle-safe traversal, deterministic
 diamond paths, and an empty-impact result.
-The packaged tarball was also installed offline in a temporary directory and
-loaded successfully on the local macOS runtime.
+The packaged tarball was also installed in temporary directories and loaded
+successfully on the local macOS runtime and Node 22/24 Linux containers; the
+macOS install used the offline npm cache.
 The bounded fan-out benchmark in
 [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) records local
 API/CLI cold-start and limit behavior without making a performance guarantee.

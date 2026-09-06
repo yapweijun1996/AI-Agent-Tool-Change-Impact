@@ -114,7 +114,8 @@ matrix execution still require evidence.
 `package.json`, the lockfile, `LICENSE`, schema, compiled entry points, and a
 Node 22/24 × Linux/macOS/Windows workflow are present. `npm pack --dry-run` and
 an offline install/API smoke check pass locally. The 23-case suite, type check,
-and package check also pass in temporary Node 22 and Node 24 Linux containers.
+package check, and tarball install/API smoke also pass in temporary Node 22 and
+Node 24 Linux containers.
 No Windows/hosted workflow result, registry publication, clean registry
 install, or provenance is claimed.
 
