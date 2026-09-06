@@ -11,7 +11,7 @@ reconciliation that follows this implementation revision.
 | Area | Evidence | Result |
 | --- | --- | --- |
 | Build and type safety | `npm run typecheck`; `npm test` builds with `tsc -p tsconfig.json` | Pass |
-| Runtime smoke/integration | `npm test` on Node.js `v23.10.0`, macOS `Darwin 25.6.0 arm64`, plus temporary `node:22-alpine` and `node:24-alpine` Linux checkouts | Pass: 24 tests on macOS; 23-case baseline on each Linux runtime |
+| Runtime smoke/integration | `npm test` on Node.js `v23.10.0`, macOS `Darwin 25.6.0 arm64`, plus temporary `node:22-alpine` and `node:24-alpine` Linux checkouts | Pass: 24 tests on macOS and in the latest Node 22/24 Linux runs; the Linux rerun used locked host-installed dependencies mounted read-only, while the earlier clean `npm ci` run established the 23-case baseline |
 | Draft contract | Ajv `8.20.0` validates capabilities, success, partial, and error envelopes | Pass |
 | Production dependency audit | `npm audit --omit=dev` | Pass: 0 vulnerabilities |
 | Package contents | `npm pack --dry-run --ignore-scripts`; temporary tarball offline install/API smoke; Node 22/24 Linux container tarball install/API checks | Pass locally: 37 files; development tests/sources excluded; packaged API loaded |
@@ -72,10 +72,10 @@ open. “Not run” means no evidence is available.
 | V-15 | Large files/projects, fan-out/deep graph, cancellation, repeated sessions | Partial | Four fan-out/depth sizes (21–501 files) confirm default versus hard-cap behavior and record API/CLI child-process observations; cancellation and memory-isolation evidence remain |
 | V-16 | Long paths, many diagnostics, tight byte budget, invalid budget, oversized graph | Pass for tested cases | Output/argument limits and valid JSON error behavior pass; long-path/diagnostic stress remains |
 | V-17 | Identical snapshots/config/dependencies/provider; changed provider/resolution input | Partial | Repeated identical API payloads compare equal; cross-provider/input invalidation is untested |
-| V-18 | External diff/textconv, executable plugin/config, automatic type acquisition | Pass for tested cases | Marker-based external diff/textconv helper fixture confirms configured helpers are not executed; broader executable-config and automatic-type-acquisition matrix remains |
+| V-18 | External diff/textconv, executable plugin/config, automatic type acquisition | Pass for tested cases | Marker-based external diff/textconv helper fixture confirms configured helpers are not executed on macOS and Node 22/24 Linux; broader executable-config and automatic-type-acquisition matrix remains |
 | V-19 | Symlink escape, workspace symlink, external declarations, source/Git snapshots | Partial | Snapshot IDs, old/new evidence, and read boundaries are implemented; symlink/external-input fixture remains |
 | V-20 | CLI/API success, partial, validation/operation errors, coordinate handoff | Pass for tested cases | CLI JSON/exit behavior, API parity, partials, and `--at` pass; UTF-16/old-coordinate cases remain |
-| V-21 | Packaged artifact outside checkout on Node 22/24 and Linux/macOS/Windows | Partial | Temporary Node 22/24 Linux checkouts and Node 23/macOS pass tests, typecheck, pack checks, and packaged API smoke; Windows and hosted matrix remain unrun |
+| V-21 | Packaged artifact outside checkout on Node 22/24 and Linux/macOS/Windows | Partial | Node 23/macOS and Node 22/24 Linux pass tests, typecheck, and pack checks; the earlier clean Linux runs also pass tarball install/API smoke; Windows and hosted matrix remain unrun |
 | V-22 | Authorized publication and clean registry installation | Not run | Publication requires explicit release authorization and registry credentials |
 
 Fixtures for callbacks and dynamic dispatch should continue to verify honest
