@@ -9,6 +9,7 @@ const { readTextFileBounded } = require("../dist/snapshot.js");
 const Ajv = require("ajv/dist/2020");
 const schema = require("../schemas/result-v0.1-draft.schema.json");
 const fixtureRoot = join(__dirname, "fixtures", "basic");
+const temporaryRepositories = new Set();
 
 function git(root, args) {
   return execFileSync("git", args, { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }).trim();
@@ -16,6 +17,7 @@ function git(root, args) {
 
 function createRepo(options = {}) {
   const root = mkdtempSync(join(require("node:os").tmpdir(), options.prefix ?? "agent-impact-test-"));
+  temporaryRepositories.add(root);
   cpSync(fixtureRoot, root, { recursive: true });
   if (!options.includeDynamic) {
     rmSync(join(root, "src", "dynamic.ts"));
@@ -27,6 +29,13 @@ function createRepo(options = {}) {
   git(root, ["commit", "-qm", "fixture"]);
   return root;
 }
+
+test.afterEach(() => {
+  for (const root of temporaryRepositories) {
+    rmSync(root, { recursive: true, force: true });
+  }
+  temporaryRepositories.clear();
+});
 
 function withGitMutation(root, target, callback) {
   const bin = mkdtempSync(join(require("node:os").tmpdir(), "agent-impact-git-wrapper-"));
