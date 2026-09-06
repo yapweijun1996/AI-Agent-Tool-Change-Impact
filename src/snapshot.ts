@@ -205,7 +205,7 @@ function loadWorkingTreeFiles(root: string, limits: Limits): { files: Map<string
         diagnostics.add({ code: "FILE_BUDGET_EXCEEDED", message: `Skipped file after reaching total byte budget: ${relativePath}`, file: relativePath, severity: "warning" });
         continue;
       }
-      const bounded = readTextFileBounded(absolutePath, Math.min(limits.maxFileBytes, remainingBytes));
+      const bounded = readTextFileBounded(real, Math.min(limits.maxFileBytes, remainingBytes));
       if (bounded.exceeded) {
         diagnostics.add({ code: "FILE_BUDGET_EXCEEDED", message: `Skipped file after content-size check: ${relativePath}`, file: relativePath, severity: "warning" });
         continue;

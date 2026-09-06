@@ -1,3 +1,4 @@
+import { realpathSync } from "node:fs";
 import { isAbsolute, join, relative, resolve, sep } from "node:path";
 import * as ts from "typescript";
 import { ImpactError } from "./errors";
@@ -54,7 +55,11 @@ function readPermittedFile(root: string, fileName: string, snapshot: SourceSnaps
     return undefined;
   }
   try {
-    const result = readTextFileBounded(absolute, maxBytes);
+    const real = realpathSync(absolute);
+    if (!externalFileAllowed(root, real)) {
+      return undefined;
+    }
+    const result = readTextFileBounded(real, maxBytes);
     return result.exceeded ? undefined : result.content;
   } catch {
     return undefined;
