@@ -138,6 +138,15 @@ heuristic matching, and a dedicated `why` command remain deferred. A second
 provider must establish its own project, coordinate, completeness, and budget
 evidence before the public provider contract is broadened.
 
+### D-11: Keep the v0.1 runtime floor explicit
+
+The package targets Node.js 22 and newer, matching the maintained runtime lines
+selected for this release candidate and the configured Node 22/24 matrix. The
+earlier proposal's Node 18/20 targets are not advertised by v0.1; lowering the
+floor requires separate compatibility evidence and a deliberate support
+decision. This keeps the published engine range aligned with tested behavior
+instead of implying unverified historical runtime support.
+
 ## Review disposition
 
 The original design review concerns are now covered by implementation and tests

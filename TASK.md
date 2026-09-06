@@ -132,7 +132,7 @@ The following commands passed after the implementation commit:
 | Historical dependency-input fidelity | CI-03, CI-04, CI-07 | Use permitted current local declarations and report the limitation; never install/fetch history |
 | Precise module-widening rules | CI-02, CI-05 | Current file mode is module-level; symbol mode retains bound references |
 | Frozen schema/enums/API signatures | CI-02, CI-09 | Keep `0.1-draft` until all acceptance and release gates pass |
-| Node/platform compatibility | CI-09 | `engines.node >=22`; Node 23/macOS and Node 22/24 Linux containers pass locally; Windows and hosted three-OS matrix remain unrun |
+| Node/platform compatibility | CI-09 | `engines.node >=22` is the deliberate v0.1 floor; Node 23/macOS and Node 22/24 Linux containers pass locally; Node 18/20 are unsupported without separate evidence; Windows and hosted three-OS matrix remain unrun |
 | Input/provider/output thresholds | CI-08 | Defaults and hard caps are implemented; macOS and Node 22/24 Linux fan-out observations exist, while release thresholds await repeated sustained and Windows/hosted measurement |
 
 ## Blockers and limitations

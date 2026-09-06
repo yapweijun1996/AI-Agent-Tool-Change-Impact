@@ -158,8 +158,10 @@ diagnostics; `ANALYSIS_LIMIT_EXCEEDED` is reserved in the draft vocabulary and
 is not emitted by the current provider.
 
 Runtime dependencies are Node.js `>=22` and TypeScript `5.9.3`; Ajv is a
-development-only schema-test dependency. The lockfile is committed. The
-maintained Node 22/24 and Linux/macOS/Windows CI matrix is configured in
+development-only schema-test dependency. The lockfile is committed. Node 18/20
+are outside the v0.1 support contract until a separate compatibility decision
+and runtime evidence lower the floor. The maintained Node 22/24 and
+Linux/macOS/Windows CI matrix is configured in
 `.github/workflows/ci.yml`. Local execution covers Node.js `23.10.0` on macOS
 and Node.js 22/24 in Linux containers; Windows and hosted matrix jobs remain
 unexecuted. The package is not published and registry installation is not
