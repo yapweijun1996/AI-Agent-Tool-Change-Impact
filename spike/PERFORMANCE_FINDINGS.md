@@ -54,9 +54,11 @@ evidence.
 
 The same default 241-file fixture was run in clean Git archive checkouts using
 Node.js `v22.23.2` and `v24.20.0` Alpine runtime binaries inside a Git-capable
-Linux container. Each checkout used `npm ci --offline` from the locked npm
-cache, `NODE_OPTIONS=--max-old-space-size=1024`, and `npm run build` before the
-benchmark. This validates the Linux runtimes and locked dependency graph; it
+Linux container. Earlier benchmark checkouts used `npm ci --offline` from the
+locked npm cache; the latest package-smoke validation uses a fresh lockfile
+`npm ci` followed by cache-preferred artifact installation. Every benchmark
+uses `NODE_OPTIONS=--max-old-space-size=1024` and `npm run build` before the
+measurement. This validates the Linux runtimes and locked dependency graph; it
 does not claim stock-image setup, hosted CI behavior, or registry availability.
 
 | Runtime | Mode | Wall time | API work time | RSS delta | Result |
