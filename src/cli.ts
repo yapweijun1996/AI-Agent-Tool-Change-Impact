@@ -102,7 +102,10 @@ function parseArgs(argv: readonly string[]): ParsedArgs {
       positional.push(token);
       continue;
     }
-    const [rawName, inlineValue] = token.slice(2).split("=", 2);
+    const tokenBody = token.slice(2);
+    const separator = tokenBody.indexOf("=");
+    const rawName = separator === -1 ? tokenBody : tokenBody.slice(0, separator);
+    const inlineValue = separator === -1 ? undefined : tokenBody.slice(separator + 1);
     if (!rawName) {
       throw new ImpactError("INVALID_ARGUMENT", "Flag name cannot be empty");
     }
@@ -118,7 +121,7 @@ function parseArgs(argv: readonly string[]): ParsedArgs {
       continue;
     }
     const value = inlineValue ?? tokens[index + 1];
-    if (value === undefined || value.startsWith("--")) {
+    if (value === undefined || value.length === 0 || (inlineValue === undefined && value.startsWith("--"))) {
       throw new ImpactError("INVALID_ARGUMENT", `Flag --${rawName} requires a value`);
     }
     if (inlineValue === undefined) {

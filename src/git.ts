@@ -25,11 +25,11 @@ export function collectGitChanges(rootInput: string | undefined, baseInput: stri
     throw new ImpactError("INVALID_ARGUMENT", "Pass exactly one of head or worktree for changed analysis");
   }
   const base = baseInput.trim();
-  if (!base || base.startsWith("-")) {
+  if (!base || base.startsWith("-") || base.includes("\0")) {
     throw new ImpactError("INVALID_ARGUMENT", "A valid base revision is required");
   }
   const head = headInput?.trim();
-  if (!worktree && (!head || head.startsWith("-"))) {
+  if (!worktree && (!head || head.startsWith("-") || head.includes("\0"))) {
     throw new ImpactError("INVALID_ARGUMENT", "A valid head revision is required when worktree is false");
   }
   const captureBefore = worktree ? worktreeCaptureSignature(root, base) : undefined;

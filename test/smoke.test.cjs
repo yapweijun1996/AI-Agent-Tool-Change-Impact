@@ -14,7 +14,7 @@ function git(root, args) {
 }
 
 function createRepo(options = {}) {
-  const root = mkdtempSync(join(require("node:os").tmpdir(), "agent-impact-test-"));
+  const root = mkdtempSync(join(require("node:os").tmpdir(), options.prefix ?? "agent-impact-test-"));
   cpSync(fixtureRoot, root, { recursive: true });
   if (!options.includeDynamic) {
     rmSync(join(root, "src", "dynamic.ts"));
@@ -485,6 +485,27 @@ test("invalid invocations return exit code 2 and one JSON document", () => {
   const extra = spawnSync(process.execPath, [join(__dirname, "..", "dist", "cli.js"), "file", "src/math.ts", "extra", "--json"], { encoding: "utf8" });
   assert.equal(extra.status, 2);
   assert.equal(JSON.parse(extra.stdout).error.code, "INVALID_ARGUMENT");
+});
+
+test("CLI inline values preserve equals signs and changed revisions trim whitespace", () => {
+  const root = createRepo({ prefix: "agent-impact=cli-" });
+  const cli = spawnSync(process.execPath, [join(__dirname, "..", "dist", "cli.js"), "file", "src/math.ts", `--root=${root}`, "--project=tsconfig.json", "--json"], { encoding: "utf8" });
+  assert.equal(cli.status, 0);
+  assert.equal(JSON.parse(cli.stdout).ok, true);
+
+  const base = git(root, ["rev-parse", "HEAD"]);
+  const mathPath = join(root, "src", "math.ts");
+  writeFileSync(mathPath, readFileSync(mathPath, "utf8").replace("value * 2", "value * 9"));
+  git(root, ["add", "src/math.ts"]);
+  git(root, ["commit", "-qm", "trim-revision-input"]);
+  const head = git(root, ["rev-parse", "HEAD"]);
+  const changed = api.analyzeChanged({ root, project: "tsconfig.json", base: ` ${base} `, head: ` ${head} ` });
+  assert.equal(changed.ok, true);
+  assert.ok(changed.changed.some((entry) => entry.path === "src/math.ts"));
+
+  const nulRevision = api.analyzeChanged({ root, project: "tsconfig.json", base: `HEAD\0`, head });
+  assert.equal(nulRevision.ok, false);
+  assert.equal(nulRevision.error.code, "INVALID_ARGUMENT");
 });
 
 test("changed analysis rejects missing comparison endpoints and missing roots", () => {

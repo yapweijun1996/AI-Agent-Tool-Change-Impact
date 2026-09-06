@@ -191,10 +191,11 @@ export function loadWorkingTreeStable(rootInput?: string, limits: Limits = DEFAU
 }
 
 export function resolveRevision(root: string, revision: string): string {
-  if (!revision || revision.startsWith("-")) {
+  const normalized = revision.trim();
+  if (!normalized || normalized.startsWith("-") || normalized.includes("\0")) {
     throw new ImpactError("INVALID_ARGUMENT", "Git revision must be a non-empty revision name");
   }
-  return runGit(root, ["rev-parse", "--verify", `${revision}^{commit}`]).trim();
+  return runGit(root, ["rev-parse", "--verify", `${normalized}^{commit}`]).trim();
 }
 
 export function loadRevision(rootInput: string | undefined, revisionInput: string, limits: Limits = DEFAULT_LIMITS): SnapshotLoadResult {
