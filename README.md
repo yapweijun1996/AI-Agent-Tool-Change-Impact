@@ -38,7 +38,7 @@ npm run pack:check
 The test suite creates temporary Git repositories from
 [`test/fixtures/basic`](test/fixtures/basic), then exercises the CLI and API
 without modifying the checkout. `npm test` builds TypeScript before running the
-23 smoke/integration cases, including cycle-safe traversal, deterministic
+24 smoke/integration cases, including cycle-safe traversal, deterministic
 diamond paths, and an empty-impact result.
 The packaged tarball was also installed in temporary directories and loaded
 successfully on the local macOS runtime and Node 22/24 Linux containers; the
