@@ -61,14 +61,14 @@ dependency graph without claiming registry availability.
 
 | Runtime | Mode | Wall time | API work time | RSS delta | Result |
 | --- | --- | ---: | ---: | ---: | --- |
-| Node 22 / Linux | API default | 446.6 ms | 325.5 ms | 79.8 MiB | `partial`, 100 nodes/99 edges, `NODE_LIMIT` |
-| Node 22 / Linux | API hard caps | 438.6 ms | 317.7 ms | 80.3 MiB | `complete`, 241 nodes/240 edges |
-| Node 22 / Linux | CLI default | 443.2 ms | — | — | `partial`, 100 nodes/99 edges, `NODE_LIMIT` |
-| Node 22 / Linux | CLI hard caps | 441.8 ms | — | — | `complete`, 241 nodes/240 edges |
-| Node 24 / Linux | API default | 404.9 ms | 280.7 ms | 102.8 MiB | `partial`, 100 nodes/99 edges, `NODE_LIMIT` |
-| Node 24 / Linux | API hard caps | 389.8 ms | 276.2 ms | 102.2 MiB | `complete`, 241 nodes/240 edges |
-| Node 24 / Linux | CLI default | 379.8 ms | — | — | `partial`, 100 nodes/99 edges, `NODE_LIMIT` |
-| Node 24 / Linux | CLI hard caps | 374.0 ms | — | — | `complete`, 241 nodes/240 edges |
+| Node 22 / Linux | API default | 585.5 ms | 436.6 ms | 81.5 MiB | `partial`, 100 nodes/99 edges, `NODE_LIMIT` |
+| Node 22 / Linux | API hard caps | 607.4 ms | 461.2 ms | 79.0 MiB | `complete`, 241 nodes/240 edges |
+| Node 22 / Linux | CLI default | 544.7 ms | — | — | `partial`, 100 nodes/99 edges, `NODE_LIMIT` |
+| Node 22 / Linux | CLI hard caps | 570.7 ms | — | — | `complete`, 241 nodes/240 edges |
+| Node 24 / Linux | API default | 901.6 ms | 606.4 ms | 102.9 MiB | `partial`, 100 nodes/99 edges, `NODE_LIMIT` |
+| Node 24 / Linux | API hard caps | 692.1 ms | 494.5 ms | 100.9 MiB | `complete`, 241 nodes/240 edges |
+| Node 24 / Linux | CLI default | 709.7 ms | — | — | `partial`, 100 nodes/99 edges, `NODE_LIMIT` |
+| Node 24 / Linux | CLI hard caps | 697.2 ms | — | — | `complete`, 241 nodes/240 edges |
 
 Returned counts and stop reasons match the macOS fixture behavior. These Linux
 observations improve cross-runtime evidence but do not establish Windows or
