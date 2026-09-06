@@ -30,7 +30,7 @@ It is evidence for project-host behavior, not a performance guarantee.
    Deleted declarations remain addressable in the base context, and rename
    results retain old and new paths.
 5. The implementation enforces file, graph, observation, and output limits. The
-   current 28-case smoke suite verifies behavior at the API/CLI boundary on the
+   historical 28-case smoke suite verifies behavior at the API/CLI boundary on the
    macOS runtime and in latest clean-clone Linux runs after `1e61baf` using Node.js `v22.23.2` and `v24.20.0`
    Alpine runtime binaries inside a Git-capable container. Each Linux run used
    a fresh lockfile `npm ci` install, followed by cache-preferred package smoke;

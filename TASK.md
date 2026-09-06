@@ -82,7 +82,10 @@ lifecycle-safe CI installs are in
 [`f64fbb6`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/f64fbb6);
 CLI inline-value and Git revision input hardening is in
 [`ab27679`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/ab27679);
-documentation reconciliation follows the implementation revision above.
+documentation reconciliation follows in
+[`3a7bc99`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/3a7bc99),
+[`079acbd`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/079acbd),
+and [`1a57175`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/1a57175).
 
 ## Current situation
 
@@ -92,7 +95,7 @@ metadata/lockfile, and a configured cross-platform workflow. Local verification
 on Node.js `23.10.0` / macOS `Darwin 25.6.0 arm64` passes 29 smoke/integration
 tests, including cycle-safe traversal, complete empty-impact results, and
 external-helper, symlink-escape isolation, malformed API request validation, and
-snapshot-aware diagnostics. The full 28-case suite, clean lockfile installs,
+snapshot-aware diagnostics. Historical full 28-case Linux runs, clean lockfile installs,
 type check, and package check pass in temporary Node 22 and Node 24 Linux
 checkouts. The package smoke uses a cache-preferred install with normal registry
 fallback when metadata is absent; the latest clean clone rerun after `273a344`
@@ -154,7 +157,8 @@ release action as completed evidence.
 ## Verified local commands
 
 The following commands passed in the final local gate run on 2026-09-07 at code
-revision `ab27679` (documentation reconciliation `079acbd`) using Node.js
+revision `ab27679` (documentation reconciliation `079acbd`, clean-install
+evidence `1a57175`) using Node.js
 `v23.10.0` on macOS `Darwin 25.6.0 arm64`. A fresh dependency install with
 `npm ci --ignore-scripts --no-audit --no-fund` completed before the test run:
 

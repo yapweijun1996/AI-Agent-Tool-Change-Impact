@@ -8,6 +8,7 @@ Latest release metadata validation: `4d770e0`.
 Latest API limit validation: `74563b1`.
 Latest local release evidence: `17020ad`.
 Latest CLI/revision input hardening: `ab27679`.
+Latest documentation/clean-install evidence reconciliation: `1a57175`.
 Runtime evidence is tracked in [VALIDATION.md](VALIDATION.md); task status is
 authoritative in [TASK.md](TASK.md).
 

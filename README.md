@@ -26,6 +26,8 @@ added in `13990ce`).
 Unknown JavaScript API limit fields fail closed in `74563b1`; the latest local
 Node 22/24 release evidence is recorded in `17020ad`.
 CLI inline values and Git revision inputs are hardened in `ab27679`.
+Documentation and clean-install evidence are reconciled in `079acbd` and
+`1a57175`.
 It is a working draft,
 not a published release: the public schema is still `0.1-draft`, local macOS
 and Linux container verification passes, the hosted cross-platform CI matrix
