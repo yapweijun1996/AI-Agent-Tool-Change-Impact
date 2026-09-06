@@ -161,7 +161,8 @@ the full 28-case Node 22/24 Linux container runs, clean lockfile `npm ci`,
 cache-preferred package install, type checks, and package checks pass. Earlier
 clean Linux runs also pass tarball install/API smoke. The latest full run includes the
 external-helper, symlink-escape, malformed API request, out-of-range coordinate,
-and snapshot-aware diagnostic fixtures.
+and snapshot-aware diagnostic fixtures. Package-only Node 22.23.2 and 24.20.0
+Linux checkouts also pass clean `npm ci` and `release:check`.
 No Windows/hosted workflow result, registry publication, clean registry
 install, or provenance is claimed.
 
