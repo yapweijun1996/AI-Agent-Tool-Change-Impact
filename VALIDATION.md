@@ -20,7 +20,7 @@ for the unrun hosted matrix or registry gates below.
 
 | Area | Evidence | Result |
 | --- | --- | --- |
-| Build and type safety | `npm run typecheck`; `npm test` builds with `tsc -p tsconfig.json` | Pass |
+| Build and type safety | `npm run typecheck`; `npm test` builds with strict `tsc -p tsconfig.json`, including unused locals/parameters checks | Pass |
 | Runtime smoke/integration | `npm test` on Node.js `v23.10.0`, macOS `Darwin 25.6.0 arm64`, plus temporary clean Git clones using Node.js `v22.23.2` and `v24.20.0` Alpine runtimes | Pass: 29 tests on macOS and historical 28-test runs on each Linux runtime, with installed API/CLI smoke; Linux clones use the committed lockfile with fresh `npm ci` installs, followed by the same checks as CI, with `NODE_OPTIONS=--max-old-space-size=1024` |
 | Draft contract | Ajv `8.20.0` validates capabilities, success, partial, and error envelopes, including effective `analysis.limits` | Pass |
 | Dependency audit | `npm audit --json` (production and development dependency graph) | Pass: 0 vulnerabilities |

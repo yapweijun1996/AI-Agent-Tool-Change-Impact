@@ -169,7 +169,7 @@ evidence `1a57175`) using Node.js
 | Command | Result |
 | --- | --- |
 | `npm test` | Pass: 29 tests; build plus Node test runner |
-| `npm run typecheck` | Pass: strict TypeScript check |
+| `npm run typecheck` | Pass: strict TypeScript check with unused locals/parameters rejected |
 | `npm run docs:check` | Pass: 11 Markdown files; links/anchors, identifiers, task DAG, fences, whitespace, Git references, and `.gitattributes` preservation |
 | `npm audit --json` | Pass: 0 vulnerabilities across production and development dependencies |
 | `npm pack --dry-run --ignore-scripts` | Pass: 38 package files, including `CHANGELOG.md`; no development sources/tests included |
