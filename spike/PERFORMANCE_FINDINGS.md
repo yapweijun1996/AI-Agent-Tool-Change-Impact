@@ -1,7 +1,7 @@
 # Local performance findings
 
 Date: 2026-09-07
-Benchmark implementation revision: `db809f4`; latest core implementation revision: `8bb3651`; latest package verification revision: `273a344`; latest provider observation bounding: `32fd01a`; latest diagnostic collection bounding: `a0f148b`
+Benchmark implementation revision: `db809f4`; latest core implementation revision: `8bb3651`; latest package verification revision: `273a344`; latest provider observation bounding: `32fd01a`; latest diagnostic collection bounding: `a0f148b`; latest bounded source reads: `149e0fa`
 
 This note records bounded local resource experiments on macOS and Linux
 containers. It is evidence that the configured limits stop work predictably;
@@ -143,3 +143,9 @@ diagnostics during snapshot discovery instead of accumulating all 20,000
 entries; this is a bounded-work regression check, not a throughput or memory
 guarantee. The script accepts `AGENT_IMPACT_DIAGNOSTIC_FILES` and
 `AGENT_IMPACT_DIAGNOSTIC_FILE_BYTES` for smaller repeatable runs.
+
+At revision `149e0fa`, the same test also exercises the bounded descriptor reader
+directly: a 4 KiB file read with a 512-byte budget stops after 513 bytes and
+returns no decoded content. Working-tree, Git revision, and permitted external
+declaration reads use this same pre-decode bound. This is a memory-bound
+regression check, not a sustained-memory or cancellation guarantee.

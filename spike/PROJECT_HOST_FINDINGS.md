@@ -1,7 +1,7 @@
 # Project-host feasibility findings
 
 Date: 2026-09-07
-Evidence implementation revision: `db809f4`; latest core implementation revision: `8bb3651`; latest package verification revision: `273a344`; latest provider observation bounding: `32fd01a`; latest diagnostic collection bounding: `a0f148b`
+Evidence implementation revision: `db809f4`; latest core implementation revision: `8bb3651`; latest package verification revision: `273a344`; latest provider observation bounding: `32fd01a`; latest diagnostic collection bounding: `a0f148b`; latest bounded source reads: `149e0fa`
 
 This note records the bounded feasibility check that informed the first provider.
 It is evidence for project-host behavior, not a performance guarantee.
@@ -37,7 +37,10 @@ It is evidence for project-host behavior, not a performance guarantee.
    a fresh lockfile `npm ci` install, followed by cache-preferred package smoke;
    this reproduces the dependency-install order used by CI. It does not establish
    Windows/hosted-matrix behavior, sustained cross-platform performance,
-   cancellation latency, or memory limits.
+   cancellation latency, or memory limits. Working-tree, Git-blob, and permitted
+   external declaration reads now stop at the per-file budget plus one byte before
+   decoding; the direct bounded-reader regression is part of the same 31-case
+   suite.
 
 ## Decisions and remaining questions
 

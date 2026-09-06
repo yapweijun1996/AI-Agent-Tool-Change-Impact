@@ -76,6 +76,9 @@ an explicit partial-result marker and regression coverage in
 Diagnostic collection is now bounded before projection, with an explicit
 `DIAGNOSTIC_LIMIT` marker, a post-read file-size check, and regression coverage
 in [`a0f148b`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/a0f148b).
+Bounded descriptor reads now stop at the per-file budget plus one byte before
+decoding, and Git blobs/permitted external declarations use the same bound in
+[`149e0fa`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/149e0fa).
 [TASK.md](TASK.md) is the authoritative status ledger.
 
 ## Work packages
@@ -89,7 +92,7 @@ in [`a0f148b`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/comm
 | E-05: Evidence graph and impact | CI-05 | Done for scope | Reverse traversal, stable IDs, retained paths, cycle-safe depth/node/edge caps |
 | E-06: Candidate-test projection | CI-06 | Done for scope | Filename candidates linked to retained dependency edges |
 | E-07: Changed-target orchestration | CI-07 | Done for tested cases | Modification, deletion, rename, configuration, unsupported-file, worktree projections |
-| E-08: Resource and correctness hardening | CI-08 | In progress | Deterministic file/graph/provider/diagnostic/output limits, three repeated cold starts, high-fan-out regressions, and bounded fan-out measurements across four sizes are present; cancellation, isolation, and platform runs remain |
+| E-08: Resource and correctness hardening | CI-08 | In progress | Deterministic file/graph/provider/diagnostic/output limits, bounded descriptor/Git/external reads, three repeated cold starts, high-fan-out regressions, and bounded fan-out measurements across four sizes are present; cancellation, isolation, and platform runs remain |
 | E-09: Package and release gates | CI-09 | In progress | Local pack dry-run includes the unreleased changelog, `npm run release:check` validates package metadata and the tarball file set, dependency audit and installed API/CLI smoke are configured, and CI uses full-history checkout, lifecycle-disabled dependency installation, and `contents: read`; schema freeze, cross-platform artifact checks, and registry evidence remain |
 
 ## Acceptance by work package
@@ -149,10 +152,13 @@ explicitly rather than returning a false empty result.
 ### E-08: Verify actual work and output bounds
 
 File, graph, retained provider-observation, diagnostic, and serialized-output
-limits are enforced before projection; deterministic ordering and unchanged-Git
+limits are enforced before projection; source descriptors, Git blobs, and
+permitted external declarations stop at their effective per-file byte budget
+plus one byte before decoding. Deterministic ordering and unchanged-Git
 assertions are covered locally. Unresolved module observations are capped at the
 effective edge budget, diagnostic collection is capped at `maxDiagnostics`, and
-the 31-case suite includes high-fan-out regressions for both truncation markers.
+the 31-case suite includes high-fan-out regressions for both truncation markers
+plus the bounded reader.
 A bounded fan-out benchmark records default versus hard-cap behavior
 across four sizes on macOS and the 241-file fixture on Node 22/24 Linux, with
 separate API/CLI cold-start observations. A 20,000-oversized-file stress script
