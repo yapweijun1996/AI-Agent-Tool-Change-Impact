@@ -70,8 +70,11 @@ export class SourceSnapshot {
 }
 
 function runGit(root: string, args: string[], encoding: BufferEncoding = "utf8"): string {
+  // A repository can configure core.fsmonitor as an executable helper. Disable
+  // it so read-only analysis never runs repository-configured processes.
+  const safeArgs = ["-c", "core.fsmonitor=false", ...args];
   try {
-    return execFileSync("git", args, {
+    return execFileSync("git", safeArgs, {
       cwd: root,
       encoding,
       stdio: ["ignore", "pipe", "pipe"],
@@ -84,7 +87,7 @@ function runGit(root: string, args: string[], encoding: BufferEncoding = "utf8")
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    throw new ImpactError("GIT_ERROR", `Git command failed: git ${args.join(" ")}`, { cause: message });
+    throw new ImpactError("GIT_ERROR", `Git command failed: git ${safeArgs.join(" ")}`, { cause: message });
   }
 }
 

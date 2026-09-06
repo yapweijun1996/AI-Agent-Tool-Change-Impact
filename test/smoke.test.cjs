@@ -40,6 +40,10 @@ function withGitMutation(root, target, callback) {
       "  >>\"%IMPACT_CAPTURE_TARGET%\" echo // concurrent edit",
       "  type nul > \"%IMPACT_CAPTURE_MARKER%\"",
       ")",
+      "if \"%~1\"==\"-c\" if \"%~2\"==\"core.fsmonitor=false\" if \"%~3\"==\"diff\" if \"%~4\"==\"--raw\" if not exist \"%IMPACT_CAPTURE_MARKER%\" (",
+      "  >>\"%IMPACT_CAPTURE_TARGET%\" echo // concurrent edit",
+      "  type nul > \"%IMPACT_CAPTURE_MARKER%\"",
+      ")",
       "exit /b %code%",
       "",
     ].join("\r\n"));
@@ -48,6 +52,7 @@ function withGitMutation(root, target, callback) {
       "#!/bin/sh",
       "\"$IMPACT_REAL_GIT\" \"$@\"",
       "code=$?",
+      "if [ \"$1\" = \"-c\" ] && [ \"$2\" = \"core.fsmonitor=false\" ]; then shift 2; fi",
       "if [ \"$1\" = \"diff\" ] && [ \"$2\" = \"--raw\" ] && [ ! -e \"$IMPACT_CAPTURE_MARKER\" ]; then",
       "  printf '\\n// concurrent edit\\n' >> \"$IMPACT_CAPTURE_TARGET\"",
       "  : > \"$IMPACT_CAPTURE_MARKER\"",
@@ -367,6 +372,7 @@ test("changed analysis disables configured external diff and textconv helpers", 
   git(root, ["commit", "-qm", "configure-diff-driver"]);
   git(root, ["config", "diff.external", helper]);
   git(root, ["config", "diff.fixture.textconv", helper]);
+  git(root, ["config", "core.fsmonitor", helper]);
   const base = git(root, ["rev-parse", "HEAD"]);
   const mathPath = join(root, "src", "math.ts");
   writeFileSync(mathPath, readFileSync(mathPath, "utf8").replace("value * 2", "value * 6"));
