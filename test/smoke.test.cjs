@@ -195,6 +195,27 @@ test("worktree includes non-ignored untracked source and does not mutate Git", (
   assert.equal(git(root, ["status", "--porcelain"]), before);
 });
 
+test("conflicted worktrees are reported as partial", () => {
+  const root = createRepo();
+  const base = git(root, ["rev-parse", "HEAD"]);
+  const defaultBranch = git(root, ["branch", "--show-current"]);
+  git(root, ["checkout", "-qb", "impact-conflict-side"]);
+  const mathPath = join(root, "src", "math.ts");
+  writeFileSync(mathPath, readFileSync(mathPath, "utf8").replace("value * 2", "value * 5"));
+  git(root, ["add", "src/math.ts"]);
+  git(root, ["commit", "-qm", "conflict-side"]);
+  git(root, ["checkout", defaultBranch]);
+  writeFileSync(mathPath, readFileSync(mathPath, "utf8").replace("value * 2", "value * 7"));
+  git(root, ["add", "src/math.ts"]);
+  git(root, ["commit", "-qm", "conflict-main"]);
+  const merge = spawnSync("git", ["merge", "--no-edit", "impact-conflict-side"], { cwd: root, encoding: "utf8" });
+  assert.notEqual(merge.status, 0);
+  const result = api.analyzeChanged({ root, project: "tsconfig.json", base, worktree: true });
+  assert.equal(result.ok, true);
+  assert.equal(result.analysis.status, "partial");
+  assert.ok(result.warnings.some((warning) => warning.code === "GIT_CONFLICT_STATE"));
+});
+
 test("output and argument limits fail with machine-readable errors", () => {
   const root = createRepo();
   const output = api.analyzeFile({ root, project: "tsconfig.json", file: "src/math.ts", limits: { maxOutputBytes: 256 } });
