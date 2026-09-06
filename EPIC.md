@@ -19,7 +19,9 @@ Package checks now build compiled entry points in
 CLI positional-argument validation was added in
 [`0169580`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/0169580).
 Boundary hardening was added in
-[`954f6dc`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/954f6dc).
+[`bbfeb58`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/bbfeb58).
+Git change-state fixture coverage was expanded in
+[`940effd`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/940effd).
 The draft schema and local verification pass; cross-platform execution,
 stress/cancellation evidence, schema freeze, and publication remain open.
 [TASK.md](TASK.md) is the authoritative status ledger.
@@ -30,7 +32,7 @@ stress/cancellation evidence, schema freeze, and publication remain open.
 | --- | --- | --- | --- |
 | E-01: Project-host feasibility | CI-01 | Done locally | Config-bound virtual host and [`spike/PROJECT_HOST_FINDINGS.md`](spike/PROJECT_HOST_FINDINGS.md) |
 | E-02: Executable draft contracts | CI-02 | Done as draft | TypeScript contracts, draft JSON Schema, CLI/API/error fixtures |
-| E-03: Snapshot and Git boundary | CI-03 | In progress | Revision/worktree snapshots, endpoint diff, read-only flags; conflict/concurrency fixtures remain |
+| E-03: Snapshot and Git boundary | CI-03 | Done for tested cases | Revision/worktree snapshots, endpoint diff, read-only flags, conflict and concurrent-content fixtures |
 | E-04: TypeScript semantic provider | CI-04 | Done for scope | JS/TS/TSX targets, imports/re-exports, calls/references, extends/implements |
 | E-05: Evidence graph and impact | CI-05 | Done for scope | Reverse traversal, stable IDs, retained paths, depth/node/edge caps |
 | E-06: Candidate-test projection | CI-06 | Done for scope | Filename candidates linked to retained dependency edges |
@@ -59,8 +61,9 @@ payloads with Ajv. The schema is intentionally not frozen.
 `src/snapshot.ts` reads Git trees and bounded working-tree files without
 checkout/reset. `src/git.ts` implements endpoint comparison, untracked files,
 old/new ranges, rename status, conflict detection, and worktree capture-change
-diagnostics. Conflict and concurrent-change behavior is implemented but lacks a
-dedicated smoke fixture.
+diagnostics. The capture signature combines status and raw tracked diffs, and
+the smoke suite exercises both conflict and concurrent-content changes in
+temporary repositories.
 
 ### E-04: Resolve semantics without hiding scope gaps
 

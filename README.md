@@ -9,7 +9,7 @@ can inspect the relevant code.
 ## Current state
 
 The implementation was introduced in `b57321d`; provider-boundary, Git endpoint,
-and conflict-coverage/package/CLI/boundary fixes are in `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`, and `954f6dc`. It is a working draft,
+and conflict-coverage/package/CLI/boundary fixes are in `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`, `954f6dc`, `bbfeb58`, and `940effd`. It is a working draft,
 not a published release: the public schema is still `0.1-draft`, local macOS verification passes, the cross-platform
 CI matrix is configured but has not run here, and no npm publication has been
 performed.
@@ -36,7 +36,7 @@ npm run pack:check
 The test suite creates temporary Git repositories from
 [`test/fixtures/basic`](test/fixtures/basic), then exercises the CLI and API
 without modifying the checkout. `npm test` builds TypeScript before running the
-18 smoke/integration cases.
+21 smoke/integration cases.
 The packaged tarball was also installed offline in a temporary directory and
 loaded successfully on the local macOS runtime.
 

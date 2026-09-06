@@ -5,13 +5,13 @@ gates; implementation status is authoritative in [TASK.md](TASK.md).
 
 ## Current evidence
 
-Implementation revisions: `b57321d`, `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`, and `954f6dc`, plus the documentation
+Implementation revisions: `b57321d`, `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`, `954f6dc`, `bbfeb58`, and `940effd`, plus the documentation
 reconciliation that follows this implementation revision.
 
 | Area | Evidence | Result |
 | --- | --- | --- |
 | Build and type safety | `npm run typecheck`; `npm test` builds with `tsc -p tsconfig.json` | Pass |
-| Runtime smoke/integration | `npm test` on Node.js `v23.10.0`, macOS `Darwin 25.6.0 arm64` | Pass: 18 tests |
+| Runtime smoke/integration | `npm test` on Node.js `v23.10.0`, macOS `Darwin 25.6.0 arm64` | Pass: 21 tests |
 | Draft contract | Ajv `8.20.0` validates capabilities, success, partial, and error envelopes | Pass |
 | Production dependency audit | `npm audit --omit=dev` | Pass: 0 vulnerabilities |
 | Package contents | `npm pack --dry-run --ignore-scripts`; temporary tarball offline install/API smoke | Pass locally: 37 files; development tests/sources excluded; packaged API loaded |
@@ -36,7 +36,7 @@ An inline Python validator was run after this reconciliation for:
   separation, candidate-test terminology, dependencies, and release status.
 - Byte-identical preservation of `.gitattributes`.
 
-Result: **Pass** on 2026-09-06. It checked 9 Markdown files, 71 link/anchor
+Result: **Pass** on 2026-09-06. It checked 9 Markdown files, 74 link/anchor
 references, all identifier definitions/references, an acyclic CI dependency graph,
 balanced fences, final newlines, whitespace, and byte-identical `.gitattributes`.
 The previous eight-file baseline had 37 links; the increase reflects the
@@ -62,8 +62,8 @@ open. “Not run” means no evidence is available.
 | V-08 | Direct/transitive dependencies, widening, multiple changed seeds | Pass for tested cases | File/symbol direct/transitive paths and changed seeds pass; widening policy is intentionally conservative |
 | V-09 | Cycles, diamond paths, duplicate aliases, tied sort keys, repeated requests | Partial | Repeated requests are deterministic and traversal is cycle-safe by construction; dedicated graph fixtures remain |
 | V-10 | Two commits, non-current head, deleted symbol/file, removed export, rename/move | Pass for tested cases | Modification, deleted symbol, and rename old/new snapshot tests pass; removed-file/export matrix remains |
-| V-11 | Staged/unstaged edits, untracked files, missing ref, conflict, concurrent edit | Partial | Worktree/untracked/read-only, missing endpoint, and conflict checks pass; concurrent-content-change fixture remains |
-| V-12 | Top-level side effects, tsconfig/package changes, unsupported asset | Partial | Configuration change and unsupported-file projection are implemented; side-effect/package matrix remains |
+| V-11 | Staged/unstaged edits, untracked files, missing ref, conflict, concurrent edit | Pass for tested cases | Worktree/untracked/read-only, staged plus unstaged edits, missing endpoint, conflict, and concurrent-content-change checks pass; broader repository-state combinations remain |
+| V-12 | Top-level side effects, tsconfig/package changes, unsupported asset | Partial | `tsconfig.json` and `package.json` configuration changes plus unsupported-file projection pass; side-effect and broader package matrix remain |
 | V-13 | Empty complete, partial, unresolved observations elsewhere in scope | Partial | Complete and dynamic partial results pass; explicit empty/irrelevant-observation fixture remains |
 | V-14 | Test imports/type-only/unused/mock/skipped/unrelated/external test project | Partial | Filename candidate and dependency separation pass; negative test matrix remains |
 | V-15 | Large files/projects, fan-out/deep graph, cancellation, repeated sessions | Partial | Deterministic hard input/provider/graph caps are implemented; benchmarks, cancellation, and memory evidence are not run |

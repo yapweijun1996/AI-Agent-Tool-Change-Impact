@@ -15,6 +15,10 @@ boundary hardening is in
 [`5d29c4c`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/5d29c4c);
 cross-platform resolution-boundary hardening is in
 [`954f6dc`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/954f6dc);
+concurrent worktree-content detection is in
+[`bbfeb58`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/bbfeb58);
+Git change-state fixture coverage is in
+[`940effd`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/940effd);
 documentation reconciliation follows the implementation revision above.
 
 ## Current situation
@@ -40,10 +44,10 @@ publication, and clean registry installation have not been verified.
 
 | ID | Work | Status | Evidence |
 | --- | --- | --- | --- |
-| DOC-01 | Inspect implementation baseline and working-tree state | Done | Git history/tree/status reconciled before and after `b57321d`/`0cdd08f`/`13e9f14`/`6b43c58`/`ca5453e`/`0169580`/`5d29c4c`/`954f6dc` |
+| DOC-01 | Inspect implementation baseline and working-tree state | Done | Git history/tree/status reconciled before and after `b57321d`/`0cdd08f`/`13e9f14`/`6b43c58`/`ca5453e`/`0169580`/`5d29c4c`/`954f6dc`/`bbfeb58`/`940effd` |
 | DOC-02 | Review supplied product design and technical assumptions | Done | Review dispositions preserved in [DESIGN.md](DESIGN.md) |
-| DOC-03 | Maintain coordinated product/design/epic/roadmap/task docs | Done | This reconciliation updates all eight Markdown documents |
-| DOC-04 | Validate links, references, consistency, and final changes | Done | Inline validator: 9 Markdown files, 64 links/anchors, identifiers, DAG, fences, whitespace, and `.gitattributes` preservation all pass |
+| DOC-03 | Maintain coordinated product/design/epic/roadmap/task docs | Done | This reconciliation updates the eight product/status Markdown documents and the feasibility note |
+| DOC-04 | Validate links, references, consistency, and final changes | Done | Inline validator: 9 Markdown files, 72 link/anchor references, identifiers, DAG, fences, whitespace, and `.gitattributes` preservation all pass |
 
 ## Implementation backlog
 
@@ -51,7 +55,7 @@ publication, and clean registry installation have not been verified.
 | --- | --- | --- | --- | --- |
 | CI-01 | Run a configured TypeScript project-host feasibility spike | Done locally | None | Config-bound host and [`spike/PROJECT_HOST_FINDINGS.md`](spike/PROJECT_HOST_FINDINGS.md); V-02, V-03, V-06, V-15 local subset |
 | CI-02 | Define executable draft result/CLI/API contracts and fixtures | Done as draft | CI-01 | `src/types.ts`, draft schema, CLI/API/Ajv fixtures; V-04, V-05, V-08, V-13, V-16, V-20 local subset |
-| CI-03 | Implement bounded snapshot access and local Git comparison | In progress | CI-02 | Git trees/worktree, untracked/read-only, deletion/rename, and conflict fixture pass; concurrent-change fixture remains; V-01, V-10, V-11, V-18, V-19 |
+| CI-03 | Implement bounded snapshot access and local Git comparison | Done for tested cases | CI-02 | Git trees/worktree, untracked/read-only, deletion/rename, conflict, and concurrent-content fixtures pass; nested/symlink and exhaustive staged/unstaged matrices remain; V-01, V-10, V-11, V-18, V-19 |
 | CI-04 | Implement the context-bound TypeScript semantic provider | Done for scope | CI-01, CI-02, CI-03 | JS/TS/TSX targets, imports/re-exports, references/calls, extends/implements; project references deferred; V-02 through V-07 |
 | CI-05 | Implement evidence graph traversal and result projection | Done for scope | CI-02, CI-04 | Reverse BFS, stable IDs, paths, cycles, graph caps; one path per target; V-08, V-09, V-13 |
 | CI-06 | Add candidate-test classification and graph-linked results | Done for scope | CI-04, CI-05 | Filename candidates retain edge IDs/evidence and make no coverage claim; V-14 |
@@ -68,7 +72,7 @@ The following commands passed after the implementation commit:
 
 | Command | Result |
 | --- | --- |
-| `npm test` | Pass: 18 tests; build plus Node test runner |
+| `npm test` | Pass: 21 tests; build plus Node test runner |
 | `npm run typecheck` | Pass: strict TypeScript check |
 | `npm audit --omit=dev` | Pass: 0 production vulnerabilities |
 | `npm pack --dry-run --ignore-scripts` | Pass: 37 package files, no development sources/tests included |
@@ -103,8 +107,8 @@ The following commands passed after the implementation commit:
 
 1. Run the committed CI workflow on Node 22/24 and Linux/macOS/Windows; capture
    job IDs and artifact checks in [VALIDATION.md](VALIDATION.md).
-2. Add conflict/concurrent-capture and larger fan-out/depth fixtures, then record
-   measured cold-start, memory, cancellation, and output-bound behavior.
+2. Add larger fan-out/depth fixtures, then record measured cold-start, memory,
+   cancellation, and output-bound behavior.
 3. Review the draft schema/API against the completed fixtures and freeze only the
    fields and enums supported by that evidence.
 4. With explicit release authorization, publish the package and verify a clean
