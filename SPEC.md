@@ -149,7 +149,8 @@ is not emitted by the current provider.
 Runtime dependencies are Node.js `>=22` and TypeScript `5.9.3`; Ajv is a
 development-only schema-test dependency. The lockfile is committed. The
 maintained Node 22/24 and Linux/macOS/Windows CI matrix is configured in
-`.github/workflows/ci.yml`, but only local Node.js `23.10.0` on macOS has been
-executed. The package is not published and registry installation is not
+`.github/workflows/ci.yml`. Local execution covers Node.js `23.10.0` on macOS
+and Node.js 22/24 in Linux containers; Windows and hosted matrix jobs remain
+unexecuted. The package is not published and registry installation is not
 claimed. See [DESIGN.md](DESIGN.md) for ownership decisions and
 [VALIDATION.md](VALIDATION.md) for release gates.

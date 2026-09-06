@@ -30,8 +30,10 @@ It is evidence for project-host behavior, not a performance guarantee.
    Deleted declarations remain addressable in the base context, and rename
    results retain old and new paths.
 5. The implementation enforces file, graph, observation, and output limits. The
-   current 23-case smoke suite verifies behavior at the API/CLI boundary; it does not
-   establish cross-platform performance, cancellation latency, or memory limits.
+   current 23-case smoke suite verifies behavior at the API/CLI boundary on the
+   macOS runtime and in Node 22/24 Linux containers; it does not establish
+   Windows/hosted-matrix behavior, cross-platform performance, cancellation
+   latency, or memory limits.
 
 ## Decisions and remaining questions
 

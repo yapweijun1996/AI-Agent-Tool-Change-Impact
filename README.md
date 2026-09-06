@@ -12,9 +12,9 @@ The implementation was introduced in `b57321d`; provider-boundary, Git endpoint,
 conflict-coverage/package/CLI/boundary fixes, and graph traversal hardening are in
 `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`, `954f6dc`,
 `bbfeb58`, `940effd`, `1753c22`, and `e55647f`. It is a working draft,
-not a published release: the public schema is still `0.1-draft`, local macOS verification passes, the cross-platform
-CI matrix is configured but has not run here, and no npm publication has been
-performed.
+not a published release: the public schema is still `0.1-draft`, local macOS
+and Linux container verification passes, the hosted cross-platform CI matrix
+has not run here, and no npm publication has been performed.
 
 | Surface | Current state |
 | --- | --- |
@@ -23,7 +23,7 @@ performed.
 | JavaScript API | `dist/index.js` exports `capabilities`, `analyzeFile`, `analyzeSymbol`, and `analyzeChanged` |
 | Supported source | JavaScript, TypeScript, and TSX in one selected `tsconfig.json` or `jsconfig.json` project |
 | Provider | TypeScript `5.9.3` Language Service plus AST inspection |
-| Runtime floor | Node.js `22` or newer according to `package.json`; only Node.js `23.10.0` has been run locally |
+| Runtime floor | Node.js `22` or newer according to `package.json`; Node.js `23.10.0` on macOS and Node.js 22/24 Linux containers have been run locally |
 | Release state | Draft schema; not published |
 
 ## Install and verify from a checkout

@@ -54,6 +54,6 @@ replace local tests:
 | [TypeScript module resolution](https://www.typescriptlang.org/docs/handbook/modules/reference.html) | Configuration, package metadata, declarations, and links affect resolution |
 | [Git diff](https://git-scm.com/docs/git-diff) | Endpoint versus merge-base semantics and external diff/textconv behavior |
 | [CodeQL JavaScript call graph](https://codeql.github.com/docs/codeql-language-guides/codeql-library-for-javascript/#call-graph) | Static call analysis can be incomplete or imprecise |
-| [Node.js releases](https://nodejs.org/en/about/previous-releases) | Node 22/24 are maintained targets; local verification uses Node 23.10.0 |
+| [Node.js releases](https://nodejs.org/en/about/previous-releases) | Node 22/24 are maintained targets; local verification uses Node 23.10.0 on macOS and Node 22/24 Linux containers |
 | [SCIP repository](https://github.com/scip-code/scip) | Future index-provider direction only |
 | [Agent Code Slice](https://github.com/yapweijun1996/AI-Agent-Tool-Code-Slice) | Complementary location-to-code workflow; integration remains unverified |

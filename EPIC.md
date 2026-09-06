@@ -28,8 +28,9 @@ Cycle-safe graph traversal and empty-impact regression coverage were added in
 [`1753c22`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/1753c22).
 The depth-frontier regression assertion was added in
 [`e55647f`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/e55647f).
-The draft schema and local verification pass; cross-platform execution,
-cancellation/isolation evidence, schema freeze, and publication remain open.
+The draft schema and local verification pass; Windows/hosted cross-platform
+execution, cancellation/isolation evidence, schema freeze, and publication
+remain open.
 [TASK.md](TASK.md) is the authoritative status ledger.
 
 ## Work packages
@@ -104,16 +105,18 @@ explicitly rather than returning a false empty result.
 File, graph, provider-observation, and serialized-output limits are enforced;
 deterministic ordering and unchanged-Git assertions are covered locally. A
 bounded fan-out benchmark records default versus hard-cap behavior across four
-sizes and separate API/CLI cold-start observations. Larger repeated runs,
-cancellation/resource-abort behavior, memory isolation, and all target
-platforms still require execution evidence.
+sizes and separate API/CLI cold-start observations. Broader repeated runs,
+cancellation/resource-abort behavior, memory isolation, Windows, and hosted
+matrix execution still require evidence.
 
 ### E-09: Release only what the artifact proves
 
 `package.json`, the lockfile, `LICENSE`, schema, compiled entry points, and a
 Node 22/24 × Linux/macOS/Windows workflow are present. `npm pack --dry-run` and
-an offline install/API smoke check pass locally. No registry publication, clean
-registry install, or remote workflow result is claimed.
+an offline install/API smoke check pass locally. The 23-case suite, type check,
+and package check also pass in temporary Node 22 and Node 24 Linux containers.
+No Windows/hosted workflow result, registry publication, clean registry
+install, or provenance is claimed.
 
 ## Completion gate
 
