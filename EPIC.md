@@ -166,6 +166,9 @@ Linux checkouts also pass clean `npm ci` and `release:check`.
 No Windows/hosted workflow result, registry publication, clean registry
 install, or provenance is claimed.
 
+The current workflow uses full-history checkout, read-only contents permission,
+and `npm ci --ignore-scripts`; this policy is recorded in [`f64fbb6`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/f64fbb6).
+
 ## Completion gate
 
 The epic is not release-complete until every in-scope requirement in

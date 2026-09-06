@@ -5,7 +5,15 @@ gates; implementation status is authoritative in [TASK.md](TASK.md).
 
 ## Current evidence
 
-Core implementation revisions: `b57321d`, `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`, `954f6dc`, `bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, `89f5286`, `db809f4`, `143e9f7`, `d385ff5`, `798594c`, `83f398d`, and `8bb3651`; path normalization is in `661cb4d`, its NUL-byte regression is in `1e61baf`, installed API/CLI artifact smoke is in `0902d49`, Windows `.cmd` invocation hardening is in `2a68521`, the space-containing path fixture is in `1c195af`, install scripts are disabled in `b248f10`, cache-preferred dependency resolution is in `48f102e`, packaged API/CLI analysis is in `273a344`, stable two-read worktree capture is in `c4dca94`, unknown API limit fields are rejected in `74563b1`, release metadata validation is in `2262658`, optional tag validation is in `13990ce`, schema metadata validation is in `4d770e0`, repeated resource observations are recorded in `aeef862`, Linux release checks are recorded in `17020ad`, the CI dependency audit is in `850f106`, and the latest limit evidence reconciliation is in `beb003e`.
+Core implementation revisions: `b57321d`, `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`, `954f6dc`, `bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, `89f5286`, `db809f4`, `143e9f7`, `d385ff5`, `798594c`, `83f398d`, and `8bb3651`; path normalization is in `661cb4d`, its NUL-byte regression is in `1e61baf`, installed API/CLI artifact smoke is in `0902d49`, Windows `.cmd` invocation hardening is in `2a68521`, the space-containing path fixture is in `1c195af`, install scripts are disabled in `b248f10`, cache-preferred dependency resolution is in `48f102e`, packaged API/CLI analysis is in `273a344`, stable two-read worktree capture is in `c4dca94`, unknown API limit fields are rejected in `74563b1`, release metadata validation is in `2262658`, optional tag validation is in `13990ce`, schema metadata validation is in `4d770e0`, repeated resource observations are recorded in `aeef862`, Linux release checks are recorded in `17020ad`, the CI dependency audit is in `850f106`, the limit evidence reconciliation is in `beb003e`, and lifecycle-safe CI installs are in `f64fbb6`.
+
+Final local gate run on 2026-09-07 at `f64fbb6` used Node.js `v23.10.0` on
+macOS `Darwin 25.6.0 arm64`. `npm test` (28/28), `npm run typecheck`,
+`npm run pack:check` (38 files), `npm run release:check` with and without the
+matching tag, `npm run pack:smoke`, `npm audit --audit-level=low --json` (zero
+vulnerabilities), `npm run docs:check`, workflow YAML parsing, and
+`git diff --check` all passed. This is local evidence; it does not substitute
+for the unrun hosted matrix or registry gates below.
 
 | Area | Evidence | Result |
 | --- | --- | --- |

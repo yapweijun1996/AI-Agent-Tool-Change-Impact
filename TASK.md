@@ -78,6 +78,8 @@ the CI dependency audit is in
 [`850f106`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/850f106),
 and the latest limit-validation reconciliation is in
 [`beb003e`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/beb003e);
+lifecycle-safe CI installs are in
+[`f64fbb6`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/f64fbb6);
 documentation reconciliation follows the implementation revision above.
 
 ## Current situation
@@ -149,7 +151,8 @@ release action as completed evidence.
 
 ## Verified local commands
 
-The following commands passed after the implementation commit:
+The following commands passed in the final local gate run on 2026-09-07 at
+`f64fbb6` using Node.js `v23.10.0` on macOS `Darwin 25.6.0 arm64`:
 
 | Command | Result |
 | --- | --- |
