@@ -121,8 +121,12 @@ export class TypeScriptProvider {
         throw new ImpactError("TARGET_NOT_FOUND", `No declaration matched ${repoFile}:${line}:${column}`);
       }
       const lineStart = sourceFile.getPositionOfLineAndCharacter(line - 1, 0);
-      const nextLineStart = line < lineCount ? sourceFile.getPositionOfLineAndCharacter(line, 0) : sourceFile.getEnd();
-      const position = lineStart + Math.min(column - 1, Math.max(0, nextLineStart - lineStart));
+      const lineEnd = sourceFile.getLineEndOfPosition(lineStart);
+      const maxColumn = lineEnd - lineStart + 1;
+      if (column > maxColumn) {
+        throw new ImpactError("TARGET_NOT_FOUND", `No declaration matched ${repoFile}:${line}:${column}`);
+      }
+      const position = lineStart + column - 1;
       const token = findTokenAtPosition(sourceFile, position);
       const symbol = token ? resolveAliasedSymbol(this.checker.getSymbolAtLocation(token), this.checker) : undefined;
       const declaration = symbol ? declarationForSymbol(symbol, repoFile, this.context.snapshot.ref, this.checker) : undefined;

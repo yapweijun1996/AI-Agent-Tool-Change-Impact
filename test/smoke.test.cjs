@@ -243,6 +243,15 @@ test("ambiguous symbols fail closed and support location disambiguation", () => 
   assert.equal(selected.ok, true);
 });
 
+test("location selectors reject columns beyond the requested line", () => {
+  const root = createRepo();
+  const path = join(root, "src", "coordinates.ts");
+  writeFileSync(path, "export const selected = 1;\nselected;\n");
+  const result = api.analyzeSymbol({ root, project: "tsconfig.json", file: "src/coordinates.ts", name: "selected", line: 1, column: 999 });
+  assert.equal(result.ok, false);
+  assert.equal(result.error.code, "TARGET_NOT_FOUND");
+});
+
 test("changed analysis retains base and head snapshots for modifications", () => {
   const root = createRepo();
   const base = git(root, ["rev-parse", "HEAD"]);
