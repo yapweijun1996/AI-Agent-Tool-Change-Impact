@@ -133,6 +133,9 @@ test("file impact returns reverse dependency paths and candidate tests", () => {
   const outside = api.analyzeFile({ root, project: "tsconfig.json", file: "src/../math.ts" });
   assert.equal(outside.ok, false);
   assert.equal(outside.error.code, "FILE_OUTSIDE_ROOT");
+  const nul = api.analyzeFile({ root, project: "tsconfig.json", file: "src/\0math.ts" });
+  assert.equal(nul.ok, false);
+  assert.equal(nul.error.code, "FILE_OUTSIDE_ROOT");
   assert.equal(git(root, ["rev-parse", "HEAD"]), before);
 });
 
