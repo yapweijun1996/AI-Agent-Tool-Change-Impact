@@ -28,11 +28,12 @@ export function collectGitChanges(rootInput: string | undefined, baseInput: stri
   if (!base || base.startsWith("-")) {
     throw new ImpactError("INVALID_ARGUMENT", "A valid base revision is required");
   }
-  if (!worktree && (!headInput || !headInput.trim() || headInput.trim().startsWith("-"))) {
+  const head = headInput?.trim();
+  if (!worktree && (!head || head.startsWith("-"))) {
     throw new ImpactError("INVALID_ARGUMENT", "A valid head revision is required when worktree is false");
   }
   const captureBefore = worktree ? gitOutput(root, ["status", "--porcelain=v1", "-z"]) : undefined;
-  const endpoint = worktree ? undefined : headInput;
+  const endpoint = worktree ? undefined : head;
   const args = ["diff", "--name-status", "-z", "--find-renames", "--no-ext-diff", "--no-textconv", base];
   if (endpoint) {
     args.push(endpoint);
