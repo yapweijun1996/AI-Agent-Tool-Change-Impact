@@ -9,6 +9,7 @@ const root = join(__dirname, "..");
 const packageJsonPath = join(root, "package.json");
 const lockfilePath = join(root, "package-lock.json");
 const changelogPath = join(root, "CHANGELOG.md");
+const schemaPath = join(root, "schemas", "result-v0.1-draft.schema.json");
 
 function readJson(path) {
   return JSON.parse(readFileSync(path, "utf8"));
@@ -33,6 +34,7 @@ try {
   const packageJson = readJson(packageJsonPath);
   const lockfile = readJson(lockfilePath);
   const changelog = readFileSync(changelogPath, "utf8");
+  const schema = readJson(schemaPath);
 
   assert.equal(typeof packageJson.name, "string", "package name is required");
   assert.match(packageJson.version, /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/, "package version must be semver-like");
@@ -48,6 +50,8 @@ try {
 
   const versionHeading = new RegExp(`^## \\[${escapeRegExp(packageJson.version)}\\] - (?:Unreleased|\\d{4}-\\d{2}-\\d{2})$`, "m");
   assert.match(changelog, versionHeading, "CHANGELOG must contain the package version heading");
+  assert.equal(schema.$defs?.success?.properties?.schemaVersion?.const, "0.1-draft", "success schema version must match the draft contract");
+  assert.equal(schema.$defs?.error?.properties?.schemaVersion?.const, "0.1-draft", "error schema version must match the draft contract");
 
   const requiredFiles = new Set([
     "CHANGELOG.md",

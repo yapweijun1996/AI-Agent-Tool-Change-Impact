@@ -60,9 +60,9 @@ CLI were loaded successfully on the local macOS runtime and Node 22/24 Linux
 containers; the smoke prefers the npm cache, permits registry fallback for
 missing dependency metadata, and disables install scripts.
 `npm run release:check` verifies package/lockfile versions, the unreleased
-changelog heading, required entry points, and the actual dry-run tarball file
-set. Set `AGENT_IMPACT_RELEASE_TAG=v<package.version>` when validating a release
-tag. It does not publish or create a release.
+changelog heading, draft schema version, required entry points, and the actual
+dry-run tarball file set. Set `AGENT_IMPACT_RELEASE_TAG=v<package.version>` when
+validating a release tag. It does not publish or create a release.
 The bounded fan-out benchmark in
 [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) records local
 API/CLI cold-start and limit behavior without making a performance guarantee.
