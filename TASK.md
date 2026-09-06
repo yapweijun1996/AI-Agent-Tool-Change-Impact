@@ -36,9 +36,9 @@ documentation reconciliation follows the implementation revision above.
 The repository now contains a CommonJS TypeScript implementation, a draft JSON
 Schema, a CLI, a JavaScript API, a fixture-backed Node test suite, package
 metadata/lockfile, and a configured cross-platform workflow. Local verification
-on Node.js `23.10.0` / macOS `Darwin 25.6.0 arm64` passes 24 smoke/integration
+on Node.js `23.10.0` / macOS `Darwin 25.6.0 arm64` passes 25 smoke/integration
 tests, including cycle-safe traversal, complete empty-impact results, and
-external-helper isolation. The full 24-case suite, clean `npm ci --offline`,
+external-helper and symlink-escape isolation. The full 25-case suite, clean `npm ci --offline`,
 type check, and package check pass in temporary Node 22 and Node 24 Linux
 checkouts using only the locked npm cache; an earlier clean run also established
 tarball API smoke in those containers. Bounded fan-out measurements are recorded in
@@ -71,7 +71,7 @@ registry publication, and clean registry installation have not been verified.
 | --- | --- | --- | --- | --- |
 | CI-01 | Run a configured TypeScript project-host feasibility spike | Done locally | None | Config-bound host and [`spike/PROJECT_HOST_FINDINGS.md`](spike/PROJECT_HOST_FINDINGS.md); V-02, V-03, V-06, V-15 local subset |
 | CI-02 | Define executable draft result/CLI/API contracts and fixtures | Done as draft | CI-01 | `src/types.ts`, draft schema, CLI/API/Ajv fixtures; V-04, V-05, V-08, V-13, V-16, V-20 local subset |
-| CI-03 | Implement bounded snapshot access and local Git comparison | Done for tested cases | CI-02 | Git trees/worktree, untracked/read-only, deletion/rename, conflict, concurrent-content, and external-helper fixtures pass; nested/symlink and exhaustive staged/unstaged matrices remain; V-01, V-10, V-11, V-18, V-19 |
+| CI-03 | Implement bounded snapshot access and local Git comparison | Done for tested cases | CI-02 | Git trees/worktree, untracked/read-only, deletion/rename, conflict, concurrent-content, external-helper, and symlink-escape fixtures pass; nested/internal symlink and exhaustive staged/unstaged matrices remain; V-01, V-10, V-11, V-18, V-19 |
 | CI-04 | Implement the context-bound TypeScript semantic provider | Done for scope | CI-01, CI-02, CI-03 | JS/TS/TSX targets, imports/re-exports, references/calls, extends/implements; project references deferred; V-02 through V-07 |
 | CI-05 | Implement evidence graph traversal and result projection | Done for scope | CI-02, CI-04 | Reverse BFS, stable IDs, paths, per-seed cycle termination, graph caps, and complete empty impacts; one path per target; V-08, V-09, V-13 |
 | CI-06 | Add candidate-test classification and graph-linked results | Done for scope | CI-04, CI-05 | Filename candidates retain edge IDs/evidence and make no coverage claim; V-14 |
@@ -88,12 +88,12 @@ The following commands passed after the implementation commit:
 
 | Command | Result |
 | --- | --- |
-| `npm test` | Pass: 24 tests; build plus Node test runner |
+| `npm test` | Pass: 25 tests; build plus Node test runner |
 | `npm run typecheck` | Pass: strict TypeScript check |
 | `npm audit --omit=dev` | Pass: 0 production vulnerabilities |
 | `npm pack --dry-run --ignore-scripts` | Pass: 37 package files, no development sources/tests included |
 | Pack-and-install smoke | Pass: local tarball installed with `npm install --offline --omit=dev`; packaged API returned `0.1-draft`, and packaged `analyzeChanged` did not execute a configured fsmonitor marker |
-| Node 22/24 Linux container matrix | Pass: temporary clean `git archive` checkouts in `node:22-alpine` and `node:24-alpine`; `npm ci --offline`, the full 24-case suite, typecheck, and pack check pass using only the locked npm cache; earlier clean runs also pass tarball install/API smoke; the full run includes the external-helper fixture |
+| Node 22/24 Linux container matrix | Pass: temporary clean `git archive` checkouts in `node:22-alpine` and `node:24-alpine`; `npm ci --offline`, the full 25-case suite, typecheck, and pack check pass using only the locked npm cache; earlier clean runs also pass tarball install/API smoke; the full run includes external-helper and symlink-escape fixtures |
 | `node spike/performance-benchmark.cjs` | Pass locally: default 241-file fan-out plus 21/121/501-file parameterized runs on macOS, and default 241-file API/CLI runs on Node 22/24 Linux; defaults stop at 100 nodes, hard caps complete within fixture size; observations are recorded in [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) |
 | `git diff --check` | Pass: no whitespace errors |
 
