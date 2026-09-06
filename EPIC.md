@@ -46,6 +46,10 @@ Repository-relative paths are canonicalized and traversal segments rejected in
 [`661cb4d`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/661cb4d).
 NUL-byte path rejection is covered by a regression assertion in
 [`1e61baf`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/1e61baf).
+CI token permissions were restricted in
+[`0644fda`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/0644fda),
+and full-history checkout for documentation validation was added in
+[`343750a`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/343750a).
 The draft schema and local verification pass; Windows/hosted cross-platform
 execution, cancellation/isolation evidence, schema freeze, and publication
 remain open.

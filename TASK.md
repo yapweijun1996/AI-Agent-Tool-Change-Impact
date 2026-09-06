@@ -41,6 +41,10 @@ repository-relative paths are canonicalized in
 [`661cb4d`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/661cb4d);
 NUL-byte path rejection is covered in
 [`1e61baf`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/1e61baf);
+CI token permissions are restricted in
+[`0644fda`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/0644fda),
+and the full-history documentation-checkout requirement is in
+[`343750a`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/343750a);
 documentation reconciliation follows the implementation revision above.
 
 ## Current situation
