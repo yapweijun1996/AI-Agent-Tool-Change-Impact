@@ -28,7 +28,8 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "npm run build && node --test test/*.test.cjs",
-    "pack:check": "npm pack --dry-run --ignore-scripts"
+    "pack:check": "npm run build && npm pack --dry-run --ignore-scripts",
+    "prepack": "npm run build"
   },
   "dependencies": {
     "typescript": "5.9.3"
