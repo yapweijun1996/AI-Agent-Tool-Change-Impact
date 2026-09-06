@@ -18,3 +18,4 @@ pass.
 - Bound unresolved provider observations by the effective edge budget and report `PROVIDER_OBSERVATION_LIMIT` when high-fan-out inputs are truncated.
 - Bound snapshot/project diagnostic collection with the `maxDiagnostics` limit and report `DIAGNOSTIC_LIMIT` when oversized-file or configuration diagnostics are truncated; re-check bytes after working-tree reads.
 - Bound working-tree, Git revision, and permitted external declaration reads before UTF-8 decoding so concurrent file growth cannot force an oversized file into memory.
+- Re-open validated real paths for bounded reads and re-check permitted external declaration paths to reduce symlink-replacement races.

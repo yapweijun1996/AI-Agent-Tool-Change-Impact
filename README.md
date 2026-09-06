@@ -38,7 +38,8 @@ Diagnostic collection and post-read file-size checks are bounded in `a0f148b`;
 large skipped-file inventories report `DIAGNOSTIC_LIMIT` instead of accumulating
 unbounded warnings. Bounded descriptor reads and per-file Git/external-declaration
 read limits are in `149e0fa`, so concurrent file growth is rejected before the
-full file is decoded into memory.
+full file is decoded into memory. Validated real-path reads close the symlink
+replacement window in `dd212e4`.
 It is a working draft,
 not a published release: the public schema is still `0.1-draft`, local macOS
 and Linux container verification passes, the hosted cross-platform CI matrix
@@ -128,8 +129,8 @@ project diagnostic collection is capped at the effective `maxDiagnostics` value;
 truncation is visible as `DIAGNOSTIC_LIMIT`. Both markers make the analysis
 partial. Working-tree and Git revision reads stop at the effective per-file byte
 budget plus one byte before UTF-8 decoding; permitted external TypeScript
-declarations use the same per-file bound. Limits and partial stop reasons are
-included in the result.
+declarations use the same per-file bound and re-check their real path before
+opening. Limits and partial stop reasons are included in the result.
 
 ## Boundary and limitations
 

@@ -1,7 +1,7 @@
 # Local performance findings
 
 Date: 2026-09-07
-Benchmark implementation revision: `db809f4`; latest core implementation revision: `8bb3651`; latest package verification revision: `273a344`; latest provider observation bounding: `32fd01a`; latest diagnostic collection bounding: `a0f148b`; latest bounded source reads: `149e0fa`
+Benchmark implementation revision: `db809f4`; latest core implementation revision: `8bb3651`; latest package verification revision: `273a344`; latest provider observation bounding: `32fd01a`; latest diagnostic collection bounding: `a0f148b`; latest bounded source reads: `149e0fa`; latest validated real-path reads: `dd212e4`
 
 This note records bounded local resource experiments on macOS and Linux
 containers. It is evidence that the configured limits stop work predictably;
@@ -147,5 +147,6 @@ guarantee. The script accepts `AGENT_IMPACT_DIAGNOSTIC_FILES` and
 At revision `149e0fa`, the same test also exercises the bounded descriptor reader
 directly: a 4 KiB file read with a 512-byte budget stops after 513 bytes and
 returns no decoded content. Working-tree, Git revision, and permitted external
-declaration reads use this same pre-decode bound. This is a memory-bound
-regression check, not a sustained-memory or cancellation guarantee.
+declaration reads use this same pre-decode bound and re-open validated real paths.
+This is a memory-bound and path-isolation regression check, not a sustained-memory
+or cancellation guarantee.

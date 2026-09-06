@@ -13,6 +13,7 @@ Latest TypeScript compiler hygiene: [`473b4da`](https://github.com/yapweijun1996
 Latest provider observation bounding: [`32fd01a`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/32fd01a)
 Latest diagnostic collection bounding: [`a0f148b`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/a0f148b)
 Latest bounded source reads: [`149e0fa`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/149e0fa)
+Latest validated real-path reads: [`dd212e4`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/dd212e4)
 Last reconciled: 2026-09-07
 
 This document owns architecture and design decisions. [SPEC.md](SPEC.md) owns
@@ -115,8 +116,10 @@ NUL bytes are rejected. Symlink escapes are skipped. TypeScript
 standard-library files and local `node_modules` may be read for static
 resolution, but repository modules, config code, plugins, test runners,
 automatic type acquisition, external diff drivers, textconv filters, and
-`core.fsmonitor` hooks are never executed. Git commands disable external
-diff/textconv, `core.fsmonitor`, and optional locks.
+`core.fsmonitor` hooks are never executed. Working-tree files are opened through
+the real path that passed the root-boundary check, and permitted external
+declaration reads re-check their real path before opening. Git commands disable
+external diff/textconv, `core.fsmonitor`, and optional locks.
 
 ### D-08: Bound work before serialization
 

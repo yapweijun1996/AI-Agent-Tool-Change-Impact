@@ -94,6 +94,8 @@ checks and a `DIAGNOSTIC_LIMIT` marker in
 bounded descriptor reads, Git blob buffers, and permitted external declaration
 reads stop at the effective per-file budget in
 [`149e0fa`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/149e0fa);
+validated real-path reads close the symlink replacement window in
+[`dd212e4`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/dd212e4);
 documentation reconciliation is recorded in
 [`3a7bc99`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/3a7bc99),
 [`079acbd`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/079acbd),
@@ -148,7 +150,7 @@ registry publication, and clean registry installation have not been verified.
 | --- | --- | --- | --- | --- |
 | CI-01 | Run a configured TypeScript project-host feasibility spike | Done locally | None | Config-bound host and [`spike/PROJECT_HOST_FINDINGS.md`](spike/PROJECT_HOST_FINDINGS.md); V-02, V-03, V-06, V-15 local subset |
 | CI-02 | Define executable draft result/CLI/API contracts and fixtures | Done as draft | CI-01 | `src/types.ts`, draft schema, strict TypeScript unused-code checks, CLI/API runtime validation including required fields, unknown limit rejection, effective analysis limits including `maxDiagnostics`, canonical repository paths, line-bounded coordinate handling, inline `=` values, revision trimming/NUL rejection, and Ajv fixtures; V-04, V-05, V-08, V-13, V-16, V-20 local subset |
-| CI-03 | Implement bounded snapshot access and local Git comparison | Done for tested cases | CI-02 | Git trees/worktree, two-read content-hashed capture, bounded descriptor/Git-blob reads, post-read byte checks, untracked/read-only, deletion/rename, conflict, concurrent-content, external-helper, and symlink-escape fixtures pass; nested/internal symlink and exhaustive staged/unstaged matrices remain; V-01, V-10, V-11, V-18, V-19 |
+| CI-03 | Implement bounded snapshot access and local Git comparison | Done for tested cases | CI-02 | Git trees/worktree, two-read content-hashed capture, bounded descriptor/Git-blob reads, validated real-path reads, post-read byte checks, untracked/read-only, deletion/rename, conflict, concurrent-content, external-helper, and symlink-escape fixtures pass; nested/internal symlink and exhaustive staged/unstaged matrices remain; V-01, V-10, V-11, V-18, V-19 |
 | CI-04 | Implement the context-bound TypeScript semantic provider | Done for scope | CI-01, CI-02, CI-03 | JS/TS/TSX targets, imports/re-exports, references/calls, extends/implements, and bounded unresolved provider observations; project references deferred; V-02 through V-07 |
 | CI-05 | Implement evidence graph traversal and result projection | Done for scope | CI-02, CI-04 | Reverse BFS, stable IDs, paths, per-seed cycle termination, graph caps, and complete empty impacts; one path per target; V-08, V-09, V-13 |
 | CI-06 | Add candidate-test classification and graph-linked results | Done for scope | CI-04, CI-05 | Filename candidates retain edge IDs/evidence and make no coverage claim; V-14 |

@@ -14,6 +14,7 @@ Latest TypeScript compiler hygiene: `473b4da`.
 Latest provider observation bounding: `32fd01a`.
 Latest diagnostic collection bounding: `a0f148b`.
 Latest bounded source reads: `149e0fa`.
+Latest validated real-path reads: `dd212e4`.
 Runtime evidence is tracked in [VALIDATION.md](VALIDATION.md); task status is
 authoritative in [TASK.md](TASK.md).
 
@@ -164,10 +165,11 @@ Hard input/output/diagnostic caps are 8 paths, 16 MiB output, 100,000 files,
 16 MiB per file, 512 MiB total source, and 10,000 diagnostics. Retained provider
 references, unresolved module observations, file edges, dynamic observations,
 and diagnostics are capped before graph/result projection. Working-tree readers
-also check the bytes actually read after the initial filesystem-stat check and
-stop at the per-file budget plus one byte before UTF-8 decoding. Git revision
-blobs and permitted external TypeScript declarations use the same per-file read
-bound. The underlying TypeScript Language Service reference lookup is not
+also check the bytes actually read after the initial filesystem-stat check, open
+the real path that passed the root-boundary check, and stop at the per-file budget
+plus one byte before UTF-8 decoding. Git revision blobs and permitted external
+TypeScript declarations use the same per-file read bound and re-check their real
+path before opening. The underlying TypeScript Language Service reference lookup is not
 independently cancellable in this adapter, so worker isolation and query-time
 limits remain release work.
 If a usable result cannot fit the byte limit, the API returns
