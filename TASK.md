@@ -114,6 +114,8 @@ CLI formatted-output enforcement is in
 [`c6296e4`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/c6296e4);
 test fixture cleanup is in
 [`55a10bb`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/55a10bb);
+installed artifact smoke now covers compact-versus-pretty CLI output limits in
+[`3472b13`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/3472b13);
 documentation reconciliation is recorded in
 [`3a7bc99`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/3a7bc99),
 [`079acbd`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/079acbd),
@@ -179,7 +181,7 @@ registry publication, and clean registry installation have not been verified.
 | CI-06 | Add candidate-test classification and graph-linked results | Done for scope | CI-04, CI-05 | Filename candidates retain edge IDs/evidence and make no coverage claim; V-14 |
 | CI-07 | Implement two-snapshot changed-target analysis and fallback | Done for tested cases | CI-03, CI-04, CI-05 | Modification/deletion/rename/configuration/unsupported/worktree cases; V-10, V-11, V-12 |
 | CI-08 | Enforce budgets, deterministic results, isolation, and measured limits | In progress | CI-05, CI-06, CI-07 | Local file/graph/provider/diagnostic/output limits, pre-decode bounded source/external/module-resolution reads, bounded Git revision buffers with `FILE_BUDGET_EXCEEDED` overflow diagnostics, snapshot-tagged base/head loader and project diagnostics, determinism/read-only checks, bounded fan-out API/CLI measurements across macOS and Node 22/24 Linux, and high-fan-out unresolved-observation and diagnostic-cap regressions pass; Windows/hosted measurements, cancellation, and memory isolation remain; V-09, V-15 through V-20 |
-| CI-09 | Verify packaging, freeze contracts, and complete release gates | In progress | CI-08 | Local pack dry-run includes the unreleased changelog, cache-preferred `npm run pack:smoke` installed API/CLI end-to-end analysis smoke, dependency audit, Node 22/24 Linux container checks, and full-history/read-only workflow are committed; Windows/hosted artifact checks, schema freeze, publication remain; V-21, V-22 |
+| CI-09 | Verify packaging, freeze contracts, and complete release gates | In progress | CI-08 | Local pack dry-run includes the unreleased changelog, cache-preferred `npm run pack:smoke` installed API/CLI end-to-end analysis smoke plus compact-versus-pretty output-limit enforcement, dependency audit, Node 22/24 Linux container checks, and full-history/read-only workflow are committed; Windows/hosted artifact checks, schema freeze, publication remain; V-21, V-22 |
 
 Requirements and fixture definitions are in [SPEC.md](SPEC.md) and
 [VALIDATION.md](VALIDATION.md). Work-package context is in [EPIC.md](EPIC.md).
@@ -191,7 +193,7 @@ release action as completed evidence.
 
 | Gate slice | Parent | Status | Acceptance criterion | Current blocker or next input |
 | --- | --- | --- | --- | --- |
-| Local artifact and changelog integrity | CI-09 | Done locally | `npm pack --dry-run` and `npm run release:check` confirm the versioned package, lockfile, schema, compiled entry points, `CHANGELOG.md`, and no development sources; installed API/CLI analysis passes | Re-run in the hosted matrix for the release candidate |
+| Local artifact and changelog integrity | CI-09 | Done locally | `npm pack --dry-run` and `npm run release:check` confirm the versioned package, lockfile, schema, compiled entry points, `CHANGELOG.md`, and no development sources; installed API/CLI analysis and packaged pretty-output budget rejection pass | Re-run in the hosted matrix for the release candidate |
 | Hosted platform matrix | CI-09 | Blocked by external state | Six Node 22/24 jobs on Ubuntu, macOS, and Windows pass typecheck, tests, package checks, pack smoke, and docs check with captured job IDs | Requires an authorized push or workflow run against this commit and hosted runners |
 | Provider cancellation and isolation | CI-08 | Pending architecture decision | A documented cancellation/timeout contract interrupts or contains bounded provider work, with repeatable latency and memory-isolation evidence | Decide whether to add a worker boundary and public query budget before implementation |
 | Schema/API freeze | CI-09 | Pending contract review | Reviewed fixtures validate a strict versioned schema and the implementation, CLI, types, and changelog use the same frozen contract | Requires product/API review of draft fields and enums |
@@ -213,7 +215,7 @@ container evidence is retained below.
 | `npm audit --json` | Pass: 0 vulnerabilities across production and development dependencies |
 | `npm pack --dry-run --ignore-scripts` | Pass: 38 package files, including `CHANGELOG.md`; no development sources/tests included |
 | `npm run release:check` | Pass: package/lockfile version, changelog heading, draft schema version, entry points, and 38-file dry-run tarball set agree; `AGENT_IMPACT_RELEASE_TAG=v0.1.0 npm run release:check` also passes |
-| `npm run pack:smoke` | Pass: local tarball installed with `npm install --prefer-offline --omit=dev --ignore-scripts`; packaged API and `agent-impact capabilities --json` both returned valid draft results |
+| `npm run pack:smoke` | Pass: local tarball installed with `npm install --prefer-offline --omit=dev --ignore-scripts`; packaged API and CLI analysis returned valid draft results, and packaged pretty output was rejected with `OUTPUT_LIMIT_EXCEEDED` when formatting exceeded the selected byte budget |
 | Node 22/24 package-only release check | Pass: clean Node.js `v22.23.2` and `v24.20.0` Alpine copies install the lockfile with `npm ci --ignore-scripts` and pass `npm run release:check` |
 | Pack-and-install smoke | Pass: local tarball installed with cache-preferred dependency resolution and install scripts disabled; packaged API returned `0.1-draft`, and packaged `analyzeChanged` did not execute a configured fsmonitor marker |
 | Node 22/24 Linux container matrix | Pass at `f9f904b`: current clean copies using Node.js `v22.23.2` and `v24.20.0` Alpine runtimes inside Git-capable Linux containers; after fresh lockfile `npm ci`, dependency audit, the 34-case suite, typecheck, pack check, installed API/CLI smoke, both release checks, docs check, and `git diff --check` pass; the run includes external-helper, symlink-escape, internal source/root symlink, malformed API request, out-of-range coordinate, NUL path rejection, effective analysis limits, provider-observation cap, diagnostic-limit, pre-decode bounded-reader, oversized revision-blob, and distinct base/head diagnostic-snapshot fixtures |

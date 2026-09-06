@@ -19,6 +19,7 @@ Latest snapshot diagnostic identity: [`0c8a130`](https://github.com/yapweijun199
 Latest internal symlink coverage: [`f9f904b`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/f9f904b)
 Latest provider resolution read boundary: [`ba0538a`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/ba0538a)
 Latest CLI formatted-output bound: [`c6296e4`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/c6296e4)
+Latest installed artifact output-limit smoke: [`3472b13`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/3472b13)
 Last reconciled: 2026-09-07
 
 This document owns architecture and design decisions. [SPEC.md](SPEC.md) owns

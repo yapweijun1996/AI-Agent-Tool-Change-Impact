@@ -24,3 +24,4 @@ pass.
 - Preserve the producing snapshot ID on loader and project-configuration diagnostics so duplicate base/head warnings remain distinguishable.
 - Cover repository-internal symlinked source files and repository-root symlink aliases while continuing to reject symlink escapes outside the repository boundary.
 - Enforce `maxOutputBytes` after CLI pretty formatting as well as compact JSON serialization, with a regression for over-budget formatted output.
+- Extend installed tarball smoke to exercise the packaged CLI's formatted-output byte limit.

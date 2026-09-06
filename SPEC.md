@@ -20,6 +20,7 @@ Latest snapshot diagnostic identity: `0c8a130`.
 Latest internal symlink coverage: `f9f904b`.
 Latest provider resolution read boundary: `ba0538a`.
 Latest CLI formatted-output bound: `c6296e4`.
+Latest installed artifact output-limit smoke: `3472b13`.
 Runtime evidence is tracked in [VALIDATION.md](VALIDATION.md); task status is
 authoritative in [TASK.md](TASK.md).
 

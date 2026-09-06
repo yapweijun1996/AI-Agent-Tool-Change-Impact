@@ -30,6 +30,8 @@ Provider module-resolution reads now reuse the bounded, real-path-validated
 reader, with an oversized package-metadata regression in `ba0538a`.
 CLI output is checked again after optional pretty formatting so the final
 serialized body stays within `maxOutputBytes`; the regression is in `c6296e4`.
+The installed tarball smoke now exercises the same compact-versus-pretty output
+limit through the packaged CLI; that artifact coverage is in `3472b13`.
 CLI inline values and Git revision inputs are hardened in `ab27679`.
 Documentation and clean-install evidence were reconciled in `079acbd` and
 `1a57175`; the diagnostic-bound update is in `ad028b6` with the follow-up
@@ -95,7 +97,9 @@ runtime; a hosted cross-platform rerun remains outstanding.
 The packaged tarball was also installed in temporary directories and its API and
 CLI were loaded successfully on the local macOS runtime and Node 22/24 Linux
 containers; the smoke prefers the npm cache, permits registry fallback for
-missing dependency metadata, and disables install scripts.
+missing dependency metadata, disables install scripts, and verifies that the
+installed CLI rejects pretty output when formatting would exceed the declared
+byte budget.
 `npm run release:check` verifies package/lockfile versions, the unreleased
 changelog heading, draft schema version, required entry points, and the actual
 dry-run tarball file set. Set `AGENT_IMPACT_RELEASE_TAG=v<package.version>` when

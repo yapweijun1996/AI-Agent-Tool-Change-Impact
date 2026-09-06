@@ -101,6 +101,9 @@ package-metadata regression in
 CLI output is checked after optional pretty formatting so presentation cannot
 exceed the declared serialized-byte budget; regression coverage is in
 [`c6296e4`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/c6296e4).
+The installed tarball smoke now exercises the same formatted-output limit using
+the packaged CLI, with artifact-level regression coverage in
+[`3472b13`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/3472b13).
 [TASK.md](TASK.md) is the authoritative status ledger.
 
 ## Work packages
@@ -115,7 +118,7 @@ exceed the declared serialized-byte budget; regression coverage is in
 | E-06: Candidate-test projection | CI-06 | Done for scope | Filename candidates linked to retained dependency edges |
 | E-07: Changed-target orchestration | CI-07 | Done for tested cases | Modification, deletion, rename, configuration, unsupported-file, worktree projections |
 | E-08: Resource and correctness hardening | CI-08 | In progress | Deterministic file/graph/provider/diagnostic/output limits, bounded descriptor/Git/external reads, three repeated cold starts, high-fan-out regressions, and bounded fan-out measurements across four sizes are present; cancellation, isolation, and platform runs remain |
-| E-09: Package and release gates | CI-09 | In progress | Local pack dry-run includes the unreleased changelog, `npm run release:check` validates package metadata and the tarball file set, dependency audit and installed API/CLI smoke are configured, and CI uses full-history checkout, lifecycle-disabled dependency installation, and `contents: read`; schema freeze, cross-platform artifact checks, and registry evidence remain |
+| E-09: Package and release gates | CI-09 | In progress | Local pack dry-run includes the unreleased changelog, `npm run release:check` validates package metadata and the tarball file set, dependency audit and installed API/CLI smoke (including formatted-output limit enforcement) are configured, and CI uses full-history checkout, lifecycle-disabled dependency installation, and `contents: read`; schema freeze, cross-platform artifact checks, and registry evidence remain |
 
 ## Acceptance by work package
 
