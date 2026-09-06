@@ -17,6 +17,7 @@ Latest bounded source reads: `149e0fa`.
 Latest validated real-path reads: `dd212e4`.
 Latest bounded revision blob reads: `2f3c482`.
 Latest snapshot diagnostic identity: `0c8a130`.
+Latest internal symlink coverage: `f8a580e`.
 Runtime evidence is tracked in [VALIDATION.md](VALIDATION.md); task status is
 authoritative in [TASK.md](TASK.md).
 
@@ -158,7 +159,8 @@ matching name.
 - Missing refs, conflict state, and a worktree status change during capture are
   surfaced as Git errors/partial diagnostics. No fetch, checkout, reset, build,
   install, source write, external diff, textconv, or `core.fsmonitor` helper is
-  performed.
+  performed. A symlink is included only when its resolved real path remains
+  inside the repository root; an escaping symlink is skipped with a diagnostic.
 
 ## Limits, errors, and dependencies
 

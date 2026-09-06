@@ -89,6 +89,9 @@ overflow as `FILE_BUDGET_EXCEEDED` before decoding in
 Snapshot-loader and project-configuration diagnostics now retain their producing
 snapshot before changed-result deduplication in
 [`0c8a130`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/0c8a130).
+Internal symlinked source files are covered by a repository-boundary regression
+fixture in
+[`f8a580e`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/f8a580e).
 [TASK.md](TASK.md) is the authoritative status ledger.
 
 ## Work packages
@@ -97,7 +100,7 @@ snapshot before changed-result deduplication in
 | --- | --- | --- | --- |
 | E-01: Project-host feasibility | CI-01 | Done locally | Config-bound virtual host and [`spike/PROJECT_HOST_FINDINGS.md`](spike/PROJECT_HOST_FINDINGS.md) |
 | E-02: Executable draft contracts | CI-02 | Done as draft | TypeScript contracts with unused-code compiler checks, draft JSON Schema, CLI/API runtime validation including required-field and unknown-limit rejection, and error fixtures |
-| E-03: Snapshot and Git boundary | CI-03 | Done for tested cases | Revision/worktree snapshots, two-read content-hashed worktree capture, canonical repository paths, validated real-path reads, endpoint diff, read-only flags, conflict, concurrent-content, and external diff/textconv/fsmonitor helper fixtures |
+| E-03: Snapshot and Git boundary | CI-03 | Done for tested cases | Revision/worktree snapshots, two-read content-hashed worktree capture, canonical repository paths, validated real-path reads, internal/external symlink boundary, endpoint diff, read-only flags, conflict, concurrent-content, and external diff/textconv/fsmonitor helper fixtures |
 | E-04: TypeScript semantic provider | CI-04 | Done for scope | JS/TS/TSX targets, imports/re-exports, calls/references, extends/implements |
 | E-05: Evidence graph and impact | CI-05 | Done for scope | Reverse traversal, stable IDs, retained paths, cycle-safe depth/node/edge caps |
 | E-06: Candidate-test projection | CI-06 | Done for scope | Filename candidates linked to retained dependency edges |
@@ -170,9 +173,9 @@ blobs use a bounded binary subprocess buffer and classify overflow as
 reader after a real-path recheck. Deterministic ordering and unchanged-Git
 assertions are covered locally. Unresolved module observations are capped at the
 effective edge budget, diagnostic collection is capped at `maxDiagnostics`, and
-the 32-case suite includes high-fan-out regressions for both truncation markers,
-the bounded reader, oversized revision blobs, and distinct base/head diagnostic
-snapshot identities.
+the 33-case suite includes high-fan-out regressions for both truncation markers,
+the bounded reader, oversized revision blobs, distinct base/head diagnostic
+snapshot identities, and an internal symlink source boundary.
 A bounded fan-out benchmark records default versus hard-cap behavior
 across four sizes on macOS and the 241-file fixture on Node 22/24 Linux, with
 separate API/CLI cold-start observations. A 20,000-oversized-file stress script
@@ -187,13 +190,13 @@ matrix execution still require evidence.
 Node 22/24 × Linux/macOS/Windows workflow are present. `npm pack --dry-run`,
 `npm run release:check`, `npm run pack:smoke`, and a cache-preferred install/API
 plus fsmonitor-isolation smoke
-check pass locally. The current 32-case macOS suite passes, and current Node
-22/24 Linux container copies also pass the 32-case suite, clean lockfile `npm ci`,
+check pass locally. The current 33-case macOS suite passes, and current Node
+22/24 Linux container copies also pass the 33-case suite, clean lockfile `npm ci`,
 cache-preferred package install, type checks, and package checks pass. Earlier
 clean Linux runs also pass tarball install/API smoke. The latest full run includes the
 external-helper, symlink-escape, malformed API request, out-of-range coordinate,
 snapshot-aware, provider-observation, diagnostic-limit, oversized revision-blob,
-and distinct base/head diagnostic-snapshot fixtures. Package-only Node 22.23.2 and 24.20.0
+distinct base/head diagnostic-snapshot, and internal-symlink fixtures. Package-only Node 22.23.2 and 24.20.0
 Linux checkouts also pass clean `npm ci` and `release:check`.
 No Windows/hosted workflow result, registry publication, clean registry
 install, or provenance is claimed.

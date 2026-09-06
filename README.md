@@ -44,6 +44,8 @@ buffer and classify output-limit overflow as `FILE_BUDGET_EXCEEDED` in
 `2f3c482`, before UTF-8 decoding. Snapshot file-read and project diagnostics now
 retain the snapshot identity that produced them, including duplicate base/head
 budget warnings, in `0c8a130`.
+Internal symlink targets that resolve inside the repository are covered by a
+regression fixture in `f8a580e`.
 It is a working draft,
 not a published release: the public schema is still `0.1-draft`, local macOS
 and Linux container verification passes, the hosted cross-platform CI matrix
@@ -74,11 +76,13 @@ npm run docs:check
 The test suite creates temporary Git repositories from
 [`test/fixtures/basic`](test/fixtures/basic), then exercises the CLI and API
 without modifying the checkout. `npm test` builds TypeScript before running the
-32 smoke/integration cases, including cycle-safe traversal, deterministic
+33 smoke/integration cases, including cycle-safe traversal, deterministic
 diamond paths, an empty-impact result, malformed JavaScript API request and
 out-of-range coordinate handling, snapshot-aware diagnostics, and bounded
-high-fan-out unresolved-module and diagnostic observations.
-The same 32-case suite and package checks pass in current Node.js 22 and 24
+high-fan-out unresolved-module and diagnostic observations. The suite also
+verifies that an internal symlinked source file remains within the repository
+boundary.
+The same 33-case suite and package checks pass in current Node.js 22 and 24
 Linux container copies using fresh lockfile installs.
 The packaged tarball was also installed in temporary directories and its API and
 CLI were loaded successfully on the local macOS runtime and Node 22/24 Linux

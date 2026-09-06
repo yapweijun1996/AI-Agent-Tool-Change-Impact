@@ -21,3 +21,4 @@ pass.
 - Re-open validated real paths for bounded reads and re-check permitted external declaration paths to reduce symlink-replacement races.
 - Read Git revision blobs through bounded binary buffers, classify output-limit overflow as `FILE_BUDGET_EXCEEDED`, and cover the behavior with an oversized-blob regression.
 - Preserve the producing snapshot ID on loader and project-configuration diagnostics so duplicate base/head warnings remain distinguishable.
+- Cover repository-internal symlinked source files while continuing to reject symlink escapes outside the repository boundary.
