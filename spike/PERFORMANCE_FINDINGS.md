@@ -50,6 +50,23 @@ insufficient to establish release thresholds, sustained-memory behavior,
 cancellation latency, or Windows/hosted performance; those remain open CI-08
 evidence.
 
+## Post-cap benchmark rerun
+
+After the provider observation cap was added in `32fd01a`, the default 241-file
+fixture was rerun on the same Node.js `v23.10.0` / macOS host. Semantic results
+were unchanged: API and CLI defaults returned `partial` with 100 nodes/99 edges
+and `NODE_LIMIT`, while hard caps returned `complete` with 241 nodes/240 edges.
+Timing and RSS varied with process state:
+
+| Mode | Wall time | API work time | RSS delta | Result |
+| --- | ---: | ---: | ---: | --- |
+| API default | 578.6 ms | 437.9 ms | 80.9 MiB | `partial`, 100 nodes/99 edges, `NODE_LIMIT` |
+| API hard caps | 607.4 ms | 450.2 ms | 86.0 MiB | `complete`, 241 nodes/240 edges |
+| CLI default | 610.2 ms | — | — | `partial`, 100 nodes/99 edges, `NODE_LIMIT` |
+| CLI hard caps | 754.6 ms | — | — | `complete`, 241 nodes/240 edges |
+
+This rerun is additional local evidence, not a release performance threshold.
+
 ## Repeated cold-start observation
 
 On 2026-09-07, the default 241-file fixture was run three consecutive times on
