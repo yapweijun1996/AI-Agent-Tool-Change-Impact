@@ -42,6 +42,12 @@ formatted-output, test-fixture-cleanup, and artifact-smoke changes. The
 documentation-only reconciliation after that gate does not replace the
 `f9f904b` cross-runtime evidence or change source behavior.
 
+A read-only remote check on 2026-09-07 reports `origin/main` at `81b9e62` while
+the local branch is 135 commits ahead; `gh workflow list --all` returns HTTP 404
+because `ci.yml` is not present on the remote default branch. No hosted workflow
+was dispatched, and this confirms the platform gate is externally blocked rather
+than locally simulated.
+
 After the bounded source-read change in `149e0fa`, fresh Node.js `22.23.2` and
 `24.20.0` Alpine containers reran the same lockfile install and passed the 31-case
 suite, type check, dependency audit, package check, release check, installed
@@ -79,7 +85,7 @@ hosted or registry evidence is inferred from either local run.
 | Package contents | `npm pack --dry-run --ignore-scripts`; `npm run release:check`; `npm run pack:smoke` temporary tarball `--prefer-offline` install with `--ignore-scripts`, API/CLI smoke, formatted-output limit assertion, and a space-containing temporary path; fsmonitor-isolation smoke; Node 22/24 Linux container tarball install/API checks | Pass locally: release metadata and 38-file tarball set agree; packaged files include the unreleased changelog; development tests/sources are excluded; packaged API and CLI loaded, analysis completed, and pretty output was rejected with `OUTPUT_LIMIT_EXCEEDED` when it exceeded the selected budget; configured fsmonitor helper was not executed; clean Node 22.23.2 and Node 24.20.0 Linux package-only checkouts also pass `npm ci --ignore-scripts` and `release:check`; Windows `.cmd` path handling is exercised through the quoted path fixture but hosted execution remains unrun |
 | Bounded resource observation | `node spike/performance-benchmark.cjs` on temporary 21-, 121-, 241-, and 501-file fan-out/depth repositories on macOS, plus the 241-file fixture on Node 22/24 Linux containers; three repeated 241-file cold starts on macOS; 12,000-missing-import and 20,000-oversized-file reproductions under default limits; direct pre-decode bounded-reader assertion in the diagnostic-limit test | Pass locally: default node cap stops at 100 nodes for larger fixtures; hard caps complete; semantic counts and stop reasons remain stable across three repeated runs; the high-fan-out provider reproduction returns 299 unresolved observations with `PROVIDER_OBSERVATION_LIMIT` in a 163,378-byte envelope, `node spike/diagnostic-limit.cjs` returns 1,000 warnings with `DIAGNOSTIC_LIMIT` in a 154,605-byte envelope, and the bounded reader rejects a 4 KiB file after 513 bytes under a 512-byte budget; API/CLI child-process timings and RSS across macOS/Linux are recorded in [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) |
 | Git/read-only behavior | Temporary repositories, revision/worktree cases, unchanged Git assertions, internal source/root and escaping symlink paths, and an oversized revision blob under a tight `maxFileBytes` limit | Pass for tested cases; oversized Git output is rejected before UTF-8 decoding and reported as `FILE_BUDGET_EXCEEDED`, duplicate base/head loader warnings retain distinct snapshot IDs, internal source/root symlinks remain in-root, and escaping symlinks are skipped |
-| Cross-platform workflow | `.github/workflows/ci.yml` configured for Node 22/24 × Ubuntu/macOS/Windows, full Git history, read-only contents permission, and low-severity dependency audit | Configured; remote execution not yet recorded |
+| Cross-platform workflow | `.github/workflows/ci.yml` configured for Node 22/24 × Ubuntu/macOS/Windows, full Git history, read-only contents permission, and low-severity dependency audit | Configured locally; read-only remote check finds `origin/main` at `81b9e62` without `ci.yml` (HTTP 404), so no hosted execution is recorded |
 | Registry release | No publish or registry install was requested or authorized | Not run |
 
 The local suite covers the core vertical slice on macOS and Linux container

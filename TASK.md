@@ -244,7 +244,8 @@ container evidence is retained below.
 
 - Local implementation has no failing verification. The remaining release gate is
   evidence unavailable in this checkout: the configured GitHub Actions matrix has
-  not executed, no Windows artifact run is available locally, and
+  not executed; a read-only remote check finds `origin/main` at `81b9e62` without
+  `ci.yml` (HTTP 404), no Windows artifact run is available locally, and
   cancellation/isolation behavior has not been measured.
 - Schema freeze and registry publication require review and release credentials.
   Publishing, pushing, and deployment are intentionally outside this authorized
