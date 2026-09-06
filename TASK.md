@@ -204,7 +204,7 @@ using Node.js
 
 | Command | Result |
 | --- | --- |
-| `npm test` | Pass: 35 tests; build plus Node test runner |
+| `npm test` | Pass: 34 tests in the complete `f9f904b` gate; the latest `ba0538a` macOS rerun passes 35/35, including the provider-resolution regression |
 | `npm run typecheck` | Pass: strict TypeScript check with unused locals/parameters rejected |
 | `npm run docs:check` | Pass: 11 Markdown files; links/anchors, identifiers, task DAG, fences, whitespace, Git references, and `.gitattributes` preservation |
 | `npm audit --json` | Pass: 0 vulnerabilities across production and development dependencies |
