@@ -76,8 +76,8 @@ export function main(argv: readonly string[] = process.argv.slice(2)): number {
     };
   }
   try {
-    const output = boundedJson(result, maxOutputBytes);
-    process.stdout.write(json ? `${output}\n` : `${JSON.stringify(JSON.parse(output), null, 2)}\n`);
+    const output = boundedCliOutput(result, json, maxOutputBytes);
+    process.stdout.write(output);
   } catch (error) {
     const value = error instanceof ImpactError ? error : new ImpactError("OUTPUT_LIMIT_EXCEEDED", String(error));
     const fallback = {
@@ -90,6 +90,19 @@ export function main(argv: readonly string[] = process.argv.slice(2)): number {
     return 1;
   }
   return result.ok ? 0 : result.error.code === "INVALID_ARGUMENT" ? 2 : 1;
+}
+
+function boundedCliOutput(result: ImpactResult, json: boolean, maxOutputBytes: number): string {
+  const compact = boundedJson(result, maxOutputBytes);
+  const body = json ? compact : JSON.stringify(JSON.parse(compact), null, 2);
+  const bytes = Buffer.byteLength(body);
+  if (bytes > maxOutputBytes) {
+    throw new ImpactError("OUTPUT_LIMIT_EXCEEDED", `JSON output exceeds ${maxOutputBytes} bytes after CLI formatting`, {
+      maxOutputBytes,
+      actualBytes: bytes,
+    });
+  }
+  return `${body}\n`;
 }
 
 function parseArgs(argv: readonly string[]): ParsedArgs {

@@ -616,6 +616,37 @@ test("output and argument limits fail with machine-readable errors", () => {
   assert.equal(JSON.parse(boundedCli.stdout).analysis.limits.maxDiagnostics, 1);
 });
 
+test("CLI pretty output honors the serialized output limit after formatting", () => {
+  const root = createRepo();
+  const invocation = [
+    join(__dirname, "..", "dist", "cli.js"),
+    "file",
+    "src/math.ts",
+    "--root",
+    root,
+    "--project",
+    "tsconfig.json",
+  ];
+  const compactCommand = invocation.concat([
+    "--max-output-bytes",
+    "16384",
+    "--json",
+  ]);
+  const compactCli = spawnSync(process.execPath, compactCommand, { encoding: "utf8" });
+  assert.equal(compactCli.status, 0);
+  const payload = JSON.parse(compactCli.stdout);
+  const compactBytes = Buffer.byteLength(JSON.stringify(payload));
+  const prettyBytes = Buffer.byteLength(JSON.stringify(payload, null, 2));
+  assert.ok(compactBytes >= 256);
+  assert.ok(prettyBytes > compactBytes);
+
+  const prettyCli = spawnSync(process.execPath, invocation.concat(`--max-output-bytes=${compactBytes}`), { encoding: "utf8" });
+  assert.equal(prettyCli.status, 1);
+  const result = JSON.parse(prettyCli.stdout);
+  assert.equal(result.error.code, "OUTPUT_LIMIT_EXCEEDED");
+  assert.ok(Buffer.byteLength(prettyCli.stdout.trim()) <= compactBytes);
+});
+
 test("invalid invocations return exit code 2 and one JSON document", () => {
   const cli = spawnSync(process.execPath, [join(__dirname, "..", "dist", "cli.js"), "symbol", "missing.ts", "missing", "--line", "0", "--json"], { encoding: "utf8" });
   assert.equal(cli.status, 2);
