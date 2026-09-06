@@ -74,7 +74,7 @@ registry publication, and clean registry installation have not been verified.
 | CI-05 | Implement evidence graph traversal and result projection | Done for scope | CI-02, CI-04 | Reverse BFS, stable IDs, paths, per-seed cycle termination, graph caps, and complete empty impacts; one path per target; V-08, V-09, V-13 |
 | CI-06 | Add candidate-test classification and graph-linked results | Done for scope | CI-04, CI-05 | Filename candidates retain edge IDs/evidence and make no coverage claim; V-14 |
 | CI-07 | Implement two-snapshot changed-target analysis and fallback | Done for tested cases | CI-03, CI-04, CI-05 | Modification/deletion/rename/configuration/unsupported/worktree cases; V-10, V-11, V-12 |
-| CI-08 | Enforce budgets, deterministic results, isolation, and measured limits | In progress | CI-05, CI-06, CI-07 | Local limits/determinism/read-only checks and bounded fan-out API/CLI measurements across four sizes pass; cancellation, memory isolation, and cross-platform measurements remain; V-09, V-15 through V-20 |
+| CI-08 | Enforce budgets, deterministic results, isolation, and measured limits | In progress | CI-05, CI-06, CI-07 | Local limits/determinism/read-only checks and bounded fan-out API/CLI measurements across macOS and Node 22/24 Linux pass; Windows/hosted measurements, cancellation, and memory isolation remain; V-09, V-15 through V-20 |
 | CI-09 | Verify packaging, freeze contracts, and complete release gates | In progress | CI-08 | Local pack dry-run, offline tarball install/API smoke, Node 22/24 Linux container checks, and workflow committed; Windows/hosted artifact checks, schema freeze, publication remain; V-21, V-22 |
 
 Requirements and fixture definitions are in [SPEC.md](SPEC.md) and
@@ -92,7 +92,7 @@ The following commands passed after the implementation commit:
 | `npm pack --dry-run --ignore-scripts` | Pass: 37 package files, no development sources/tests included |
 | Pack-and-install smoke | Pass: local tarball installed with `npm install --offline --omit=dev`; packaged API returned `0.1-draft` |
 | Node 22/24 Linux container matrix | Pass: temporary clean `git archive` checkouts in `node:22-alpine` and `node:24-alpine`; `npm ci --offline`, the full 24-case suite, typecheck, and pack check pass using only the locked npm cache; earlier clean runs also pass tarball install/API smoke; the full run includes the external-helper fixture |
-| `node spike/performance-benchmark.cjs` | Pass locally: default 241-file fan-out plus 21/121/501-file parameterized runs; defaults stop at 100 nodes, hard caps complete within fixture size; API/CLI child-process observations recorded in [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) |
+| `node spike/performance-benchmark.cjs` | Pass locally: default 241-file fan-out plus 21/121/501-file parameterized runs on macOS, and default 241-file API/CLI runs on Node 22/24 Linux; defaults stop at 100 nodes, hard caps complete within fixture size; observations are recorded in [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) |
 | `git diff --check` | Pass: no whitespace errors |
 
 ## Pending decisions
@@ -105,7 +105,7 @@ The following commands passed after the implementation commit:
 | Precise module-widening rules | CI-02, CI-05 | Current file mode is module-level; symbol mode retains bound references |
 | Frozen schema/enums/API signatures | CI-02, CI-09 | Keep `0.1-draft` until all acceptance and release gates pass |
 | Node/platform compatibility | CI-09 | `engines.node >=22`; Node 23/macOS and Node 22/24 Linux containers pass locally; Windows and hosted three-OS matrix remain unrun |
-| Input/provider/output thresholds | CI-08 | Defaults and hard caps are implemented; four local fan-out observations exist, while release thresholds await repeated/platform measurement |
+| Input/provider/output thresholds | CI-08 | Defaults and hard caps are implemented; macOS and Node 22/24 Linux fan-out observations exist, while release thresholds await repeated sustained and Windows/hosted measurement |
 
 ## Blockers and limitations
 

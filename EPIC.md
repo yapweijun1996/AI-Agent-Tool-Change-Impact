@@ -109,7 +109,8 @@ explicitly rather than returning a false empty result.
 File, graph, provider-observation, and serialized-output limits are enforced;
 deterministic ordering and unchanged-Git assertions are covered locally. A
 bounded fan-out benchmark records default versus hard-cap behavior across four
-sizes and separate API/CLI cold-start observations. Broader repeated runs,
+sizes on macOS and the 241-file fixture on Node 22/24 Linux, with separate
+API/CLI cold-start observations. Broader repeated runs,
 cancellation/resource-abort behavior, memory isolation, Windows, and hosted
 matrix execution still require evidence.
 

@@ -3,9 +3,9 @@
 Date: 2026-09-06
 Implementation revision: `89f5286`
 
-This note records one bounded local resource experiment. It is evidence that
-the configured limits stop work predictably; it is not a latency, throughput,
-or memory guarantee.
+This note records bounded local resource experiments on macOS and Linux
+containers. It is evidence that the configured limits stop work predictably;
+it is not a latency, throughput, or memory guarantee.
 
 ## Reproduction
 
@@ -47,5 +47,30 @@ even though timing and RSS vary by process state.
 The result confirms bounded fan-out behavior across four fixture sizes and
 separate CLI cold-start measurement for this machine and fixture. These runs are
 insufficient to establish release thresholds, sustained-memory behavior,
-cancellation latency, or cross-platform performance; those remain open CI-08
+cancellation latency, or Windows/hosted performance; those remain open CI-08
 evidence.
+
+## Linux container observations
+
+The same default 241-file fixture was run in clean Git archive checkouts on
+`node:22-alpine` (`v22.23.2`) and `node:24-alpine` (`v24.20.0`). Each checkout
+used `npm ci --offline` from the locked npm cache, `NODE_OPTIONS=--max-old-space-size=1024`,
+and `npm run build` before the benchmark. Git was installed in the container;
+the cache was mounted read-only, so this validates the Linux runtime and locked
+dependency graph without claiming registry availability.
+
+| Runtime | Mode | Wall time | API work time | RSS delta | Result |
+| --- | --- | ---: | ---: | ---: | --- |
+| Node 22 / Linux | API default | 446.6 ms | 325.5 ms | 79.8 MiB | `partial`, 100 nodes/99 edges, `NODE_LIMIT` |
+| Node 22 / Linux | API hard caps | 438.6 ms | 317.7 ms | 80.3 MiB | `complete`, 241 nodes/240 edges |
+| Node 22 / Linux | CLI default | 443.2 ms | — | — | `partial`, 100 nodes/99 edges, `NODE_LIMIT` |
+| Node 22 / Linux | CLI hard caps | 441.8 ms | — | — | `complete`, 241 nodes/240 edges |
+| Node 24 / Linux | API default | 404.9 ms | 280.7 ms | 102.8 MiB | `partial`, 100 nodes/99 edges, `NODE_LIMIT` |
+| Node 24 / Linux | API hard caps | 389.8 ms | 276.2 ms | 102.2 MiB | `complete`, 241 nodes/240 edges |
+| Node 24 / Linux | CLI default | 379.8 ms | — | — | `partial`, 100 nodes/99 edges, `NODE_LIMIT` |
+| Node 24 / Linux | CLI hard caps | 374.0 ms | — | — | `complete`, 241 nodes/240 edges |
+
+Returned counts and stop reasons match the macOS fixture behavior. These Linux
+observations improve cross-runtime evidence but do not establish Windows or
+hosted CI behavior, sustained-memory limits, cancellation latency, or release
+performance thresholds.

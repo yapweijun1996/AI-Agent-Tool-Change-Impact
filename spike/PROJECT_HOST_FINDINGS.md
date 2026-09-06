@@ -34,8 +34,8 @@ It is evidence for project-host behavior, not a performance guarantee.
    macOS runtime and in the latest Node 22/24 Linux container runs. Each Linux
    run used a fresh `npm ci --offline` install from the locked npm cache; an
    earlier clean run also established tarball API smoke. It does not establish
-   Windows/hosted-matrix behavior, cross-platform performance, cancellation
-   latency, or memory limits.
+   Windows/hosted-matrix behavior, sustained cross-platform performance,
+   cancellation latency, or memory limits.
 
 ## Decisions and remaining questions
 
