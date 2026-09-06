@@ -67,6 +67,8 @@ without modifying the checkout. `npm test` builds TypeScript before running the
 diamond paths, an empty-impact result, malformed JavaScript API request and
 out-of-range coordinate handling, snapshot-aware diagnostics, and bounded
 high-fan-out unresolved-module observations.
+The same 30-case suite and package checks pass in current Node.js 22 and 24
+Linux container copies using fresh lockfile installs.
 The packaged tarball was also installed in temporary directories and its API and
 CLI were loaded successfully on the local macOS runtime and Node 22/24 Linux
 containers; the smoke prefers the npm cache, permits registry fallback for

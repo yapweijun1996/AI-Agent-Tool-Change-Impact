@@ -31,8 +31,8 @@ It is evidence for project-host behavior, not a performance guarantee.
    results retain old and new paths.
 5. The implementation enforces file, graph, unresolved-observation, and output
    limits. The current 30-case smoke suite verifies behavior at the API/CLI
-   boundary on the macOS runtime; historical full 28-case clean-clone Linux runs
-   after `1e61baf` use Node.js `v22.23.2` and `v24.20.0`
+   boundary on the macOS runtime and in current clean-clone Linux runs using
+   Node.js `v22.23.2` and `v24.20.0`
    Alpine runtime binaries inside a Git-capable container. Each Linux run used
    a fresh lockfile `npm ci` install, followed by cache-preferred package smoke;
    this reproduces the dependency-install order used by CI. It does not establish

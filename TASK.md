@@ -102,9 +102,9 @@ on Node.js `23.10.0` / macOS `Darwin 25.6.0 arm64` passes 30 smoke/integration
 tests, including cycle-safe traversal, complete empty-impact results,
 external-helper and symlink-escape isolation, malformed API request validation,
 snapshot-aware diagnostics, and bounded high-fan-out unresolved-module
-observations. Historical full 28-case Linux runs, clean lockfile installs,
-type check, and package check pass in temporary Node 22 and Node 24 Linux
-checkouts. The package smoke uses a cache-preferred install with normal registry
+observations. Current Node 22/24 Linux container copies also pass the 30-case
+suite and clean lockfile installs, type check, and package checks. The package
+smoke uses a cache-preferred install with normal registry
 fallback when metadata is absent; the latest clean clone rerun after `273a344`
 also passed the documentation check and exercised packaged API/CLI analysis end
 to end. Bounded fan-out measurements are recorded in
@@ -180,7 +180,7 @@ using Node.js
 | `npm run pack:smoke` | Pass: local tarball installed with `npm install --prefer-offline --omit=dev --ignore-scripts`; packaged API and `agent-impact capabilities --json` both returned valid draft results |
 | Node 22/24 package-only release check | Pass: clean Node.js `v22.23.2` and `v24.20.0` Alpine copies install the lockfile with `npm ci --ignore-scripts` and pass `npm run release:check` |
 | Pack-and-install smoke | Pass: local tarball installed with cache-preferred dependency resolution and install scripts disabled; packaged API returned `0.1-draft`, and packaged `analyzeChanged` did not execute a configured fsmonitor marker |
-| Node 22/24 Linux container matrix | Pass: latest clean Git clones using Node.js `v22.23.2` and `v24.20.0` Alpine runtimes inside a Git-capable Linux container; after a fresh lockfile `npm ci`, the full 28-case suite, typecheck, pack check, cache-preferred installed API/CLI smoke, and docs check pass; the full run includes external-helper, symlink-escape, malformed API request, out-of-range coordinate, NUL path rejection, effective analysis limits, and snapshot-aware diagnostic fixtures |
+| Node 22/24 Linux container matrix | Pass: current clean copies using Node.js `v22.23.2` and `v24.20.0` Alpine runtimes inside Git-capable Linux containers; after fresh lockfile `npm ci`, the 30-case suite, typecheck, pack check, installed API/CLI smoke, release check, and docs check pass; the run includes external-helper, symlink-escape, malformed API request, out-of-range coordinate, NUL path rejection, effective analysis limits, and provider-observation cap fixtures |
 | `node spike/performance-benchmark.cjs` | Pass locally: default 241-file fan-out plus 21/121/501-file parameterized runs on macOS, default 241-file API/CLI runs on Node 22/24 Linux, and three repeated 241-file macOS cold starts; defaults stop at 100 nodes, hard caps complete within fixture size, and repeated semantic counts/stop reasons remain stable; observations are recorded in [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) |
 | High-fan-out unresolved-provider reproduction | Pass locally: a temporary file with 12,000 missing imports under default limits returns a usable partial result with 299 unresolved observations, `PROVIDER_OBSERVATION_LIMIT`, and a 163,378-byte JSON envelope |
 | `git diff --check` | Pass: no whitespace errors |

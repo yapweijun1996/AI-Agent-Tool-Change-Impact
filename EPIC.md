@@ -161,8 +161,8 @@ matrix execution still require evidence.
 Node 22/24 × Linux/macOS/Windows workflow are present. `npm pack --dry-run`,
 `npm run release:check`, `npm run pack:smoke`, and a cache-preferred install/API
 plus fsmonitor-isolation smoke
-check pass locally. The current 30-case macOS suite passes; historical full
-28-case Node 22/24 Linux container runs, clean lockfile `npm ci`,
+check pass locally. The current 30-case macOS suite passes, and current Node
+22/24 Linux container copies also pass the 30-case suite, clean lockfile `npm ci`,
 cache-preferred package install, type checks, and package checks pass. Earlier
 clean Linux runs also pass tarball install/API smoke. The latest full run includes the
 external-helper, symlink-escape, malformed API request, out-of-range coordinate,
