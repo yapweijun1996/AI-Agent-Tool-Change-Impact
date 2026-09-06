@@ -41,6 +41,10 @@ try {
   assert.equal(lockfile.packages?.[""].version, packageJson.version, "lockfile root version must match package.json");
   assert.equal(typeof packageJson.license, "string", "package license is required");
   assert.equal(typeof packageJson.engines?.node, "string", "Node engine range is required");
+  const releaseTag = process.env.AGENT_IMPACT_RELEASE_TAG;
+  if (releaseTag !== undefined) {
+    assert.equal(releaseTag, `v${packageJson.version}`, "release tag must be v<package.version>");
+  }
 
   const versionHeading = new RegExp(`^## \\[${escapeRegExp(packageJson.version)}\\] - (?:Unreleased|\\d{4}-\\d{2}-\\d{2})$`, "m");
   assert.match(changelog, versionHeading, "CHANGELOG must contain the package version heading");
