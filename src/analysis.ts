@@ -1,12 +1,12 @@
-import { existsSync, statSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { existsSync } from "node:fs";
+import { resolve } from "node:path";
 import * as ts from "typescript";
 import { ImpactError, asImpactError } from "./errors";
 import { traverseReverse } from "./graph";
-import { changedSeedFromChange, collectGitChanges, type GitChange } from "./git";
+import { changedSeedFromChange, collectGitChanges } from "./git";
 import { createProjectContext, type ProjectContext } from "./project";
 import { TypeScriptProvider, type ResolvedTarget } from "./provider";
-import { loadRevision, loadWorkingTree, loadWorkingTreeStable, repositoryRoot, type SourceSnapshot } from "./snapshot";
+import { loadRevision, loadWorkingTree, loadWorkingTreeStable, repositoryRoot } from "./snapshot";
 import type {
   AnalysisContext,
   AnalysisScope,
@@ -26,7 +26,6 @@ import type {
   SymbolImpactRequest,
   UnresolvedObservation,
 } from "./types";
-import { DEFAULT_LIMITS, type TextRange } from "./types";
 import { compareText, diagnostic, mergeLimits } from "./util";
 
 export type ImpactResult = ResultEnvelope | ErrorEnvelope | CapabilitiesResult;
@@ -342,7 +341,7 @@ function makeEnvelope(
   const analysis = makeAnalysisScope(context, limits, traversal.status, [...traversal.stopReasons, ...(allUnresolved.length > 0 ? ["UNRESOLVED_OBSERVATIONS"] : [])], traversal, allDiagnostics, allUnresolved);
   const contextOutput: AnalysisContext = {
     provider: "typescript-language-service",
-    providerVersion: tsVersion(context),
+    providerVersion: tsVersion(),
     root: ".",
     project: context.project,
     snapshots: [context.snapshot.ref],
@@ -364,7 +363,7 @@ function makeEnvelope(
   };
 }
 
-function tsVersion(context: ProjectContext): string {
+function tsVersion(): string {
   return ts.version;
 }
 

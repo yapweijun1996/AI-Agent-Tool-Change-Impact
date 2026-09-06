@@ -4,7 +4,6 @@ import { ImpactError } from "./errors";
 import type { ProjectContext } from "./project";
 import type {
   DeclarationInfo,
-  Diagnostic,
   Evidence,
   GraphEdge,
   GraphNode,
@@ -68,7 +67,7 @@ export class TypeScriptProvider {
     if (!sourceFile) {
       return [];
     }
-    const declarations = collectDeclarations(sourceFile, repoFile, this.context.snapshot.ref, this.checker);
+    const declarations = collectDeclarations(sourceFile, repoFile, this.checker);
     const meaningful = declarations.filter((declaration) => !["parameter", "bindingelement"].includes(declaration.kind));
     if (ranges.length === 0) {
       return meaningful;
@@ -108,7 +107,7 @@ export class TypeScriptProvider {
     if (!sourceFile) {
       throw new ImpactError("FILE_NOT_FOUND", `Source file is unavailable: ${repoFile}`);
     }
-    const declarations = collectDeclarations(sourceFile, repoFile, this.context.snapshot.ref, this.checker);
+    const declarations = collectDeclarations(sourceFile, repoFile, this.checker);
     const candidates = declarations.filter((declaration) => declaration.name === name);
     let selected: DeclarationInfo | undefined;
     if (line !== undefined || column !== undefined) {
@@ -129,7 +128,7 @@ export class TypeScriptProvider {
       const position = lineStart + column - 1;
       const token = findTokenAtPosition(sourceFile, position);
       const symbol = token ? resolveAliasedSymbol(this.checker.getSymbolAtLocation(token), this.checker) : undefined;
-      const declaration = symbol ? declarationForSymbol(symbol, repoFile, this.context.snapshot.ref, this.checker) : undefined;
+      const declaration = symbol ? declarationForSymbol(symbol, repoFile) : undefined;
       if (!declaration || (name && declaration.name !== name)) {
         throw new ImpactError("TARGET_NOT_FOUND", `No declaration matched ${repoFile}:${line}:${column}`);
       }
@@ -176,7 +175,7 @@ export class TypeScriptProvider {
     if (!sourceFile) {
       return undefined;
     }
-    const declarations = collectDeclarations(sourceFile, node.file, this.context.snapshot.ref, this.checker);
+    const declarations = collectDeclarations(sourceFile, node.file, this.checker);
     const declaration = declarations.find((candidate) => candidate.name === node.symbol && candidate.range.start.line === node.declaration?.start.line && candidate.range.start.column === node.declaration?.start.column);
     return declaration ? this.targetFromDeclaration(declaration) : undefined;
   }
@@ -558,14 +557,14 @@ function safeRepoPath(context: ProjectContext, fileName: string): string | undef
   }
 }
 
-function collectDeclarations(sourceFile: ts.SourceFile, file: string, snapshot: { kind: "working-tree" | "revision"; id: string; revision?: string }, checker: ts.TypeChecker): DeclarationInfo[] {
+function collectDeclarations(sourceFile: ts.SourceFile, file: string, checker: ts.TypeChecker): DeclarationInfo[] {
   const result: DeclarationInfo[] = [];
   const visit = (node: ts.Node): void => {
     const named = declarationNameNode(node);
     if (named && ts.isIdentifier(named)) {
       const symbol = resolveAliasedSymbol(checker.getSymbolAtLocation(named), checker);
       if (symbol) {
-        const declaration = declarationForNode(node, named, file, snapshot, checker);
+        const declaration = declarationForNode(node, named, file);
         if (declaration) {
           result.push(declaration);
         }
@@ -587,11 +586,10 @@ function declarationNameNode(node: ts.Node): ts.Node | undefined {
   return undefined;
 }
 
-function declarationForNode(node: ts.Node, nameNode: ts.Node, file: string, snapshot: { kind: "working-tree" | "revision"; id: string; revision?: string }, checker: ts.TypeChecker): DeclarationInfo {
+function declarationForNode(node: ts.Node, nameNode: ts.Node, file: string): DeclarationInfo {
   const sourceFile = node.getSourceFile();
   const name = nameNode.getText(sourceFile);
   const range = toRange(sourceFile.getFullText(), node.getStart(sourceFile), node.getWidth(sourceFile));
-  const symbol = resolveAliasedSymbol(checker.getSymbolAtLocation(nameNode), checker);
   const symbolKey = `${node.getStart(sourceFile)}:${node.getWidth(sourceFile)}:${name}`;
   return {
     file,
@@ -604,11 +602,11 @@ function declarationForNode(node: ts.Node, nameNode: ts.Node, file: string, snap
   };
 }
 
-function declarationForSymbol(symbol: ts.Symbol, file: string, snapshot: { kind: "working-tree" | "revision"; id: string; revision?: string }, checker: ts.TypeChecker): DeclarationInfo | undefined {
+function declarationForSymbol(symbol: ts.Symbol, file: string): DeclarationInfo | undefined {
   const declarations = symbol.declarations ?? [];
   const matching = declarations.find((declaration) => {
     const sourceFile = declaration.getSourceFile();
-    return safeRelative(sourceFile.fileName, file, sourceFile) && declarationNameNode(declaration) !== undefined;
+    return safeRelative(sourceFile.fileName, file) && declarationNameNode(declaration) !== undefined;
   });
   if (!matching) {
     return undefined;
@@ -617,10 +615,10 @@ function declarationForSymbol(symbol: ts.Symbol, file: string, snapshot: { kind:
   if (!nameNode) {
     return undefined;
   }
-  return declarationForNode(matching, nameNode, file, snapshot, checker);
+  return declarationForNode(matching, nameNode, file);
 }
 
-function safeRelative(sourceFileName: string, requestedFile: string, sourceFile: ts.SourceFile): boolean {
+function safeRelative(sourceFileName: string, requestedFile: string): boolean {
   const normalizedSource = sourceFileName.replaceAll("\\", "/");
   const normalizedRequested = requestedFile.replaceAll("\\", "/");
   return normalizedSource.endsWith(`/${normalizedRequested}`) || normalizedSource === normalizedRequested;
