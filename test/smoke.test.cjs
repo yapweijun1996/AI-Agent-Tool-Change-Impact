@@ -98,6 +98,24 @@ test("capabilities are explicit and read-only", () => {
   assert.equal(result.capabilities.heuristics, false);
 });
 
+test("JavaScript API rejects malformed request objects", () => {
+  const missingFile = api.analyzeFile(undefined);
+  assert.equal(missingFile.ok, false);
+  assert.equal(missingFile.error.code, "INVALID_ARGUMENT");
+  const wrongFileType = api.analyzeFile({ file: 42 });
+  assert.equal(wrongFileType.ok, false);
+  assert.equal(wrongFileType.error.code, "INVALID_ARGUMENT");
+  const wrongLimits = api.analyzeFile({ file: "src/math.ts", limits: "bad" });
+  assert.equal(wrongLimits.ok, false);
+  assert.equal(wrongLimits.error.code, "INVALID_ARGUMENT");
+  const wrongCoordinates = api.analyzeSymbol({ file: "src/math.ts", name: "calculateTotal", line: 1.5, column: 1 });
+  assert.equal(wrongCoordinates.ok, false);
+  assert.equal(wrongCoordinates.error.code, "INVALID_ARGUMENT");
+  const wrongWorktree = api.analyzeChanged({ base: "HEAD", worktree: "true" });
+  assert.equal(wrongWorktree.ok, false);
+  assert.equal(wrongWorktree.error.code, "INVALID_ARGUMENT");
+});
+
 test("file impact returns reverse dependency paths and candidate tests", () => {
   const root = createRepo();
   const before = git(root, ["rev-parse", "HEAD"]);

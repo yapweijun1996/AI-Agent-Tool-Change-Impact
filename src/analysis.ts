@@ -31,6 +31,59 @@ import { compareText, diagnostic, mergeLimits } from "./util";
 
 export type ImpactResult = ResultEnvelope | ErrorEnvelope | CapabilitiesResult;
 
+function assertRequestObject(value: unknown, operation: string): asserts value is Record<string, unknown> {
+  if (value === null || typeof value !== "object" || Array.isArray(value)) {
+    throw new ImpactError("INVALID_ARGUMENT", `${operation} request must be an object`);
+  }
+}
+
+function assertOptionalNonEmptyString(value: unknown, name: string): void {
+  if (value !== undefined && (typeof value !== "string" || value.trim().length === 0)) {
+    throw new ImpactError("INVALID_ARGUMENT", `${name} must be a non-empty string when supplied`);
+  }
+}
+
+function assertLimitsInput(value: unknown): void {
+  if (value !== undefined && (value === null || typeof value !== "object" || Array.isArray(value))) {
+    throw new ImpactError("INVALID_ARGUMENT", "limits must be an object when supplied");
+  }
+}
+
+function validateCommonRequest(value: unknown, operation: string): asserts value is Record<string, unknown> {
+  assertRequestObject(value, operation);
+  assertOptionalNonEmptyString(value.root, "root");
+  assertOptionalNonEmptyString(value.project, "project");
+  assertLimitsInput(value.limits);
+}
+
+function validateFileRequest(value: unknown): asserts value is FileImpactRequest {
+  validateCommonRequest(value, "analyzeFile");
+  assertOptionalNonEmptyString(value.file, "file");
+}
+
+function validateSymbolRequest(value: unknown): asserts value is SymbolImpactRequest {
+  validateCommonRequest(value, "analyzeSymbol");
+  assertOptionalNonEmptyString(value.file, "file");
+  assertOptionalNonEmptyString(value.name, "name");
+  const hasLine = value.line !== undefined;
+  const hasColumn = value.column !== undefined;
+  if (hasLine !== hasColumn) {
+    throw new ImpactError("INVALID_ARGUMENT", "line and column must be supplied together");
+  }
+  if (hasLine && (!Number.isSafeInteger(value.line) || (value.line as number) < 1 || !Number.isSafeInteger(value.column) || (value.column as number) < 1)) {
+    throw new ImpactError("INVALID_ARGUMENT", "line and column must be positive safe integers");
+  }
+}
+
+function validateChangedRequest(value: unknown): asserts value is ChangedImpactRequest {
+  validateCommonRequest(value, "analyzeChanged");
+  assertOptionalNonEmptyString(value.base, "base");
+  assertOptionalNonEmptyString(value.head, "head");
+  if (value.worktree !== undefined && typeof value.worktree !== "boolean") {
+    throw new ImpactError("INVALID_ARGUMENT", "worktree must be boolean when supplied");
+  }
+}
+
 export function capabilities(): CapabilitiesResult {
   return {
     schemaVersion: "0.1-draft",
@@ -54,6 +107,7 @@ export function capabilities(): CapabilitiesResult {
 
 export function analyzeFile(request: FileImpactRequest): ImpactResult {
   try {
+    validateFileRequest(request);
     const limits = mergeLimits(request.limits);
     const { context, provider, diagnostics } = loadCurrentProvider(request.root, request.project, limits);
     const file = context.snapshot.toRepoPath(request.file);
@@ -78,6 +132,7 @@ export function analyzeFile(request: FileImpactRequest): ImpactResult {
 
 export function analyzeSymbol(request: SymbolImpactRequest): ImpactResult {
   try {
+    validateSymbolRequest(request);
     if (!request.name || !request.name.trim()) {
       throw new ImpactError("INVALID_ARGUMENT", "A non-empty symbol name is required");
     }
@@ -105,6 +160,7 @@ export function analyzeSymbol(request: SymbolImpactRequest): ImpactResult {
 
 export function analyzeChanged(request: ChangedImpactRequest): ImpactResult {
   try {
+    validateChangedRequest(request);
     const limits = mergeLimits(request.limits);
     const root = repositoryRoot(request.root);
     const gitChanges = collectGitChanges(root, request.base, request.head, request.worktree === true);
