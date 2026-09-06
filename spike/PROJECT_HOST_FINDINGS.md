@@ -1,7 +1,7 @@
 # Project-host feasibility findings
 
 Date: 2026-09-06
-Implementation revision: `940effd`
+Implementation revision: `1753c22`
 
 This note records the bounded feasibility check that informed the first provider.
 It is evidence for project-host behavior, not a performance guarantee.
@@ -30,7 +30,7 @@ It is evidence for project-host behavior, not a performance guarantee.
    Deleted declarations remain addressable in the base context, and rename
    results retain old and new paths.
 5. The implementation enforces file, graph, observation, and output limits. The
-   current 21-case smoke suite verifies behavior at the API/CLI boundary; it does not
+   current 23-case smoke suite verifies behavior at the API/CLI boundary; it does not
    establish cross-platform performance, cancellation latency, or memory limits.
 
 ## Decisions and remaining questions

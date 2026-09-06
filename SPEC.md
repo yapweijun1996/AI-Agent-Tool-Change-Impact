@@ -2,7 +2,7 @@
 
 Status: implemented v0.1 draft; the executable schema and API are not frozen for
 backward compatibility.
-Last updated: 2026-09-06. Implementation revision: `940effd`.
+Last updated: 2026-09-06. Implementation revision: `1753c22`.
 Runtime evidence is tracked in [VALIDATION.md](VALIDATION.md); task status is
 authoritative in [TASK.md](TASK.md).
 
@@ -94,6 +94,11 @@ static binding in the selected context. Dynamic imports, non-literal `require`,
 and literal modules that cannot be resolved are unresolved observations, not
 invented edges. Candidate tests are filename-pattern classifications linked to
 actual retained dependency edges; they never assert coverage or execution.
+
+Traversal tracks visited nodes per seed. Cycles therefore terminate without
+duplicating graph nodes, and a depth limit is reported only when an unvisited
+frontier remains beyond the configured depth. A complete result may contain an
+empty direct and transitive impact when the requested target has no dependents.
 
 Coordinates use one-based lines and UTF-16 columns with an inclusive start and
 exclusive end. Paths are normalized repository-relative paths. Snapshot identity

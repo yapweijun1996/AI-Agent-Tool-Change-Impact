@@ -1,7 +1,7 @@
 # Design
 
 Status: implemented v0.1 draft; release gates remain open.
-Implementation revision: [`940effd`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/940effd)
+Implementation revision: [`1753c22`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/1753c22)
 Last reconciled: 2026-09-06
 
 This document owns architecture and design decisions. [SPEC.md](SPEC.md) owns
@@ -73,7 +73,9 @@ Edges point from consumer to dependency. Reverse traversal produces impact items
 with seed attribution, distance, relation classes, evidence levels, and a
 retained node path. File requests use module edges; symbol requests use bound
 references. Candidate-test lists and direct/transitive lists are projections of
-the same retained graph.
+the same retained graph. Visited nodes are tracked per seed, so cycles terminate
+without duplicate nodes; depth is partial only when an unvisited frontier still
+exists beyond the configured boundary.
 
 ### D-05: Separate relationship evidence from completeness
 
@@ -138,7 +140,7 @@ as follows:
 | Deleted/renamed targets lose old evidence | D-03 | Changed modification, deletion, and rename cases in `test/smoke.test.cjs` |
 | Module/configuration changes disappear | D-03, D-04 | Configuration and unsupported-file projections; unresolved module observations |
 | Language Service ownership is overstated | D-02 | Config-bound host and feasibility note in [`spike/PROJECT_HOST_FINDINGS.md`](spike/PROJECT_HOST_FINDINGS.md) |
-| Graph loses direction or paths | D-04 | Reverse file/symbol impact assertions and draft schema validation |
+| Graph loses direction or paths | D-04 | Reverse file/symbol impact assertions, cycle/diamond traversal fixtures, and draft schema validation |
 | Evidence strength is confused with completeness | D-05 | Dynamic/missing module cases produce `partial` with observations |
 | Imports are presented as test coverage | D-06 | Candidate role and dependency edge IDs are separate fields |
 | Output caps do not bound work | D-08 | File/graph/provider/output limits are enforced; bounded fan-out observations exist, while stress/cancellation measurements remain open |
