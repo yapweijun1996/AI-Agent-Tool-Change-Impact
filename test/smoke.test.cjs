@@ -398,8 +398,12 @@ test("draft JSON schema validates success and error envelopes", () => {
   const root = createRepo();
   assert.equal(validator(api.capabilities()), true);
   const success = api.analyzeFile({ root, project: "tsconfig.json", file: "src/math.ts" });
+  const partial = api.analyzeFile({ root: createRepo({ includeDynamic: true }), project: "tsconfig.json", file: "src/math.ts" });
   const error = api.analyzeSymbol({ root, project: "tsconfig.json", file: "src/math.ts", name: "missing" });
   assert.equal(validator(success), true);
+  assert.equal(partial.ok, true);
+  assert.equal(partial.analysis.status, "partial");
+  assert.equal(validator(partial), true);
   assert.equal(validator(error), true);
   assert.deepEqual(validator.errors, null);
 });
