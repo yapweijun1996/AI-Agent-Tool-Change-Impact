@@ -31,7 +31,7 @@ It is evidence for project-host behavior, not a performance guarantee.
    results retain old and new paths.
 5. The implementation enforces file, graph, observation, and output limits. The
    current 28-case smoke suite verifies behavior at the API/CLI boundary on the
-   macOS runtime and in Linux runs using Node.js `v22.23.2` and `v24.20.0`
+   macOS runtime and in latest clean-clone Linux runs after `1e61baf` using Node.js `v22.23.2` and `v24.20.0`
    Alpine runtime binaries inside a Git-capable container. Each Linux run used
    a fresh `npm ci --offline` install from the locked npm cache; an earlier
    clean run also established tarball API smoke. It does not establish

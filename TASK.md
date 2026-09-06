@@ -53,8 +53,9 @@ tests, including cycle-safe traversal, complete empty-impact results, and
 external-helper, symlink-escape isolation, malformed API request validation, and
 snapshot-aware diagnostics. The full 28-case suite, clean `npm ci --offline`,
 type check, and package check pass in temporary Node 22 and Node 24 Linux
-checkouts using only the locked npm cache; an earlier clean run also established
-tarball API smoke in those containers. Bounded fan-out measurements are recorded in
+checkouts using only the locked npm cache; the latest clean clone rerun after
+`1e61baf` also passed the documentation check, and an earlier clean run
+established tarball API smoke in those containers. Bounded fan-out measurements are recorded in
 [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md). The schema is
 draft; Windows/hosted matrix execution, cancellation/isolation measurements,
 registry publication, and clean registry installation have not been verified.
@@ -107,7 +108,7 @@ The following commands passed after the implementation commit:
 | `npm audit --omit=dev` | Pass: 0 production vulnerabilities |
 | `npm pack --dry-run --ignore-scripts` | Pass: 37 package files, no development sources/tests included |
 | Pack-and-install smoke | Pass: local tarball installed with `npm install --offline --omit=dev`; packaged API returned `0.1-draft`, and packaged `analyzeChanged` did not execute a configured fsmonitor marker |
-| Node 22/24 Linux container matrix | Pass: temporary clean Git-archive checkouts using Node.js `v22.23.2` and `v24.20.0` Alpine runtimes inside a Git-capable Linux container; `npm ci --offline`, the full 28-case suite, typecheck, and pack check pass using only the locked npm cache; earlier clean runs also pass tarball install/API smoke; the full run includes external-helper, symlink-escape, malformed API request, out-of-range coordinate, and snapshot-aware diagnostic fixtures |
+| Node 22/24 Linux container matrix | Pass: latest clean Git clones using Node.js `v22.23.2` and `v24.20.0` Alpine runtimes inside a Git-capable Linux container; after `1e61baf`, `npm ci --offline`, the full 28-case suite, typecheck, pack check, and docs check pass using only the locked npm cache; earlier clean runs also pass tarball install/API smoke; the full run includes external-helper, symlink-escape, malformed API request, out-of-range coordinate, NUL path rejection, and snapshot-aware diagnostic fixtures |
 | `node spike/performance-benchmark.cjs` | Pass locally: default 241-file fan-out plus 21/121/501-file parameterized runs on macOS, and default 241-file API/CLI runs on Node 22/24 Linux; defaults stop at 100 nodes, hard caps complete within fixture size; observations are recorded in [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) |
 | `git diff --check` | Pass: no whitespace errors |
 
