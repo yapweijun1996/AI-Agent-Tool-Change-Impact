@@ -1,7 +1,7 @@
 # Local performance findings
 
 Date: 2026-09-06
-Implementation revision: `db809f4`
+Benchmark implementation revision: `db809f4`; latest implementation revision: `83f398d`
 
 This note records bounded local resource experiments on macOS and Linux
 containers. It is evidence that the configured limits stop work predictably;
@@ -52,12 +52,12 @@ evidence.
 
 ## Linux container observations
 
-The same default 241-file fixture was run in clean Git archive checkouts on
-`node:22-alpine` (`v22.23.2`) and `node:24-alpine` (`v24.20.0`). Each checkout
-used `npm ci --offline` from the locked npm cache, `NODE_OPTIONS=--max-old-space-size=1024`,
-and `npm run build` before the benchmark. Git was installed in the container;
-the cache was mounted read-only, so this validates the Linux runtime and locked
-dependency graph without claiming registry availability.
+The same default 241-file fixture was run in clean Git archive checkouts using
+Node.js `v22.23.2` and `v24.20.0` Alpine runtime binaries inside a Git-capable
+Linux container. Each checkout used `npm ci --offline` from the locked npm
+cache, `NODE_OPTIONS=--max-old-space-size=1024`, and `npm run build` before the
+benchmark. This validates the Linux runtimes and locked dependency graph; it
+does not claim stock-image setup, hosted CI behavior, or registry availability.
 
 | Runtime | Mode | Wall time | API work time | RSS delta | Result |
 | --- | --- | ---: | ---: | ---: | --- |

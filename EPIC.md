@@ -36,6 +36,12 @@ Git fsmonitor helper isolation was added in
 [`db809f4`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/db809f4).
 Symlink-escape regression coverage was added in
 [`143e9f7`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/143e9f7).
+JavaScript API runtime request validation was added in
+[`d385ff5`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/d385ff5).
+Snapshot-aware diagnostic deduplication was added in
+[`798594c`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/798594c).
+Out-of-range location selectors now fail closed in
+[`83f398d`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/83f398d).
 The draft schema and local verification pass; Windows/hosted cross-platform
 execution, cancellation/isolation evidence, schema freeze, and publication
 remain open.
@@ -46,7 +52,7 @@ remain open.
 | Work package | Task | Status | Deliverable/evidence |
 | --- | --- | --- | --- |
 | E-01: Project-host feasibility | CI-01 | Done locally | Config-bound virtual host and [`spike/PROJECT_HOST_FINDINGS.md`](spike/PROJECT_HOST_FINDINGS.md) |
-| E-02: Executable draft contracts | CI-02 | Done as draft | TypeScript contracts, draft JSON Schema, CLI/API/error fixtures |
+| E-02: Executable draft contracts | CI-02 | Done as draft | TypeScript contracts, draft JSON Schema, CLI/API runtime validation, and error fixtures |
 | E-03: Snapshot and Git boundary | CI-03 | Done for tested cases | Revision/worktree snapshots, endpoint diff, read-only flags, conflict, concurrent-content, and external diff/textconv/fsmonitor helper fixtures |
 | E-04: TypeScript semantic provider | CI-04 | Done for scope | JS/TS/TSX targets, imports/re-exports, calls/references, extends/implements |
 | E-05: Evidence graph and impact | CI-05 | Done for scope | Reverse traversal, stable IDs, retained paths, cycle-safe depth/node/edge caps |
@@ -110,7 +116,7 @@ explicitly rather than returning a false empty result.
 
 ### E-08: Verify actual work and output bounds
 
-File, graph, provider-observation, and serialized-output limits are enforced;
+File, graph, retained provider-observation, and serialized-output limits are enforced;
 deterministic ordering and unchanged-Git assertions are covered locally. A
 bounded fan-out benchmark records default versus hard-cap behavior across four
 sizes on macOS and the 241-file fixture on Node 22/24 Linux, with separate
@@ -122,11 +128,12 @@ matrix execution still require evidence.
 
 `package.json`, the lockfile, `LICENSE`, schema, compiled entry points, and a
 Node 22/24 × Linux/macOS/Windows workflow are present. `npm pack --dry-run` and
-an offline install/API plus fsmonitor-isolation smoke check pass locally. The 25-case macOS suite and
-the full 25-case Node 22/24 Linux container runs, clean `npm ci --offline`,
+an offline install/API plus fsmonitor-isolation smoke check pass locally. The 28-case macOS suite and
+the full 28-case Node 22/24 Linux container runs, clean `npm ci --offline`,
 type checks, and package checks pass using the locked npm cache. Earlier clean
 Linux runs also pass tarball install/API smoke. The latest full run includes the
-external-helper fixture.
+external-helper, symlink-escape, malformed API request, out-of-range coordinate,
+and snapshot-aware diagnostic fixtures.
 No Windows/hosted workflow result, registry publication, clean registry
 install, or provenance is claimed.
 

@@ -1,7 +1,7 @@
 # Design
 
 Status: implemented v0.1 draft; release gates remain open.
-Implementation revision: [`db809f4`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/db809f4)
+Implementation revision: [`83f398d`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/83f398d)
 Last reconciled: 2026-09-06
 
 This document owns architecture and design decisions. [SPEC.md](SPEC.md) owns
@@ -14,7 +14,7 @@ and tests are the source of truth for what is currently supported.
 ```text
 CLI / JavaScript API (src/cli.ts, src/index.ts)
         |
-Request parsing and validation (src/util.ts, src/errors.ts)
+Request parsing and validation (src/cli.ts, src/analysis.ts, src/util.ts, src/errors.ts)
         |
 Impact orchestration (src/analysis.ts)
         +-- Immutable snapshots / Git comparison (src/snapshot.ts, src/git.ts)
@@ -106,21 +106,25 @@ diff/textconv, `core.fsmonitor`, and optional locks.
 
 ### D-08: Bound work before serialization
 
-File count/bytes, graph nodes/edges/depth, reference collection, dynamic
+File count/bytes, graph nodes/edges/depth, retained reference results, dynamic
 observations, and serialized output have deterministic caps. Defaults are depth
 2, 100 nodes, 300 edges, one retained path per impact item, 1 MiB output, 10,000
 files, 2 MiB per file, and 64 MiB total source. Hard graph caps are depth 5,
 5,000 nodes, and 15,000 edges; hard input/output caps are 8 paths, 16 MiB
 output, 100,000 files, 16 MiB per file, and 512 MiB total source. A stopped
 frontier is partial; an output that cannot fit is a structured
-`OUTPUT_LIMIT_EXCEEDED` error.
+`OUTPUT_LIMIT_EXCEEDED` error. The current TypeScript Language Service adapter
+does not expose independent cancellation for its reference lookup; worker
+isolation and query-time limits remain open CI-08 work.
 
 ### D-09: Keep reproducibility conditional and measurable
 
 Snapshot IDs hash sorted repository-relative contents and revision identity.
 Paths, one-based positions, edge ordering, path selection, and tie breakers are
 stable for identical snapshots, configuration, provider version, and limits.
-Timing, absolute paths, and random IDs are omitted from semantic output. The
+Timing, absolute paths, and random IDs are omitted from semantic output. Diagnostics
+retain snapshot identity and source range when the same warning occurs in both
+contexts. The
 smoke suite repeats requests and compares complete payloads byte-for-byte at the
 object level; cross-platform determinism is still unverified.
 
@@ -142,6 +146,7 @@ as follows:
 | Module/configuration changes disappear | D-03, D-04 | Configuration and unsupported-file projections; unresolved module observations |
 | Language Service ownership is overstated | D-02 | Config-bound host and feasibility note in [`spike/PROJECT_HOST_FINDINGS.md`](spike/PROJECT_HOST_FINDINGS.md) |
 | Graph loses direction or paths | D-04 | Reverse file/symbol impact assertions, cycle/diamond traversal fixtures, and draft schema validation |
+| Location selectors silently cross line boundaries | D-09 | Out-of-range columns return `TARGET_NOT_FOUND`; location disambiguation and boundary regression fixtures |
 | Evidence strength is confused with completeness | D-05 | Dynamic/missing module cases produce `partial` with observations |
 | Imports are presented as test coverage | D-06 | Candidate role and dependency edge IDs are separate fields |
 | Output caps do not bound work | D-08 | File/graph/provider/output limits are enforced; bounded fan-out observations exist, while stress/cancellation measurements remain open |

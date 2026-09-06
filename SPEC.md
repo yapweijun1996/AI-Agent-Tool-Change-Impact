@@ -2,7 +2,7 @@
 
 Status: implemented v0.1 draft; the executable schema and API are not frozen for
 backward compatibility.
-Last updated: 2026-09-06. Implementation revision: `db809f4`.
+Last updated: 2026-09-06. Implementation revision: `83f398d`.
 Runtime evidence is tracked in [VALIDATION.md](VALIDATION.md); task status is
 authoritative in [TASK.md](TASK.md).
 
@@ -76,7 +76,8 @@ context and is disclosed rather than treated as workspace-wide coverage.
 The draft machine-readable schema is
 [`schemas/result-v0.1-draft.schema.json`](schemas/result-v0.1-draft.schema.json).
 The smoke suite validates capabilities, success, partial, and error envelopes
-with Ajv.
+with Ajv. JavaScript API entry points validate request objects and return
+`INVALID_ARGUMENT` envelopes for malformed runtime inputs.
 
 The envelope contains `schemaVersion`, `ok`, `operation`, context/project and
 snapshot identity, changed seeds or requested target, graph nodes/edges, direct
@@ -103,8 +104,11 @@ empty direct and transitive impact when the requested target has no dependents.
 Coordinates use one-based lines and UTF-16 columns with an inclusive start and
 exclusive end. Paths are normalized repository-relative paths. Snapshot identity
 is included on nodes and evidence so old locations cannot be mistaken for the
-current checkout. Rename mapping retains old and new paths; it does not infer
-semantic identity from a matching name.
+current checkout. A location selector must remain within the requested source
+line; an out-of-range column returns `TARGET_NOT_FOUND` instead of being clamped
+into another line. Diagnostics also retain snapshot identity and source range
+when the same warning occurs in both contexts. Rename mapping retains old and
+new paths; it does not infer semantic identity from a matching name.
 
 ## Git comparison rules
 
@@ -131,8 +135,10 @@ Defaults are depth 2, 100 nodes, 300 edges, one retained path per impact item,
 1 MiB serialized output, 10,000 files, 2 MiB per file, and 64 MiB total source.
 Hard graph caps are depth 5, 5,000 nodes, and 15,000 edges. Hard input/output
 caps are 8 paths, 16 MiB output, 100,000 files, 16 MiB per file, and 512 MiB
-total source. Provider reference, file-edge, and dynamic-observation collection
-is capped before graph projection.
+total source. Retained provider references, file edges, and dynamic observations
+are capped before graph projection. The underlying TypeScript Language Service
+reference lookup is not independently cancellable in this adapter, so worker
+isolation and query-time limits remain release work.
 If a usable result cannot fit the byte limit, the API returns
 `OUTPUT_LIMIT_EXCEEDED` rather than malformed JSON. All handled JSON CLI calls
 write one JSON document; exit code `0` is usable complete/partial, `2` is an

@@ -11,7 +11,7 @@ can inspect the relevant code.
 The implementation was introduced in `b57321d`; provider-boundary, Git endpoint,
 conflict-coverage/package/CLI/boundary fixes, and graph traversal hardening are in
 `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`, `954f6dc`,
-`bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, `89f5286`, `db809f4`, and `143e9f7`. It is a working draft,
+`bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, `89f5286`, `db809f4`, `143e9f7`, `d385ff5`, `798594c`, and `83f398d`. It is a working draft,
 not a published release: the public schema is still `0.1-draft`, local macOS
 and Linux container verification passes, the hosted cross-platform CI matrix
 has not run here, and no npm publication has been performed.
@@ -38,8 +38,9 @@ npm run pack:check
 The test suite creates temporary Git repositories from
 [`test/fixtures/basic`](test/fixtures/basic), then exercises the CLI and API
 without modifying the checkout. `npm test` builds TypeScript before running the
-25 smoke/integration cases, including cycle-safe traversal, deterministic
-diamond paths, and an empty-impact result.
+28 smoke/integration cases, including cycle-safe traversal, deterministic
+diamond paths, an empty-impact result, malformed JavaScript API request and
+out-of-range coordinate handling, and snapshot-aware diagnostics.
 The packaged tarball was also installed in temporary directories and loaded
 successfully on the local macOS runtime and Node 22/24 Linux containers; the
 macOS install used the offline npm cache.

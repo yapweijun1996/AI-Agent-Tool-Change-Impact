@@ -31,6 +31,12 @@ Git fsmonitor helper isolation is in
 [`db809f4`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/db809f4);
 symlink-escape regression coverage is in
 [`143e9f7`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/143e9f7);
+JavaScript API runtime request validation is in
+[`d385ff5`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/d385ff5);
+snapshot-aware diagnostic deduplication is in
+[`798594c`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/798594c);
+out-of-range location selectors now fail closed in
+[`83f398d`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/83f398d);
 documentation reconciliation follows the implementation revision above.
 
 ## Current situation
@@ -38,9 +44,10 @@ documentation reconciliation follows the implementation revision above.
 The repository now contains a CommonJS TypeScript implementation, a draft JSON
 Schema, a CLI, a JavaScript API, a fixture-backed Node test suite, package
 metadata/lockfile, and a configured cross-platform workflow. Local verification
-on Node.js `23.10.0` / macOS `Darwin 25.6.0 arm64` passes 25 smoke/integration
+on Node.js `23.10.0` / macOS `Darwin 25.6.0 arm64` passes 28 smoke/integration
 tests, including cycle-safe traversal, complete empty-impact results, and
-external-helper and symlink-escape isolation. The full 25-case suite, clean `npm ci --offline`,
+external-helper, symlink-escape isolation, malformed API request validation, and
+snapshot-aware diagnostics. The full 28-case suite, clean `npm ci --offline`,
 type check, and package check pass in temporary Node 22 and Node 24 Linux
 checkouts using only the locked npm cache; an earlier clean run also established
 tarball API smoke in those containers. Bounded fan-out measurements are recorded in
@@ -62,17 +69,17 @@ registry publication, and clean registry installation have not been verified.
 
 | ID | Work | Status | Evidence |
 | --- | --- | --- | --- |
-| DOC-01 | Inspect implementation baseline and working-tree state | Done | Git history/tree/status reconciled before and after `b57321d`/`0cdd08f`/`13e9f14`/`6b43c58`/`ca5453e`/`0169580`/`5d29c4c`/`954f6dc`/`bbfeb58`/`940effd`/`1753c22`/`e55647f`/`e51113d`/`89f5286`/`db809f4` |
+| DOC-01 | Inspect implementation baseline and working-tree state | Done | Git history/tree/status reconciled before and after `b57321d`/`0cdd08f`/`13e9f14`/`6b43c58`/`ca5453e`/`0169580`/`5d29c4c`/`954f6dc`/`bbfeb58`/`940effd`/`1753c22`/`e55647f`/`e51113d`/`89f5286`/`db809f4`/`d385ff5`/`798594c`/`83f398d` |
 | DOC-02 | Review supplied product design and technical assumptions | Done | Review dispositions preserved in [DESIGN.md](DESIGN.md) |
 | DOC-03 | Maintain coordinated product/design/epic/roadmap/task docs | Done | This reconciliation updates the eight product/status Markdown documents, the feasibility note, and the performance note |
-| DOC-04 | Validate links, references, consistency, and final changes | Done | Inline validator: 10 Markdown files, 90 link/anchor references, identifiers, DAG, fences, whitespace, and `.gitattributes` preservation all pass |
+| DOC-04 | Validate links, references, consistency, and final changes | Done | Inline validator: all 10 Markdown files, relative links/anchors, identifiers, task DAG, fences, whitespace, and `.gitattributes` preservation pass |
 
 ## Implementation backlog
 
 | ID | Work | Status | Depends on | Acceptance/evidence |
 | --- | --- | --- | --- | --- |
 | CI-01 | Run a configured TypeScript project-host feasibility spike | Done locally | None | Config-bound host and [`spike/PROJECT_HOST_FINDINGS.md`](spike/PROJECT_HOST_FINDINGS.md); V-02, V-03, V-06, V-15 local subset |
-| CI-02 | Define executable draft result/CLI/API contracts and fixtures | Done as draft | CI-01 | `src/types.ts`, draft schema, CLI/API/Ajv fixtures; V-04, V-05, V-08, V-13, V-16, V-20 local subset |
+| CI-02 | Define executable draft result/CLI/API contracts and fixtures | Done as draft | CI-01 | `src/types.ts`, draft schema, CLI/API runtime validation, line-bounded coordinate handling, and Ajv fixtures; V-04, V-05, V-08, V-13, V-16, V-20 local subset |
 | CI-03 | Implement bounded snapshot access and local Git comparison | Done for tested cases | CI-02 | Git trees/worktree, untracked/read-only, deletion/rename, conflict, concurrent-content, external-helper, and symlink-escape fixtures pass; nested/internal symlink and exhaustive staged/unstaged matrices remain; V-01, V-10, V-11, V-18, V-19 |
 | CI-04 | Implement the context-bound TypeScript semantic provider | Done for scope | CI-01, CI-02, CI-03 | JS/TS/TSX targets, imports/re-exports, references/calls, extends/implements; project references deferred; V-02 through V-07 |
 | CI-05 | Implement evidence graph traversal and result projection | Done for scope | CI-02, CI-04 | Reverse BFS, stable IDs, paths, per-seed cycle termination, graph caps, and complete empty impacts; one path per target; V-08, V-09, V-13 |
@@ -90,12 +97,12 @@ The following commands passed after the implementation commit:
 
 | Command | Result |
 | --- | --- |
-| `npm test` | Pass: 25 tests; build plus Node test runner |
+| `npm test` | Pass: 28 tests; build plus Node test runner |
 | `npm run typecheck` | Pass: strict TypeScript check |
 | `npm audit --omit=dev` | Pass: 0 production vulnerabilities |
 | `npm pack --dry-run --ignore-scripts` | Pass: 37 package files, no development sources/tests included |
 | Pack-and-install smoke | Pass: local tarball installed with `npm install --offline --omit=dev`; packaged API returned `0.1-draft`, and packaged `analyzeChanged` did not execute a configured fsmonitor marker |
-| Node 22/24 Linux container matrix | Pass: temporary clean `git archive` checkouts in `node:22-alpine` and `node:24-alpine`; `npm ci --offline`, the full 25-case suite, typecheck, and pack check pass using only the locked npm cache; earlier clean runs also pass tarball install/API smoke; the full run includes external-helper and symlink-escape fixtures |
+| Node 22/24 Linux container matrix | Pass: temporary clean Git-archive checkouts using Node.js `v22.23.2` and `v24.20.0` Alpine runtimes inside a Git-capable Linux container; `npm ci --offline`, the full 28-case suite, typecheck, and pack check pass using only the locked npm cache; earlier clean runs also pass tarball install/API smoke; the full run includes external-helper, symlink-escape, malformed API request, out-of-range coordinate, and snapshot-aware diagnostic fixtures |
 | `node spike/performance-benchmark.cjs` | Pass locally: default 241-file fan-out plus 21/121/501-file parameterized runs on macOS, and default 241-file API/CLI runs on Node 22/24 Linux; defaults stop at 100 nodes, hard caps complete within fixture size; observations are recorded in [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) |
 | `git diff --check` | Pass: no whitespace errors |
 

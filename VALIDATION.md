@@ -5,13 +5,13 @@ gates; implementation status is authoritative in [TASK.md](TASK.md).
 
 ## Current evidence
 
-Implementation revisions: `b57321d`, `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`, `954f6dc`, `bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, `89f5286`, and `db809f4`, plus the documentation
+Implementation revisions: `b57321d`, `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`, `954f6dc`, `bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, `89f5286`, `db809f4`, `d385ff5`, `798594c`, and `83f398d`, plus the documentation
 reconciliation that follows this implementation revision.
 
 | Area | Evidence | Result |
 | --- | --- | --- |
 | Build and type safety | `npm run typecheck`; `npm test` builds with `tsc -p tsconfig.json` | Pass |
-| Runtime smoke/integration | `npm test` on Node.js `v23.10.0`, macOS `Darwin 25.6.0 arm64`, plus temporary clean `node:22-alpine` and `node:24-alpine` Linux checkouts | Pass: 25 tests on macOS and each Linux runtime; Linux uses fresh `npm ci --offline` installs from the locked npm cache, with `NODE_OPTIONS=--max-old-space-size=1024` |
+| Runtime smoke/integration | `npm test` on Node.js `v23.10.0`, macOS `Darwin 25.6.0 arm64`, plus temporary clean Linux Git-archive checkouts using Node.js `v22.23.2` and `v24.20.0` Alpine runtimes | Pass: 28 tests on macOS and each Linux runtime; Linux uses fresh `npm ci --offline` installs from the locked npm cache, with `NODE_OPTIONS=--max-old-space-size=1024` |
 | Draft contract | Ajv `8.20.0` validates capabilities, success, partial, and error envelopes | Pass |
 | Production dependency audit | `npm audit --omit=dev` | Pass: 0 vulnerabilities |
 | Package contents | `npm pack --dry-run --ignore-scripts`; temporary tarball offline install/API and fsmonitor-isolation smoke; Node 22/24 Linux container tarball install/API checks | Pass locally: 37 files; development tests/sources excluded; packaged API loaded and configured fsmonitor helper was not executed |
@@ -38,12 +38,9 @@ An inline Python validator was run after this reconciliation for:
   separation, candidate-test terminology, dependencies, and release status.
 - Byte-identical preservation of `.gitattributes`.
 
-Result: **Pass** on 2026-09-06. It checked 10 Markdown files, 90 link/anchor
-references, all identifier definitions/references, an acyclic CI dependency graph,
+Result: **Pass** on 2026-09-06. It checked all 10 Markdown files, relative
+links/anchors, identifier definitions/references, an acyclic CI dependency graph,
 balanced fences, final newlines, whitespace, and byte-identical `.gitattributes`.
-The previous eight-file baseline had 37 links; the increase reflects the
-implementation, feasibility, and performance references added during the
-reconciliation.
 
 ## Fixture status
 
@@ -67,14 +64,14 @@ open. “Not run” means no evidence is available.
 | V-10 | Two commits, non-current head, deleted symbol/file, removed export, rename/move | Pass for tested cases | Modification, deleted symbol, and rename old/new snapshot tests pass; removed-file/export matrix remains |
 | V-11 | Staged/unstaged edits, untracked files, missing ref, conflict, concurrent edit | Pass for tested cases | Worktree/untracked/read-only, staged plus unstaged edits, missing endpoint, conflict, and concurrent-content-change checks pass; broader repository-state combinations remain |
 | V-12 | Top-level side effects, tsconfig/package changes, unsupported asset | Partial | `tsconfig.json` and `package.json` configuration changes plus unsupported-file projection pass; side-effect and broader package matrix remain |
-| V-13 | Empty complete, partial, unresolved observations elsewhere in scope | Pass for tested cases | Complete empty isolated-target, dynamic partial, and unresolved-module observations pass; broader irrelevant-observation combinations remain |
+| V-13 | Empty complete, partial, unresolved observations elsewhere in scope | Pass for tested cases | Complete empty isolated-target, dynamic partial, unresolved-module observations, and dual-snapshot diagnostic identity pass; broader irrelevant-observation combinations remain |
 | V-14 | Test imports/type-only/unused/mock/skipped/unrelated/external test project | Partial | Filename candidate and dependency separation pass; negative test matrix remains |
 | V-15 | Large files/projects, fan-out/deep graph, cancellation, repeated sessions | Partial | Four fan-out/depth sizes (21–501 files) on macOS plus the 241-file fixture on Node 22/24 Linux confirm default versus hard-cap behavior and record API/CLI observations; cancellation and memory-isolation evidence remain |
 | V-16 | Long paths, many diagnostics, tight byte budget, invalid budget, oversized graph | Pass for tested cases | Output/argument limits and valid JSON error behavior pass; long-path/diagnostic stress remains |
 | V-17 | Identical snapshots/config/dependencies/provider; changed provider/resolution input | Partial | Repeated identical API payloads compare equal; cross-provider/input invalidation is untested |
 | V-18 | External diff/textconv/fsmonitor, executable plugin/config, automatic type acquisition | Pass for tested cases | Marker-based external diff/textconv/fsmonitor helper fixture confirms configured helpers are not executed on macOS and Node 22/24 Linux; broader executable-config and automatic-type-acquisition matrix remains |
 | V-19 | Symlink escape, workspace symlink, external declarations, source/Git snapshots | Pass for tested cases | Symlink escapes are skipped and reported on macOS and Node 22/24 Linux; snapshot IDs, old/new evidence, and read boundaries pass; workspace symlink and broader external-input matrix remain |
-| V-20 | CLI/API success, partial, validation/operation errors, coordinate handoff | Pass for tested cases | CLI JSON/exit behavior, API parity, partials, and `--at` pass; UTF-16/old-coordinate cases remain |
+| V-20 | CLI/API success, partial, validation/operation errors, malformed requests, coordinate handoff | Pass for tested cases | CLI JSON/exit behavior, API parity, malformed JavaScript API requests, line-bounded `--at`, partials, and coordinate handoff pass; UTF-16/old-coordinate cases remain |
 | V-21 | Packaged artifact outside checkout on Node 22/24 and Linux/macOS/Windows | Partial | Node 23/macOS and Node 22/24 Linux pass tests, typecheck, and pack checks; the earlier clean Linux runs also pass tarball install/API smoke; Windows and hosted matrix remain unrun |
 | V-22 | Authorized publication and clean registry installation | Not run | Publication requires explicit release authorization and registry credentials |
 
