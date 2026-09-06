@@ -30,6 +30,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "npm run build && node --test test/*.test.cjs",
     "docs:check": "node scripts/docs-check.cjs",
+    "release:check": "node scripts/release-check.cjs",
     "pack:check": "npm run build && npm pack --dry-run --ignore-scripts",
     "pack:smoke": "npm run build && node scripts/pack-smoke.cjs",
     "prepack": "npm run build"

@@ -123,7 +123,7 @@ release action as completed evidence.
 
 | Gate slice | Parent | Status | Acceptance criterion | Current blocker or next input |
 | --- | --- | --- | --- | --- |
-| Local artifact and changelog integrity | CI-09 | Done locally | `npm pack --dry-run` contains the versioned package, schema, compiled entry points, `CHANGELOG.md`, and no development sources; installed API/CLI analysis passes | Re-run in the hosted matrix for the release candidate |
+| Local artifact and changelog integrity | CI-09 | Done locally | `npm pack --dry-run` and `npm run release:check` confirm the versioned package, lockfile, schema, compiled entry points, `CHANGELOG.md`, and no development sources; installed API/CLI analysis passes | Re-run in the hosted matrix for the release candidate |
 | Hosted platform matrix | CI-09 | Blocked by external state | Six Node 22/24 jobs on Ubuntu, macOS, and Windows pass typecheck, tests, package checks, pack smoke, and docs check with captured job IDs | Requires an authorized push or workflow run against this commit and hosted runners |
 | Provider cancellation and isolation | CI-08 | Pending architecture decision | A documented cancellation/timeout contract interrupts or contains bounded provider work, with repeatable latency and memory-isolation evidence | Decide whether to add a worker boundary and public query budget before implementation |
 | Schema/API freeze | CI-09 | Pending contract review | Reviewed fixtures validate a strict versioned schema and the implementation, CLI, types, and changelog use the same frozen contract | Requires product/API review of draft fields and enums |
@@ -139,7 +139,8 @@ The following commands passed after the implementation commit:
 | `npm run typecheck` | Pass: strict TypeScript check |
 | `npm run docs:check` | Pass: 11 Markdown files; links/anchors, identifiers, task DAG, fences, whitespace, Git references, and `.gitattributes` preservation |
 | `npm audit --json` | Pass: 0 vulnerabilities across production and development dependencies |
-| `npm pack --dry-run --ignore-scripts` | Pass: 37 package files, no development sources/tests included |
+| `npm pack --dry-run --ignore-scripts` | Pass: 38 package files, including `CHANGELOG.md`; no development sources/tests included |
+| `npm run release:check` | Pass: package/lockfile version, changelog heading, entry points, and 38-file dry-run tarball set agree |
 | `npm run pack:smoke` | Pass: local tarball installed with `npm install --prefer-offline --omit=dev --ignore-scripts`; packaged API and `agent-impact capabilities --json` both returned valid draft results |
 | Pack-and-install smoke | Pass: local tarball installed with cache-preferred dependency resolution and install scripts disabled; packaged API returned `0.1-draft`, and packaged `analyzeChanged` did not execute a configured fsmonitor marker |
 | Node 22/24 Linux container matrix | Pass: latest clean Git clones using Node.js `v22.23.2` and `v24.20.0` Alpine runtimes inside a Git-capable Linux container; after a fresh lockfile `npm ci`, the full 28-case suite, typecheck, pack check, cache-preferred installed API/CLI smoke, and docs check pass; the full run includes external-helper, symlink-escape, malformed API request, out-of-range coordinate, NUL path rejection, effective analysis limits, and snapshot-aware diagnostic fixtures |

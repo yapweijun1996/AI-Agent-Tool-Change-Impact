@@ -79,7 +79,7 @@ remain open.
 | E-06: Candidate-test projection | CI-06 | Done for scope | Filename candidates linked to retained dependency edges |
 | E-07: Changed-target orchestration | CI-07 | Done for tested cases | Modification, deletion, rename, configuration, unsupported-file, worktree projections |
 | E-08: Resource and correctness hardening | CI-08 | In progress | Deterministic limits/read-only checks and bounded fan-out measurements across four sizes are present; cancellation, isolation, and platform runs remain |
-| E-09: Package and release gates | CI-09 | In progress | Local pack dry-run includes the unreleased changelog, installed API/CLI smoke, and CI workflow with full-history checkout and `contents: read` permissions are present; schema freeze, cross-platform artifact checks, and registry evidence remain |
+| E-09: Package and release gates | CI-09 | In progress | Local pack dry-run includes the unreleased changelog, `npm run release:check` validates package metadata and the tarball file set, installed API/CLI smoke, and CI workflow with full-history checkout and `contents: read` permissions are present; schema freeze, cross-platform artifact checks, and registry evidence remain |
 
 ## Acceptance by work package
 
@@ -148,7 +148,8 @@ matrix execution still require evidence.
 
 `package.json`, the lockfile, `LICENSE`, schema, compiled entry points, and a
 Node 22/24 × Linux/macOS/Windows workflow are present. `npm pack --dry-run`,
-`npm run pack:smoke`, and a cache-preferred install/API plus fsmonitor-isolation smoke
+`npm run release:check`, `npm run pack:smoke`, and a cache-preferred install/API
+plus fsmonitor-isolation smoke
 check pass locally. The 28-case macOS suite and
 the full 28-case Node 22/24 Linux container runs, clean lockfile `npm ci`,
 cache-preferred package install, type checks, and package checks pass. Earlier
