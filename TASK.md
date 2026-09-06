@@ -41,6 +41,8 @@ repository-relative paths are canonicalized in
 [`661cb4d`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/661cb4d);
 effective analysis limits are exposed and schema-validated in
 [`8bb3651`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/8bb3651);
+unknown JavaScript API limit fields fail closed in
+[`74563b1`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/74563b1);
 NUL-byte path rejection is covered in
 [`1e61baf`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/1e61baf);
 CI token permissions are restricted in
@@ -114,7 +116,7 @@ registry publication, and clean registry installation have not been verified.
 | ID | Work | Status | Depends on | Acceptance/evidence |
 | --- | --- | --- | --- | --- |
 | CI-01 | Run a configured TypeScript project-host feasibility spike | Done locally | None | Config-bound host and [`spike/PROJECT_HOST_FINDINGS.md`](spike/PROJECT_HOST_FINDINGS.md); V-02, V-03, V-06, V-15 local subset |
-| CI-02 | Define executable draft result/CLI/API contracts and fixtures | Done as draft | CI-01 | `src/types.ts`, draft schema, CLI/API runtime validation, effective analysis limits, canonical repository paths, line-bounded coordinate handling, and Ajv fixtures; V-04, V-05, V-08, V-13, V-16, V-20 local subset |
+| CI-02 | Define executable draft result/CLI/API contracts and fixtures | Done as draft | CI-01 | `src/types.ts`, draft schema, CLI/API runtime validation including unknown limit rejection, effective analysis limits, canonical repository paths, line-bounded coordinate handling, and Ajv fixtures; V-04, V-05, V-08, V-13, V-16, V-20 local subset |
 | CI-03 | Implement bounded snapshot access and local Git comparison | Done for tested cases | CI-02 | Git trees/worktree, two-read content-hashed capture, untracked/read-only, deletion/rename, conflict, concurrent-content, external-helper, and symlink-escape fixtures pass; nested/internal symlink and exhaustive staged/unstaged matrices remain; V-01, V-10, V-11, V-18, V-19 |
 | CI-04 | Implement the context-bound TypeScript semantic provider | Done for scope | CI-01, CI-02, CI-03 | JS/TS/TSX targets, imports/re-exports, references/calls, extends/implements; project references deferred; V-02 through V-07 |
 | CI-05 | Implement evidence graph traversal and result projection | Done for scope | CI-02, CI-04 | Reverse BFS, stable IDs, paths, per-seed cycle termination, graph caps, and complete empty impacts; one path per target; V-08, V-09, V-13 |
