@@ -183,12 +183,20 @@ export class TypeScriptProvider {
   public fileEdges(): ProviderQueryResult {
     const edges: GraphEdge[] = [];
     const unresolved: UnresolvedObservation[] = [];
+    const observationLimit = Math.max(1, this.limits.maxEdges);
+    let observationTruncated = false;
+    let lastFile: string | undefined;
     for (const file of this.context.project.files) {
+      lastFile = file;
       const result = this.fileEdgesForFile(file);
       if (edges.length < this.limits.maxEdges) {
         edges.push(...result.edges.slice(0, this.limits.maxEdges - edges.length));
       }
-      unresolved.push(...result.unresolved);
+      const remaining = Math.max(0, observationLimit - unresolved.length);
+      unresolved.push(...result.unresolved.slice(0, remaining));
+      if (result.unresolved.length > remaining) {
+        observationTruncated = true;
+      }
       if (edges.length >= this.limits.maxEdges) {
         unresolved.push({
           code: "PROVIDER_EDGE_LIMIT",
@@ -199,7 +207,16 @@ export class TypeScriptProvider {
         break;
       }
     }
-    return { edges: dedupeEdges(edges), unresolved: dedupeUnresolved(unresolved) };
+    const markerFile = lastFile ?? this.context.project.files[0] ?? "unknown";
+    return {
+      edges: dedupeEdges(edges),
+      unresolved: capUnresolved(unresolved, observationLimit, {
+        code: "PROVIDER_OBSERVATION_LIMIT",
+        snapshot: this.context.snapshot.ref,
+        file: markerFile,
+        detail: `Provider unresolved observations were capped at ${observationLimit}`,
+      }, observationTruncated),
+    };
   }
 
   public references(target: ResolvedTarget): ProviderQueryResult {
@@ -264,7 +281,16 @@ export class TypeScriptProvider {
       });
     }
     unresolved.push(...this.dynamicObservations());
-    return { edges: dedupeEdges(edges), unresolved: dedupeUnresolved(unresolved) };
+    return {
+      edges: dedupeEdges(edges),
+      unresolved: capUnresolved(unresolved, Math.max(1, this.limits.maxEdges), {
+        code: "PROVIDER_OBSERVATION_LIMIT",
+        snapshot: this.context.snapshot.ref,
+        file: target.file,
+        range: target.range,
+        detail: `Provider unresolved observations were capped at ${Math.max(1, this.limits.maxEdges)}`,
+      }),
+    };
   }
 
   public referencesForNode(node: GraphNode): ProviderQueryResult {
@@ -353,6 +379,15 @@ export class TypeScriptProvider {
     }
     const edges: GraphEdge[] = [];
     const unresolved: UnresolvedObservation[] = [];
+    const rawObservationLimit = Math.max(0, this.limits.maxEdges - 2);
+    let observationTruncated = false;
+    const recordUnresolved = (observation: UnresolvedObservation): void => {
+      if (unresolved.length < rawObservationLimit) {
+        unresolved.push(observation);
+      } else {
+        observationTruncated = true;
+      }
+    };
     let edgeTruncated = false;
     const from = this.nodeForFile(file);
     const visit = (node: ts.Node): void => {
@@ -366,9 +401,9 @@ export class TypeScriptProvider {
           const to = this.nodeForFile(resolution.internal);
           edges.push(makeEdge(from, to, "imports", this.moduleEvidence(sourceFile, node.moduleSpecifier)));
         } else if (resolution.outOfScope) {
-          unresolved.push(this.moduleObservation(file, sourceFile, node.moduleSpecifier, node.moduleSpecifier.text, "PROJECT_BOUNDARY_OUT_OF_SCOPE", `Resolved module ${node.moduleSpecifier.text} is outside the selected project`));
+          recordUnresolved(this.moduleObservation(file, sourceFile, node.moduleSpecifier, node.moduleSpecifier.text, "PROJECT_BOUNDARY_OUT_OF_SCOPE", `Resolved module ${node.moduleSpecifier.text} is outside the selected project`));
         } else {
-          unresolved.push(this.moduleObservation(file, sourceFile, node.moduleSpecifier, node.moduleSpecifier.text));
+          recordUnresolved(this.moduleObservation(file, sourceFile, node.moduleSpecifier, node.moduleSpecifier.text));
         }
       } else if (ts.isExportDeclaration(node) && node.moduleSpecifier && ts.isStringLiteral(node.moduleSpecifier)) {
         const resolution = this.resolveModule(file, node.moduleSpecifier.text);
@@ -376,18 +411,18 @@ export class TypeScriptProvider {
           const to = this.nodeForFile(resolution.internal);
           edges.push(makeEdge(from, to, "reexports", this.moduleEvidence(sourceFile, node.moduleSpecifier)));
         } else if (resolution.outOfScope) {
-          unresolved.push(this.moduleObservation(file, sourceFile, node.moduleSpecifier, node.moduleSpecifier.text, "PROJECT_BOUNDARY_OUT_OF_SCOPE", `Resolved module ${node.moduleSpecifier.text} is outside the selected project`));
+          recordUnresolved(this.moduleObservation(file, sourceFile, node.moduleSpecifier, node.moduleSpecifier.text, "PROJECT_BOUNDARY_OUT_OF_SCOPE", `Resolved module ${node.moduleSpecifier.text} is outside the selected project`));
         } else {
-          unresolved.push(this.moduleObservation(file, sourceFile, node.moduleSpecifier, node.moduleSpecifier.text));
+          recordUnresolved(this.moduleObservation(file, sourceFile, node.moduleSpecifier, node.moduleSpecifier.text));
         }
       } else if (ts.isImportEqualsDeclaration(node) && ts.isExternalModuleReference(node.moduleReference) && ts.isStringLiteral(node.moduleReference.expression)) {
         const resolution = this.resolveModule(file, node.moduleReference.expression.text);
         if (resolution.internal) {
           edges.push(makeEdge(from, this.nodeForFile(resolution.internal), "imports", this.moduleEvidence(sourceFile, node.moduleReference.expression)));
         } else if (resolution.outOfScope) {
-          unresolved.push(this.moduleObservation(file, sourceFile, node.moduleReference.expression, node.moduleReference.expression.text, "PROJECT_BOUNDARY_OUT_OF_SCOPE", `Resolved module ${node.moduleReference.expression.text} is outside the selected project`));
+          recordUnresolved(this.moduleObservation(file, sourceFile, node.moduleReference.expression, node.moduleReference.expression.text, "PROJECT_BOUNDARY_OUT_OF_SCOPE", `Resolved module ${node.moduleReference.expression.text} is outside the selected project`));
         } else {
-          unresolved.push(this.moduleObservation(file, sourceFile, node.moduleReference.expression, node.moduleReference.expression.text));
+          recordUnresolved(this.moduleObservation(file, sourceFile, node.moduleReference.expression, node.moduleReference.expression.text));
         }
       } else if (ts.isCallExpression(node) && ts.isIdentifier(node.expression) && node.expression.text === "require" && node.arguments.length > 0) {
         const argument = node.arguments[0];
@@ -396,9 +431,9 @@ export class TypeScriptProvider {
           if (resolution.internal) {
             edges.push(makeEdge(from, this.nodeForFile(resolution.internal), "imports", this.moduleEvidence(sourceFile, argument)));
           } else if (resolution.outOfScope) {
-            unresolved.push(this.moduleObservation(file, sourceFile, argument, argument.text, "PROJECT_BOUNDARY_OUT_OF_SCOPE", `Resolved module ${argument.text} is outside the selected project`));
+            recordUnresolved(this.moduleObservation(file, sourceFile, argument, argument.text, "PROJECT_BOUNDARY_OUT_OF_SCOPE", `Resolved module ${argument.text} is outside the selected project`));
           } else {
-            unresolved.push(this.moduleObservation(file, sourceFile, argument, argument.text));
+            recordUnresolved(this.moduleObservation(file, sourceFile, argument, argument.text));
           }
         }
       } else if (ts.isCallExpression(node) && node.expression.kind === ts.SyntaxKind.ImportKeyword && node.arguments.length > 0) {
@@ -408,9 +443,9 @@ export class TypeScriptProvider {
           if (resolution.internal) {
             edges.push(makeEdge(from, this.nodeForFile(resolution.internal), "imports", this.moduleEvidence(sourceFile, argument)));
           } else if (resolution.outOfScope) {
-            unresolved.push(this.moduleObservation(file, sourceFile, argument, argument.text, "PROJECT_BOUNDARY_OUT_OF_SCOPE", `Resolved module ${argument.text} is outside the selected project`));
+            recordUnresolved(this.moduleObservation(file, sourceFile, argument, argument.text, "PROJECT_BOUNDARY_OUT_OF_SCOPE", `Resolved module ${argument.text} is outside the selected project`));
           } else {
-            unresolved.push(this.moduleObservation(file, sourceFile, argument, argument.text));
+            recordUnresolved(this.moduleObservation(file, sourceFile, argument, argument.text));
           }
         }
       }
@@ -437,22 +472,34 @@ export class TypeScriptProvider {
         }));
       } else if (resolution.outOfScope) {
         const offset = Math.max(0, sourceFile.getFullText().indexOf(reference.fileName));
-        unresolved.push(this.moduleObservationAt(file, sourceFile, offset, reference.fileName.length, reference.fileName, "PROJECT_BOUNDARY_OUT_OF_SCOPE", `Resolved module ${reference.fileName} is outside the selected project`));
+        recordUnresolved(this.moduleObservationAt(file, sourceFile, offset, reference.fileName.length, reference.fileName, "PROJECT_BOUNDARY_OUT_OF_SCOPE", `Resolved module ${reference.fileName} is outside the selected project`));
       } else {
         const offset = Math.max(0, sourceFile.getFullText().indexOf(reference.fileName));
-        unresolved.push(this.moduleObservationAt(file, sourceFile, offset, reference.fileName.length, reference.fileName));
+        recordUnresolved(this.moduleObservationAt(file, sourceFile, offset, reference.fileName.length, reference.fileName));
       }
     }
     const allDynamic = this.dynamicObservations().filter((observation) => observation.file === file);
-    unresolved.push(...allDynamic);
+    for (const observation of allDynamic) {
+      recordUnresolved(observation);
+    }
+    const markers: UnresolvedObservation[] = [];
     if (edgeTruncated) {
-      unresolved.push({
+      markers.push({
         code: "PROVIDER_EDGE_LIMIT",
         snapshot: this.context.snapshot.ref,
         file,
         detail: `File dependency collection stopped after ${this.limits.maxEdges} edges`,
       });
     }
+    if (observationTruncated) {
+      markers.push({
+        code: "PROVIDER_OBSERVATION_LIMIT",
+        snapshot: this.context.snapshot.ref,
+        file,
+        detail: `Provider unresolved observations were capped at ${this.limits.maxEdges}`,
+      });
+    }
+    unresolved.push(...markers.slice(0, Math.max(0, this.limits.maxEdges - unresolved.length)));
     const resultEdges = dedupeEdges(edges);
     const resultUnresolved = dedupeUnresolved(unresolved);
     this.fileEdgesCache.set(file, resultEdges);
@@ -735,4 +782,18 @@ function dedupeUnresolved(values: readonly UnresolvedObservation[]): UnresolvedO
     seen.set(`${value.code}:${value.snapshot.id}:${value.file}:${range}`, value);
   }
   return [...seen.values()].sort((a, b) => compareText(`${a.file}:${a.code}`, `${b.file}:${b.code}`));
+}
+
+function capUnresolved(
+  values: readonly UnresolvedObservation[],
+  limit: number,
+  marker: UnresolvedObservation,
+  forceMarker = false,
+): UnresolvedObservation[] {
+  const deduped = dedupeUnresolved(values);
+  if (!forceMarker && deduped.length <= limit) {
+    return deduped;
+  }
+  const retained = deduped.slice(0, Math.max(0, limit - 1));
+  return dedupeUnresolved([...retained, marker]);
 }

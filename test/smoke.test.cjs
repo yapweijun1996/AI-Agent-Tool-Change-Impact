@@ -257,6 +257,21 @@ test("unresolved literal modules are visible instead of becoming an empty edge s
   assert.equal(result.analysis.status, "partial");
 });
 
+test("unresolved provider observations stay within the edge-derived cap", () => {
+  const root = createRepo();
+  writeFileSync(join(root, "tsconfig.json"), JSON.stringify({
+    compilerOptions: { target: "ES2022", module: "CommonJS", strict: true },
+    include: ["src/many-missing.ts"],
+  }));
+  const imports = Array.from({ length: 40 }, (_, index) => `import { missing${index} } from './missing-${index}';`).join("\n");
+  writeFileSync(join(root, "src", "many-missing.ts"), `${imports}\nexport const value = 1;\n`);
+  const result = api.analyzeFile({ root, project: "tsconfig.json", file: "src/many-missing.ts", limits: { maxEdges: 5, maxOutputBytes: 16 * 1024 } });
+  assert.equal(result.ok, true);
+  assert.equal(result.analysis.status, "partial");
+  assert.ok(result.unresolved.length <= 5);
+  assert.ok(result.unresolved.some((entry) => entry.code === "PROVIDER_OBSERVATION_LIMIT"));
+});
+
 test("ambiguous symbols fail closed and support location disambiguation", () => {
   const root = createRepo();
   const path = join(root, "src", "ambiguous.ts");
