@@ -50,6 +50,8 @@ CI token permissions were restricted in
 [`0644fda`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/0644fda),
 and full-history checkout for documentation validation was added in
 [`343750a`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/343750a).
+Installed API/CLI artifact smoke was automated in
+[`0902d49`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/0902d49).
 The draft schema and local verification pass; Windows/hosted cross-platform
 execution, cancellation/isolation evidence, schema freeze, and publication
 remain open.
@@ -67,7 +69,7 @@ remain open.
 | E-06: Candidate-test projection | CI-06 | Done for scope | Filename candidates linked to retained dependency edges |
 | E-07: Changed-target orchestration | CI-07 | Done for tested cases | Modification, deletion, rename, configuration, unsupported-file, worktree projections |
 | E-08: Resource and correctness hardening | CI-08 | In progress | Deterministic limits/read-only checks and bounded fan-out measurements across four sizes are present; cancellation, isolation, and platform runs remain |
-| E-09: Package and release gates | CI-09 | In progress | Local pack dry-run and CI workflow with full-history checkout and `contents: read` permissions are present; schema freeze, cross-platform artifact checks, and registry evidence remain |
+| E-09: Package and release gates | CI-09 | In progress | Local pack dry-run, installed API/CLI smoke, and CI workflow with full-history checkout and `contents: read` permissions are present; schema freeze, cross-platform artifact checks, and registry evidence remain |
 
 ## Acceptance by work package
 
@@ -135,8 +137,9 @@ matrix execution still require evidence.
 ### E-09: Release only what the artifact proves
 
 `package.json`, the lockfile, `LICENSE`, schema, compiled entry points, and a
-Node 22/24 × Linux/macOS/Windows workflow are present. `npm pack --dry-run` and
-an offline install/API plus fsmonitor-isolation smoke check pass locally. The 28-case macOS suite and
+Node 22/24 × Linux/macOS/Windows workflow are present. `npm pack --dry-run`,
+`npm run pack:smoke`, and an offline install/API plus fsmonitor-isolation smoke
+check pass locally. The 28-case macOS suite and
 the full 28-case Node 22/24 Linux container runs, clean `npm ci --offline`,
 type checks, and package checks pass using the locked npm cache. Earlier clean
 Linux runs also pass tarball install/API smoke. The latest full run includes the

@@ -35,7 +35,7 @@ reasoning, and automatic dependency installation are outside this version.
 | R-11 | Produce deterministic semantic results for identical declared inputs | Implemented on tested runtimes; cross-platform determinism pending | V-09, V-17 |
 | R-12 | Keep analysis read-only, offline, and free of repository-code execution | Implemented by design/tests | V-18, V-19 |
 | R-13 | Provide one consistent CLI/API contract with machine-readable errors | Implemented draft | V-05, V-16, V-20 |
-| R-14 | Verify packaging/platform support before advertising a release | Local artifact/runtime checks pass; Windows/hosted release gates pending | V-21, V-22 pending |
+| R-14 | Verify packaging/platform support before advertising a release | Local artifact/runtime checks, including installed API/CLI smoke, pass; Windows/hosted release gates pending | V-21, V-22 pending |
 
 ## Draft CLI
 

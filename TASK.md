@@ -45,6 +45,8 @@ CI token permissions are restricted in
 [`0644fda`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/0644fda),
 and the full-history documentation-checkout requirement is in
 [`343750a`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/343750a);
+installed API/CLI artifact smoke is automated in
+[`0902d49`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/0902d49);
 documentation reconciliation follows the implementation revision above.
 
 ## Current situation
@@ -95,7 +97,7 @@ registry publication, and clean registry installation have not been verified.
 | CI-06 | Add candidate-test classification and graph-linked results | Done for scope | CI-04, CI-05 | Filename candidates retain edge IDs/evidence and make no coverage claim; V-14 |
 | CI-07 | Implement two-snapshot changed-target analysis and fallback | Done for tested cases | CI-03, CI-04, CI-05 | Modification/deletion/rename/configuration/unsupported/worktree cases; V-10, V-11, V-12 |
 | CI-08 | Enforce budgets, deterministic results, isolation, and measured limits | In progress | CI-05, CI-06, CI-07 | Local limits/determinism/read-only checks and bounded fan-out API/CLI measurements across macOS and Node 22/24 Linux pass; Windows/hosted measurements, cancellation, and memory isolation remain; V-09, V-15 through V-20 |
-| CI-09 | Verify packaging, freeze contracts, and complete release gates | In progress | CI-08 | Local pack dry-run, offline tarball install/API smoke, Node 22/24 Linux container checks, and full-history/read-only workflow are committed; Windows/hosted artifact checks, schema freeze, publication remain; V-21, V-22 |
+| CI-09 | Verify packaging, freeze contracts, and complete release gates | In progress | CI-08 | Local pack dry-run, `npm run pack:smoke` installed API/CLI smoke, Node 22/24 Linux container checks, and full-history/read-only workflow are committed; Windows/hosted artifact checks, schema freeze, publication remain; V-21, V-22 |
 
 Requirements and fixture definitions are in [SPEC.md](SPEC.md) and
 [VALIDATION.md](VALIDATION.md). Work-package context is in [EPIC.md](EPIC.md).
@@ -111,6 +113,7 @@ The following commands passed after the implementation commit:
 | `npm run docs:check` | Pass: Markdown links/anchors, identifiers, task DAG, fences, whitespace, Git references, and `.gitattributes` preservation |
 | `npm audit --omit=dev` | Pass: 0 production vulnerabilities |
 | `npm pack --dry-run --ignore-scripts` | Pass: 37 package files, no development sources/tests included |
+| `npm run pack:smoke` | Pass: local tarball installed with `npm install --offline --omit=dev`; packaged API and `agent-impact capabilities --json` both returned valid draft results |
 | Pack-and-install smoke | Pass: local tarball installed with `npm install --offline --omit=dev`; packaged API returned `0.1-draft`, and packaged `analyzeChanged` did not execute a configured fsmonitor marker |
 | Node 22/24 Linux container matrix | Pass: latest clean Git clones using Node.js `v22.23.2` and `v24.20.0` Alpine runtimes inside a Git-capable Linux container; after `1e61baf`, `npm ci --offline`, the full 28-case suite, typecheck, pack check, and docs check pass using only the locked npm cache; earlier clean runs also pass tarball install/API smoke; the full run includes external-helper, symlink-escape, malformed API request, out-of-range coordinate, NUL path rejection, and snapshot-aware diagnostic fixtures |
 | `node spike/performance-benchmark.cjs` | Pass locally: default 241-file fan-out plus 21/121/501-file parameterized runs on macOS, and default 241-file API/CLI runs on Node 22/24 Linux; defaults stop at 100 nodes, hard caps complete within fixture size; observations are recorded in [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) |

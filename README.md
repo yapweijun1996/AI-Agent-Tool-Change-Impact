@@ -14,6 +14,8 @@ conflict-coverage/package/CLI/boundary fixes, and graph traversal hardening are 
 `bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, `89f5286`, `db809f4`, `143e9f7`, `d385ff5`, `798594c`, `83f398d`, and `661cb4d`.
 CI token permissions were restricted in `0644fda` and the workflow now fetches
 full history for reproducible documentation validation in `343750a`.
+The installed artifact API/CLI smoke is automated by `npm run pack:smoke` from
+`0902d49`.
 It is a working draft,
 not a published release: the public schema is still `0.1-draft`, local macOS
 and Linux container verification passes, the hosted cross-platform CI matrix
@@ -36,6 +38,7 @@ npm ci
 npm test
 npm run typecheck
 npm run pack:check
+npm run pack:smoke
 npm run docs:check
 ```
 
@@ -45,9 +48,9 @@ without modifying the checkout. `npm test` builds TypeScript before running the
 28 smoke/integration cases, including cycle-safe traversal, deterministic
 diamond paths, an empty-impact result, malformed JavaScript API request and
 out-of-range coordinate handling, and snapshot-aware diagnostics.
-The packaged tarball was also installed in temporary directories and loaded
-successfully on the local macOS runtime and Node 22/24 Linux containers; the
-macOS install used the offline npm cache.
+The packaged tarball was also installed in temporary directories and its API and
+CLI were loaded successfully on the local macOS runtime and Node 22/24 Linux
+containers; the installs used the offline npm cache.
 The bounded fan-out benchmark in
 [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) records local
 API/CLI cold-start and limit behavior without making a performance guarantee.
