@@ -63,7 +63,6 @@ export function snapshotId(kind: "working-tree" | "revision", revision: string |
 }
 
 export function mergeLimits(input: Partial<Limits> | undefined): Limits {
-  const merged: Limits = { ...DEFAULT_LIMITS, ...(input ?? {}) };
   const integerNames: Array<keyof Limits> = [
     "depth",
     "maxNodes",
@@ -74,6 +73,14 @@ export function mergeLimits(input: Partial<Limits> | undefined): Limits {
     "maxFileBytes",
     "maxTotalFileBytes",
   ];
+  if (input !== undefined) {
+    for (const key of Object.keys(input)) {
+      if (!integerNames.includes(key as keyof Limits)) {
+        throw new ImpactError("INVALID_ARGUMENT", `Unknown limit ${key}`);
+      }
+    }
+  }
+  const merged: Limits = { ...DEFAULT_LIMITS, ...(input ?? {}) };
   for (const name of integerNames) {
     const value = merged[name];
     if (!Number.isSafeInteger(value) || value <= 0) {

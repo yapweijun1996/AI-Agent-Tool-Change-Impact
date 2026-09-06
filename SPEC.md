@@ -70,7 +70,8 @@ and impossible limits return a machine-readable `INVALID_ARGUMENT` error.
 be discoverable. Missing or multiple configurations fail with an actionable
 error. A project reference or separate test project is outside the selected
 context and is disclosed rather than treated as workspace-wide coverage.
-Repository-relative paths are canonicalized before lookup: dot and empty
+Unknown CLI flags and unknown JavaScript API limit fields fail with
+`INVALID_ARGUMENT`. Repository-relative paths are canonicalized before lookup: dot and empty
 segments are removed, while parent segments and NUL bytes return
 `FILE_OUTSIDE_ROOT`.
 

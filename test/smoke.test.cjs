@@ -108,6 +108,9 @@ test("JavaScript API rejects malformed request objects", () => {
   const wrongLimits = api.analyzeFile({ file: "src/math.ts", limits: "bad" });
   assert.equal(wrongLimits.ok, false);
   assert.equal(wrongLimits.error.code, "INVALID_ARGUMENT");
+  const unknownLimit = api.analyzeFile({ file: "src/math.ts", limits: { unknown: 1 } });
+  assert.equal(unknownLimit.ok, false);
+  assert.equal(unknownLimit.error.code, "INVALID_ARGUMENT");
   const wrongCoordinates = api.analyzeSymbol({ file: "src/math.ts", name: "calculateTotal", line: 1.5, column: 1 });
   assert.equal(wrongCoordinates.ok, false);
   assert.equal(wrongCoordinates.error.code, "INVALID_ARGUMENT");
