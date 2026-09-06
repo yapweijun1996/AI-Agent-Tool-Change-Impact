@@ -299,6 +299,25 @@ test("diagnostics stay within the explicit diagnostic cap", () => {
   assert.equal(boundedRead.content, undefined);
 });
 
+test("permitted external declarations honor the file budget before decoding", () => {
+  const root = createRepo();
+  const packageRoot = join(root, "node_modules", "oversized-package");
+  mkdirSync(join(packageRoot, "types"), { recursive: true });
+  writeFileSync(join(packageRoot, "package.json"), JSON.stringify({ name: "oversized-package", types: "types/main.d.ts", description: "x".repeat(1024) }));
+  writeFileSync(join(packageRoot, "types", "main.d.ts"), "export declare const externalValue: number;\n");
+  writeFileSync(join(root, "src", "external.ts"), "import { externalValue } from 'oversized-package';\nexport const localValue = externalValue;\n");
+  const result = api.analyzeFile({
+    root,
+    project: "tsconfig.json",
+    file: "src/external.ts",
+    limits: { maxFileBytes: 512, maxOutputBytes: 16 * 1024 },
+  });
+  assert.equal(result.ok, true);
+  assert.equal(result.analysis.status, "partial");
+  assert.ok(result.unresolved.some((entry) => entry.code === "MODULE_RESOLUTION_UNRESOLVED" && entry.file === "src/external.ts"));
+  assert.equal(result.unresolved.some((entry) => entry.code === "PROJECT_BOUNDARY_OUT_OF_SCOPE"), false);
+});
+
 test("ambiguous symbols fail closed and support location disambiguation", () => {
   const root = createRepo();
   const path = join(root, "src", "ambiguous.ts");

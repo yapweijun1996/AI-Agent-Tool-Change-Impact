@@ -546,7 +546,7 @@ export class TypeScriptProvider {
     if (this.context.snapshot.fileExists(fileName)) {
       return this.context.snapshot.readFile(fileName);
     }
-    return this.resolutionFileExists(fileName) ? ts.sys.readFile(resolve(fileName)) : undefined;
+    return this.resolutionFileExists(fileName) ? this.context.readResolvedFile(resolve(fileName)) : undefined;
   }
 
   private moduleObservation(file: string, sourceFile: ts.SourceFile, node: ts.Node, moduleName: string, code = "MODULE_RESOLUTION_UNRESOLVED", detail = `Could not resolve module ${moduleName}`): UnresolvedObservation {

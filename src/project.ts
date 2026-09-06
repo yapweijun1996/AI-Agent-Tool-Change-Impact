@@ -19,6 +19,7 @@ export interface ProjectContext {
   absolutePath(file: string): string;
   repoPath(file: string): string;
   readFile(file: string): string | undefined;
+  readResolvedFile(file: string): string | undefined;
   sourceFile(file: string): ts.SourceFile | undefined;
   isProjectFile(file: string): boolean;
 }
@@ -208,6 +209,7 @@ export function createProjectContext(snapshot: SourceSnapshot, requestedProject?
     absolutePath: (file) => snapshot.absolutePath(file),
     repoPath: (file) => snapshot.toRepoPath(file),
     readFile: (file) => snapshot.readFile(file),
+    readResolvedFile: (file) => readPermittedFile(snapshot.root, file, snapshot, limits.maxFileBytes),
     sourceFile: (file) => program.getSourceFile(snapshot.absolutePath(file)),
     isProjectFile: (file) => projectFiles.includes(snapshot.toRepoPath(file)),
   };
