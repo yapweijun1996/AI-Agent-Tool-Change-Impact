@@ -39,7 +39,7 @@ cancellation/isolation evidence, schema freeze, and publication remain open.
 | E-05: Evidence graph and impact | CI-05 | Done for scope | Reverse traversal, stable IDs, retained paths, depth/node/edge caps |
 | E-06: Candidate-test projection | CI-06 | Done for scope | Filename candidates linked to retained dependency edges |
 | E-07: Changed-target orchestration | CI-07 | Done for tested cases | Modification, deletion, rename, configuration, unsupported-file, worktree projections |
-| E-08: Resource and correctness hardening | CI-08 | In progress | Deterministic limits/read-only checks and one bounded fan-out measurement are present; cancellation, isolation, repeated-size, and platform runs remain |
+| E-08: Resource and correctness hardening | CI-08 | In progress | Deterministic limits/read-only checks and bounded fan-out measurements across four sizes are present; cancellation, isolation, and platform runs remain |
 | E-09: Package and release gates | CI-09 | In progress | Local pack dry-run and CI workflow are present; schema freeze, cross-platform artifact checks, and registry evidence remain |
 
 ## Acceptance by work package
@@ -98,10 +98,10 @@ explicitly rather than returning a false empty result.
 
 File, graph, provider-observation, and serialized-output limits are enforced;
 deterministic ordering and unchanged-Git assertions are covered locally. A
-bounded fan-out benchmark records default versus hard-cap behavior and separate
-API/CLI cold-start observations. Larger repeated runs, cancellation/resource-
-abort behavior, memory isolation, and all target platforms still require
-execution evidence.
+bounded fan-out benchmark records default versus hard-cap behavior across four
+sizes and separate API/CLI cold-start observations. Larger repeated runs,
+cancellation/resource-abort behavior, memory isolation, and all target
+platforms still require execution evidence.
 
 ### E-09: Release only what the artifact proves
 

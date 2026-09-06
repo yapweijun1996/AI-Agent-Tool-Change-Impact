@@ -9,8 +9,8 @@ const os = require("node:os");
 const repository = join(__dirname, "..");
 const apiEntry = join(repository, "dist", "index.js");
 const cliEntry = join(repository, "dist", "cli.js");
-const directCount = 120;
-const transitiveCount = 120;
+const directCount = readCount("AGENT_IMPACT_BENCH_DIRECT", 120);
+const transitiveCount = readCount("AGENT_IMPACT_BENCH_TRANSITIVE", 120);
 const hardLimits = {
   depth: 5,
   maxNodes: 5000,
@@ -36,6 +36,21 @@ const apiChild = [
   "const summary = result.ok ? { ok: true, status: result.analysis.status, returnedNodes: result.analysis.returnedNodes, returnedEdges: result.analysis.returnedEdges, stopReasons: result.analysis.stopReasons } : { ok: false, error: result.error.code };",
   "process.stdout.write(JSON.stringify({ elapsedMs: Number(elapsedMs.toFixed(1)), rssDeltaMiB: Number(((process.memoryUsage().rss - before) / (1024 * 1024)).toFixed(1)), ...summary }));",
 ].join("\n");
+
+function readCount(name, fallback) {
+  const raw = process.env[name];
+  if (raw === undefined) {
+    return fallback;
+  }
+  if (!/^\d+$/.test(raw)) {
+    throw new Error(`${name} must be a positive integer`);
+  }
+  const value = Number(raw);
+  if (!Number.isSafeInteger(value) || value < 1 || value > 250) {
+    throw new Error(`${name} must be between 1 and 250`);
+  }
+  return value;
+}
 
 function git(root, args) {
   return execFileSync("git", args, { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });

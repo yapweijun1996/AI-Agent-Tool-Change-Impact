@@ -141,7 +141,7 @@ as follows:
 | Graph loses direction or paths | D-04 | Reverse file/symbol impact assertions and draft schema validation |
 | Evidence strength is confused with completeness | D-05 | Dynamic/missing module cases produce `partial` with observations |
 | Imports are presented as test coverage | D-06 | Candidate role and dependency edge IDs are separate fields |
-| Output caps do not bound work | D-08 | File/graph/provider/output limits are enforced; one bounded fan-out observation exists, while repeated stress/cancellation measurements remain open |
+| Output caps do not bound work | D-08 | File/graph/provider/output limits are enforced; bounded fan-out observations exist, while stress/cancellation measurements remain open |
 | Scan/read/execution boundaries conflict | D-07 | Git flags, symlink checks, unchanged-Git assertions, and offline/read-only API |
 
 ## Open design questions
