@@ -123,6 +123,39 @@ test("symbol impact classifies calls, imports, reexports, and remains determinis
   assert.ok(first.impact.transitive.some((item) => item.distance === 2));
 });
 
+test("file traversal terminates on cycles and retains a deterministic diamond path", () => {
+  const root = createRepo();
+  writeFileSync(join(root, "src", "cycle-a.ts"), "import { cycleB } from './cycle-b';\nexport const cycleA = cycleB + 1;\n");
+  writeFileSync(join(root, "src", "cycle-b.ts"), "import { cycleC } from './cycle-c';\nexport const cycleB = cycleC + 1;\n");
+  writeFileSync(join(root, "src", "cycle-c.ts"), "import { cycleA } from './cycle-a';\nexport const cycleC = cycleA + 1;\n");
+  writeFileSync(join(root, "src", "diamond-b.ts"), "import { value } from './math';\nexport const diamondB = value;\n");
+  writeFileSync(join(root, "src", "diamond-c.ts"), "import { value } from './math';\nexport const diamondC = value;\n");
+  writeFileSync(join(root, "src", "diamond-a.ts"), "import { diamondB } from './diamond-b';\nimport { diamondC } from './diamond-c';\nexport const diamondA = diamondB + diamondC;\n");
+  const cycle = api.analyzeFile({ root, project: "tsconfig.json", file: "src/cycle-a.ts" });
+  assert.equal(cycle.ok, true);
+  assert.equal(cycle.analysis.status, "complete");
+  const cycleFiles = cycle.graph.nodes.map((node) => node.file);
+  assert.equal(new Set(cycleFiles).size, cycleFiles.length);
+  assert.ok(cycleFiles.includes("src/cycle-b.ts"));
+  assert.ok(cycleFiles.includes("src/cycle-c.ts"));
+  const first = api.analyzeFile({ root, project: "tsconfig.json", file: "src/math.ts" });
+  const second = api.analyzeFile({ root, project: "tsconfig.json", file: "src/math.ts" });
+  assert.equal(first.ok, true);
+  assert.deepEqual(first, second);
+  assert.ok(first.impact.transitive.some((item) => first.graph.nodes.find((node) => node.id === item.node).file === "src/diamond-a.ts"));
+});
+
+test("analyzeFile returns a complete empty impact for an isolated target", () => {
+  const root = createRepo();
+  writeFileSync(join(root, "src", "isolated.ts"), "export const isolated = 1;\n");
+  const result = api.analyzeFile({ root, project: "tsconfig.json", file: "src/isolated.ts" });
+  assert.equal(result.ok, true);
+  assert.equal(result.analysis.status, "complete");
+  assert.deepEqual(result.impact.direct, []);
+  assert.deepEqual(result.impact.transitive, []);
+  assert.deepEqual(result.unresolved, []);
+});
+
 test("JavaScript and TypeScript JSX project files are analyzed", () => {
   const root = createRepo();
   const result = api.analyzeSymbol({ root, project: "tsconfig.json", file: "src/legacy.js", name: "legacyTotal" });

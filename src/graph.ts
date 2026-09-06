@@ -48,7 +48,12 @@ export function traverseReverse(seeds: readonly GraphNode[], query: GraphQuery, 
       break;
     }
     if (current.distance >= limits.depth) {
-      const frontier = query.edgesForNode(current.node).some((edge) => edge.to === current.node.id && edge.from !== current.node.id);
+      const frontier = query.edgesForNode(current.node)
+        .filter((edge) => edge.to === current.node.id && edge.from !== current.node.id)
+        .some((edge) => {
+          const candidate = nodeForId(edge.from);
+          return candidate !== undefined && !visited.has(`${current.seed}|${candidate.id}`);
+        });
       if (frontier) {
         stopReasons.add("DEPTH_LIMIT");
       }
