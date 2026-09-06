@@ -237,6 +237,24 @@ test("configuration changes remain visible and produce a partial analysis", () =
   assert.ok(result.warnings.some((warning) => warning.code === "CONFIGURATION_CHANGE"));
 });
 
+test("package metadata changes remain visible as configuration seeds", () => {
+  const root = createRepo();
+  const packagePath = join(root, "package.json");
+  writeFileSync(packagePath, '{"name":"fixture","version":"1.0.0"}\n');
+  git(root, ["add", "package.json"]);
+  git(root, ["commit", "-qm", "package-setup"]);
+  const base = git(root, ["rev-parse", "HEAD"]);
+  writeFileSync(packagePath, '{"name":"fixture","version":"1.0.1"}\n');
+  git(root, ["add", "package.json"]);
+  git(root, ["commit", "-qm", "package-change"]);
+  const head = git(root, ["rev-parse", "HEAD"]);
+  const result = api.analyzeChanged({ root, project: "tsconfig.json", base, head });
+  assert.equal(result.ok, true);
+  assert.ok(result.changed.some((entry) => entry.status === "configuration" && entry.path === "package.json"));
+  assert.ok(result.warnings.some((warning) => warning.code === "CONFIGURATION_CHANGE"));
+  assert.equal(result.analysis.status, "partial");
+});
+
 test("worktree includes non-ignored untracked source and does not mutate Git", () => {
   const root = createRepo();
   writeFileSync(join(root, ".gitignore"), "ignored.ts\n");
@@ -253,6 +271,21 @@ test("worktree includes non-ignored untracked source and does not mutate Git", (
   assert.ok(result.changed.some((entry) => entry.path === "src/new/feature.ts"));
   assert.ok(!result.changed.some((entry) => entry.path === "ignored.ts"));
   assert.equal(git(root, ["status", "--porcelain"]), before);
+});
+
+test("worktree combines staged and unstaged tracked changes", () => {
+  const root = createRepo();
+  const base = git(root, ["rev-parse", "HEAD"]);
+  const mathPath = join(root, "src", "math.ts");
+  const servicePath = join(root, "src", "service.ts");
+  writeFileSync(mathPath, readFileSync(mathPath, "utf8").replace("value * 2", "value * 4"));
+  git(root, ["add", "src/math.ts"]);
+  writeFileSync(servicePath, readFileSync(servicePath, "utf8").replace("calculateTotal(value)", "calculateTotal(value) + 1"));
+  const result = api.analyzeChanged({ root, project: "tsconfig.json", base, worktree: true });
+  assert.equal(result.ok, true);
+  assert.ok(result.changed.some((entry) => entry.path === "src/math.ts"));
+  assert.ok(result.changed.some((entry) => entry.path === "src/service.ts"));
+  assert.equal(result.analysis.status, "complete");
 });
 
 test("conflicted worktrees are reported as partial", () => {
