@@ -33,6 +33,7 @@ npm ci
 npm test
 npm run typecheck
 npm run pack:check
+npm run docs:check
 ```
 
 The test suite creates temporary Git repositories from

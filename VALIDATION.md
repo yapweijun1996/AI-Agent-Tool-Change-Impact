@@ -27,7 +27,7 @@ isolation, project-reference support, or registry provenance.
 
 ## Documentation checks
 
-An inline Python validator was run after this reconciliation for:
+`npm run docs:check` runs a dependency-free Node validator for:
 
 - Required-document presence and all relative links/anchors.
 - Consistent requirement (`R-*`), fixture (`V-*`), task (`CI-*`/`DOC-*`),

@@ -36,3 +36,6 @@ jobs:
 
       - name: Check package contents
         run: npm run pack:check
+
+      - name: Check documentation
+        run: npm run docs:check

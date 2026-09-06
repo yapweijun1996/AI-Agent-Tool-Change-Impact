@@ -72,7 +72,7 @@ registry publication, and clean registry installation have not been verified.
 | DOC-01 | Inspect implementation baseline and working-tree state | Done | Git history/tree/status reconciled before and after `b57321d`/`0cdd08f`/`13e9f14`/`6b43c58`/`ca5453e`/`0169580`/`5d29c4c`/`954f6dc`/`bbfeb58`/`940effd`/`1753c22`/`e55647f`/`e51113d`/`89f5286`/`db809f4`/`d385ff5`/`798594c`/`83f398d` |
 | DOC-02 | Review supplied product design and technical assumptions | Done | Review dispositions preserved in [DESIGN.md](DESIGN.md) |
 | DOC-03 | Maintain coordinated product/design/epic/roadmap/task docs | Done | This reconciliation updates the eight product/status Markdown documents, the feasibility note, and the performance note |
-| DOC-04 | Validate links, references, consistency, and final changes | Done | Inline validator: all 10 Markdown files, relative links/anchors, identifiers, task DAG, fences, whitespace, and `.gitattributes` preservation pass |
+| DOC-04 | Validate links, references, consistency, and final changes | Done | `npm run docs:check`: all 10 Markdown files, relative links/anchors, identifiers, task DAG, fences, whitespace, and `.gitattributes` preservation pass |
 
 ## Implementation backlog
 
@@ -99,6 +99,7 @@ The following commands passed after the implementation commit:
 | --- | --- |
 | `npm test` | Pass: 28 tests; build plus Node test runner |
 | `npm run typecheck` | Pass: strict TypeScript check |
+| `npm run docs:check` | Pass: Markdown links/anchors, identifiers, task DAG, fences, whitespace, Git references, and `.gitattributes` preservation |
 | `npm audit --omit=dev` | Pass: 0 production vulnerabilities |
 | `npm pack --dry-run --ignore-scripts` | Pass: 37 package files, no development sources/tests included |
 | Pack-and-install smoke | Pass: local tarball installed with `npm install --offline --omit=dev`; packaged API returned `0.1-draft`, and packaged `analyzeChanged` did not execute a configured fsmonitor marker |
