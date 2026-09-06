@@ -47,7 +47,7 @@ publication, and clean registry installation have not been verified.
 | DOC-01 | Inspect implementation baseline and working-tree state | Done | Git history/tree/status reconciled before and after `b57321d`/`0cdd08f`/`13e9f14`/`6b43c58`/`ca5453e`/`0169580`/`5d29c4c`/`954f6dc`/`bbfeb58`/`940effd` |
 | DOC-02 | Review supplied product design and technical assumptions | Done | Review dispositions preserved in [DESIGN.md](DESIGN.md) |
 | DOC-03 | Maintain coordinated product/design/epic/roadmap/task docs | Done | This reconciliation updates the eight product/status Markdown documents and the feasibility note |
-| DOC-04 | Validate links, references, consistency, and final changes | Done | Inline validator: 9 Markdown files, 72 link/anchor references, identifiers, DAG, fences, whitespace, and `.gitattributes` preservation all pass |
+| DOC-04 | Validate links, references, consistency, and final changes | Done | Inline validator: 9 Markdown files, 74 link/anchor references, identifiers, DAG, fences, whitespace, and `.gitattributes` preservation all pass |
 
 ## Implementation backlog
 
