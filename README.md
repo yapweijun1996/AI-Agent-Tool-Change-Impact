@@ -31,6 +31,8 @@ Documentation and clean-install evidence are reconciled in `079acbd` and
 Required JavaScript API fields are validated before work begins in `b1f6477`.
 TypeScript unused locals and parameters are rejected by the compiler in
 `473b4da`.
+Provider unresolved observations are bounded by the effective edge budget and
+reported with an explicit truncation marker in `32fd01a`.
 It is a working draft,
 not a published release: the public schema is still `0.1-draft`, local macOS
 and Linux container verification passes, the hosted cross-platform CI matrix
@@ -61,9 +63,10 @@ npm run docs:check
 The test suite creates temporary Git repositories from
 [`test/fixtures/basic`](test/fixtures/basic), then exercises the CLI and API
 without modifying the checkout. `npm test` builds TypeScript before running the
-29 smoke/integration cases, including cycle-safe traversal, deterministic
+30 smoke/integration cases, including cycle-safe traversal, deterministic
 diamond paths, an empty-impact result, malformed JavaScript API request and
-out-of-range coordinate handling, and snapshot-aware diagnostics.
+out-of-range coordinate handling, snapshot-aware diagnostics, and bounded
+high-fan-out unresolved-module observations.
 The packaged tarball was also installed in temporary directories and its API and
 CLI were loaded successfully on the local macOS runtime and Node 22/24 Linux
 containers; the smoke prefers the npm cache, permits registry fallback for
@@ -106,7 +109,10 @@ The default limits are depth 2, 100 nodes, 300 edges, one path per impact item,
 1 MiB serialized output, 10,000 files, 2 MiB per file, and 64 MiB total source.
 Hard graph caps are depth 5, 5,000 nodes, and 15,000 edges; hard input/output
 caps are 8 paths, 16 MiB output, 100,000 files, 16 MiB per file, and 512 MiB
-total source. Limits and partial stop reasons are included in the result.
+total source. Provider unresolved observations are capped at the effective
+`maxEdges` value before projection; truncation is visible as
+`PROVIDER_OBSERVATION_LIMIT` and a partial analysis. Limits and partial stop
+reasons are included in the result.
 
 ## Boundary and limitations
 

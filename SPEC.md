@@ -11,6 +11,7 @@ Latest CLI/revision input hardening: `ab27679`.
 Latest documentation/clean-install evidence reconciliation: `1a57175`.
 Latest required API request validation: `b1f6477`.
 Latest TypeScript compiler hygiene: `473b4da`.
+Latest provider observation bounding: `32fd01a`.
 Runtime evidence is tracked in [VALIDATION.md](VALIDATION.md); task status is
 authoritative in [TASK.md](TASK.md).
 
@@ -110,6 +111,10 @@ static binding in the selected context. Dynamic imports, non-literal `require`,
 and literal modules that cannot be resolved are unresolved observations, not
 invented edges. Candidate tests are filename-pattern classifications linked to
 actual retained dependency edges; they never assert coverage or execution.
+Provider unresolved observations are capped at the effective `limits.maxEdges`
+before result projection. When observations are truncated, the result includes
+`PROVIDER_OBSERVATION_LIMIT` and remains `analysis.status: partial` so callers
+can distinguish a bounded observation set from a complete dependency inventory.
 
 Traversal tracks visited nodes per seed. Cycles therefore terminate without
 duplicating graph nodes, and a depth limit is reported only when an unvisited
@@ -150,10 +155,11 @@ Defaults are depth 2, 100 nodes, 300 edges, one retained path per impact item,
 1 MiB serialized output, 10,000 files, 2 MiB per file, and 64 MiB total source.
 Hard graph caps are depth 5, 5,000 nodes, and 15,000 edges. Hard input/output
 caps are 8 paths, 16 MiB output, 100,000 files, 16 MiB per file, and 512 MiB
-total source. Retained provider references, file edges, and dynamic observations
-are capped before graph projection. The underlying TypeScript Language Service
-reference lookup is not independently cancellable in this adapter, so worker
-isolation and query-time limits remain release work.
+total source. Retained provider references, unresolved module observations, file
+edges, and dynamic observations are capped before graph projection. The
+underlying TypeScript Language Service reference lookup is not independently
+cancellable in this adapter, so worker isolation and query-time limits remain
+release work.
 If a usable result cannot fit the byte limit, the API returns
 `OUTPUT_LIMIT_EXCEEDED` rather than malformed JSON. All handled JSON CLI calls
 write one JSON document; exit code `0` is usable complete/partial, `2` is an

@@ -10,6 +10,7 @@ Latest CLI/revision input hardening: [`ab27679`](https://github.com/yapweijun199
 Latest documentation/clean-install evidence reconciliation: [`1a57175`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/1a57175)
 Latest required API request validation: [`b1f6477`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/b1f6477)
 Latest TypeScript compiler hygiene: [`473b4da`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/473b4da)
+Latest provider observation bounding: [`32fd01a`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/32fd01a)
 Last reconciled: 2026-09-07
 
 This document owns architecture and design decisions. [SPEC.md](SPEC.md) owns
@@ -117,16 +118,19 @@ diff/textconv, `core.fsmonitor`, and optional locks.
 
 ### D-08: Bound work before serialization
 
-File count/bytes, graph nodes/edges/depth, retained reference results, dynamic
-observations, and serialized output have deterministic caps. Defaults are depth
-2, 100 nodes, 300 edges, one retained path per impact item, 1 MiB output, 10,000
-files, 2 MiB per file, and 64 MiB total source. Hard graph caps are depth 5,
-5,000 nodes, and 15,000 edges; hard input/output caps are 8 paths, 16 MiB
-output, 100,000 files, 16 MiB per file, and 512 MiB total source. A stopped
-frontier is partial; an output that cannot fit is a structured
-`OUTPUT_LIMIT_EXCEEDED` error. The current TypeScript Language Service adapter
-does not expose independent cancellation for its reference lookup; worker
-isolation and query-time limits remain open CI-08 work.
+File count/bytes, graph nodes/edges/depth, retained reference results, unresolved
+module/dynamic observations, and serialized output have deterministic caps.
+Defaults are depth 2, 100 nodes, 300 edges, one retained path per impact item,
+1 MiB output, 10,000 files, 2 MiB per file, and 64 MiB total source. Hard graph
+caps are depth 5, 5,000 nodes, and 15,000 edges; hard input/output caps are 8
+paths, 16 MiB output, 100,000 files, 16 MiB per file, and 512 MiB total source.
+Provider unresolved observations are retained within the effective `maxEdges`
+budget before result projection; truncation emits
+`PROVIDER_OBSERVATION_LIMIT` and keeps the result partial. A stopped frontier is
+partial; an output that cannot fit is a structured `OUTPUT_LIMIT_EXCEEDED`
+error. The current TypeScript Language Service adapter does not expose
+independent cancellation for its reference lookup; worker isolation and
+query-time limits remain open CI-08 work.
 
 ### D-09: Keep reproducibility conditional and measurable
 
@@ -170,7 +174,7 @@ as follows:
 | Repository paths are not canonical or escape the root | D-07 | Dot/repeated-separator paths normalize to one repository-relative form; parent and NUL segments fail with `FILE_OUTSIDE_ROOT` |
 | Evidence strength is confused with completeness | D-05 | Dynamic/missing module cases produce `partial` with observations |
 | Imports are presented as test coverage | D-06 | Candidate role and dependency edge IDs are separate fields |
-| Output caps do not bound work | D-08 | File/graph/provider/output limits are enforced; bounded fan-out observations exist, while stress/cancellation measurements remain open |
+| Output caps do not bound work | D-08 | File/graph/provider/output limits are enforced; unresolved provider observations are capped before projection and a high-fan-out regression covers the marker, while stress/cancellation measurements remain open |
 | Scan/read/execution boundaries conflict | D-07 | Git flags disable external diff/textconv/fsmonitor helpers; symlink checks, unchanged-Git assertions, and offline/read-only API |
 
 ## Open design questions

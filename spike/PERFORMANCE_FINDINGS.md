@@ -1,7 +1,7 @@
 # Local performance findings
 
-Date: 2026-09-06
-Benchmark implementation revision: `db809f4`; latest core implementation revision: `8bb3651`; latest package verification revision: `273a344`
+Date: 2026-09-07
+Benchmark implementation revision: `db809f4`; latest core implementation revision: `8bb3651`; latest package verification revision: `273a344`; latest provider observation bounding: `32fd01a`
 
 This note records bounded local resource experiments on macOS and Linux
 containers. It is evidence that the configured limits stop work predictably;
@@ -88,3 +88,14 @@ Returned counts and stop reasons match the macOS fixture behavior. These Linux
 observations improve cross-runtime evidence but do not establish Windows or
 hosted CI behavior, sustained-memory limits, cancellation latency, or release
 performance thresholds.
+
+## High-fan-out unresolved observations
+
+At revision `32fd01a`, a temporary Git repository containing one TypeScript
+file with 12,000 missing imports was analyzed with the default limits. The API
+returned a usable `partial` result with 299 retained unresolved observations,
+including `PROVIDER_OBSERVATION_LIMIT`, and a 163,378-byte JSON envelope. The
+effective 300-edge budget therefore bounds retained provider observations before
+the result is serialized. This is a bounded-work regression check, not a
+throughput or memory guarantee; resolver calls, cancellation, and isolation
+remain separate release measurements.

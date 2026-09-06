@@ -15,3 +15,4 @@ pass.
 - Harden CLI inline-value parsing and Git revision validation, with regression coverage for embedded `=` values, whitespace, and NUL input.
 - Reject missing required JavaScript API fields as `INVALID_ARGUMENT` before project or Git work begins.
 - Enable compiler checks that reject unused TypeScript locals and parameters.
+- Bound unresolved provider observations by the effective edge budget and report `PROVIDER_OBSERVATION_LIMIT` when high-fan-out inputs are truncated.

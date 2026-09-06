@@ -1,7 +1,7 @@
 # Project-host feasibility findings
 
-Date: 2026-09-06
-Evidence implementation revision: `db809f4`; latest core implementation revision: `8bb3651`; latest package verification revision: `273a344`
+Date: 2026-09-07
+Evidence implementation revision: `db809f4`; latest core implementation revision: `8bb3651`; latest package verification revision: `273a344`; latest provider observation bounding: `32fd01a`
 
 This note records the bounded feasibility check that informed the first provider.
 It is evidence for project-host behavior, not a performance guarantee.
@@ -29,9 +29,10 @@ It is evidence for project-host behavior, not a performance guarantee.
 4. Revision snapshots can be analyzed concurrently with a working-tree snapshot.
    Deleted declarations remain addressable in the base context, and rename
    results retain old and new paths.
-5. The implementation enforces file, graph, observation, and output limits. The
-   historical 28-case smoke suite verifies behavior at the API/CLI boundary on the
-   macOS runtime and in latest clean-clone Linux runs after `1e61baf` using Node.js `v22.23.2` and `v24.20.0`
+5. The implementation enforces file, graph, unresolved-observation, and output
+   limits. The current 30-case smoke suite verifies behavior at the API/CLI
+   boundary on the macOS runtime; historical full 28-case clean-clone Linux runs
+   after `1e61baf` use Node.js `v22.23.2` and `v24.20.0`
    Alpine runtime binaries inside a Git-capable container. Each Linux run used
    a fresh lockfile `npm ci` install, followed by cache-preferred package smoke;
    this reproduces the dependency-install order used by CI. It does not establish

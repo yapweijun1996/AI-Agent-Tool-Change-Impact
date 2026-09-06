@@ -70,6 +70,9 @@ and [`13990ce`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/com
 The draft schema and local verification pass; Windows/hosted cross-platform
 execution, cancellation/isolation evidence, schema freeze, and publication
 remain open.
+Provider unresolved observations are now bounded before result projection, with
+an explicit partial-result marker and regression coverage in
+[`32fd01a`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/32fd01a).
 [TASK.md](TASK.md) is the authoritative status ledger.
 
 ## Work packages
@@ -143,10 +146,12 @@ explicitly rather than returning a false empty result.
 ### E-08: Verify actual work and output bounds
 
 File, graph, retained provider-observation, and serialized-output limits are enforced;
-deterministic ordering and unchanged-Git assertions are covered locally. A
-bounded fan-out benchmark records default versus hard-cap behavior across four
-sizes on macOS and the 241-file fixture on Node 22/24 Linux, with separate
-API/CLI cold-start observations. Broader repeated runs,
+deterministic ordering and unchanged-Git assertions are covered locally. Unresolved
+module observations are capped at the effective edge budget before projection,
+and the 30-case suite includes a high-fan-out regression for the truncation
+marker. A bounded fan-out benchmark records default versus hard-cap behavior
+across four sizes on macOS and the 241-file fixture on Node 22/24 Linux, with
+separate API/CLI cold-start observations. Broader repeated runs,
 cancellation/resource-abort behavior, memory isolation, Windows, and hosted
 matrix execution still require evidence.
 
@@ -156,7 +161,7 @@ matrix execution still require evidence.
 Node 22/24 × Linux/macOS/Windows workflow are present. `npm pack --dry-run`,
 `npm run release:check`, `npm run pack:smoke`, and a cache-preferred install/API
 plus fsmonitor-isolation smoke
-check pass locally. The current 29-case macOS suite passes; historical full
+check pass locally. The current 30-case macOS suite passes; historical full
 28-case Node 22/24 Linux container runs, clean lockfile `npm ci`,
 cache-preferred package install, type checks, and package checks pass. Earlier
 clean Linux runs also pass tarball install/API smoke. The latest full run includes the
