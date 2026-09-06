@@ -1,7 +1,7 @@
 const assert = require("node:assert/strict");
 const { execFileSync, spawnSync } = require("node:child_process");
-const { chmodSync, cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } = require("node:fs");
-const { delimiter, join } = require("node:path");
+const { chmodSync, cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, unlinkSync, writeFileSync } = require("node:fs");
+const { basename, delimiter, dirname, join } = require("node:path");
 const test = require("node:test");
 
 const api = require("../dist/index.js");
@@ -488,6 +488,24 @@ test("worktree retains internal symlinked source files", () => {
     assert.ok(!result.warnings.some((warning) => warning.code === "PATH_OUTSIDE_ROOT" && warning.file === "src/internal-link.ts"));
   } finally {
     rmSync(link, { force: true });
+  }
+});
+
+test("repository root can be addressed through an internal symlink", () => {
+  const root = createRepo();
+  const alias = join(dirname(root), `${basename(root)}-root-link`);
+  try {
+    symlinkSync(root, alias, "dir");
+  } catch {
+    return;
+  }
+  try {
+    const result = api.analyzeFile({ root: alias, project: "tsconfig.json", file: "src/math.ts" });
+    assert.equal(result.ok, true);
+    assert.equal(result.analysis.status, "complete");
+    assert.equal(result.target.file, "src/math.ts");
+  } finally {
+    unlinkSync(alias);
   }
 });
 
