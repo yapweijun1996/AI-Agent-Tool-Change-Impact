@@ -11,7 +11,7 @@ can inspect the relevant code.
 The implementation was introduced in `b57321d`; provider-boundary, Git endpoint,
 conflict-coverage/package/CLI/boundary fixes, and graph traversal hardening are in
 `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`, `954f6dc`,
-`bbfeb58`, `940effd`, and `1753c22`. It is a working draft,
+`bbfeb58`, `940effd`, `1753c22`, and `e55647f`. It is a working draft,
 not a published release: the public schema is still `0.1-draft`, local macOS verification passes, the cross-platform
 CI matrix is configured but has not run here, and no npm publication has been
 performed.

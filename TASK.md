@@ -21,6 +21,8 @@ Git change-state fixture coverage is in
 [`940effd`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/940effd);
 cycle-safe traversal and empty-impact regression coverage are in
 [`1753c22`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/1753c22);
+the depth-frontier regression assertion is in
+[`e55647f`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/e55647f);
 documentation reconciliation follows the implementation revision above.
 
 ## Current situation
@@ -49,10 +51,10 @@ been verified.
 
 | ID | Work | Status | Evidence |
 | --- | --- | --- | --- |
-| DOC-01 | Inspect implementation baseline and working-tree state | Done | Git history/tree/status reconciled before and after `b57321d`/`0cdd08f`/`13e9f14`/`6b43c58`/`ca5453e`/`0169580`/`5d29c4c`/`954f6dc`/`bbfeb58`/`940effd`/`1753c22` |
+| DOC-01 | Inspect implementation baseline and working-tree state | Done | Git history/tree/status reconciled before and after `b57321d`/`0cdd08f`/`13e9f14`/`6b43c58`/`ca5453e`/`0169580`/`5d29c4c`/`954f6dc`/`bbfeb58`/`940effd`/`1753c22`/`e55647f` |
 | DOC-02 | Review supplied product design and technical assumptions | Done | Review dispositions preserved in [DESIGN.md](DESIGN.md) |
 | DOC-03 | Maintain coordinated product/design/epic/roadmap/task docs | Done | This reconciliation updates the eight product/status Markdown documents, the feasibility note, and the performance note |
-| DOC-04 | Validate links, references, consistency, and final changes | Done | Inline validator: 10 Markdown files, 84 link/anchor references, identifiers, DAG, fences, whitespace, and `.gitattributes` preservation all pass |
+| DOC-04 | Validate links, references, consistency, and final changes | Done | Inline validator: 10 Markdown files, 86 link/anchor references, identifiers, DAG, fences, whitespace, and `.gitattributes` preservation all pass |
 
 ## Implementation backlog
 

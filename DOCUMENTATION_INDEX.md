@@ -1,6 +1,6 @@
 # Documentation Index
 
-Last reconciled: 2026-09-06. Current implementation revision: `1753c22`.
+Last reconciled: 2026-09-06. Current implementation revision: `e55647f`.
 
 ## Reading order and ownership
 
@@ -31,7 +31,7 @@ The current source of truth is the TypeScript implementation under `src/`, the
 fixture-backed tests under `test/`, `package.json`/`package-lock.json`, and the
 draft schema under `schemas/`. The local implementation commits are `b57321d`,
 `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`,
-`954f6dc`, `bbfeb58`, `940effd`, and `1753c22`.
+`954f6dc`, `bbfeb58`, `940effd`, `1753c22`, and `e55647f`.
 TASK owns status; SPEC owns requirements and observable contracts; DESIGN owns
 architecture; VALIDATION owns evidence. Links connect these responsibilities
 instead of duplicating competing status tables.

@@ -1,7 +1,7 @@
 # Project-host feasibility findings
 
 Date: 2026-09-06
-Implementation revision: `1753c22`
+Implementation revision: `e55647f`
 
 This note records the bounded feasibility check that informed the first provider.
 It is evidence for project-host behavior, not a performance guarantee.
