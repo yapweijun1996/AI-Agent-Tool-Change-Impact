@@ -19,7 +19,7 @@ Latest diagnostic collection bounding: `a0f148b`.
 
 M-00 through M-03 are implemented in commits `b57321d`, `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`, `954f6dc`, `bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, `89f5286`, `db809f4`, `143e9f7`, `d385ff5`, `798594c`, `83f398d`, `661cb4d`, and `8bb3651`; the NUL-byte regression is in `1e61baf`. M-04 hardening includes `0644fda`, `343750a`, `0902d49`, `2a68521`, `1c195af`, `b248f10`, `48f102e`, `273a344`, `c4dca94`, `74563b1`, `2262658`, `13990ce`, `4d770e0`, `17020ad`, `850f106`, `beb003e`, `f64fbb6`, `ab27679`, `b1f6477`, `473b4da`, `32fd01a`, and `a0f148b`; repeated resource observations are recorded in `aeef862`, and the diagnostic stress script is `spike/diagnostic-limit.cjs`. M-04 is intentionally open while cancellation/isolation measurements, schema freeze, and artifact/platform evidence are outstanding.
 Documentation and evidence reconciliation after the implementation hardening is
-recorded in `3a7bc99`, `079acbd`, and `1a57175`.
+recorded in `3a7bc99`, `079acbd`, `1a57175`, `ad028b6`, and `f032986`.
 
 ## Release targets
 

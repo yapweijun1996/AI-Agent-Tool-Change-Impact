@@ -91,10 +91,13 @@ provider unresolved observations are bounded by the effective edge budget in
 diagnostic collection is bounded before projection, with post-read file-size
 checks and a `DIAGNOSTIC_LIMIT` marker in
 [`a0f148b`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/a0f148b);
-documentation reconciliation follows in
+documentation reconciliation is recorded in
 [`3a7bc99`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/3a7bc99),
 [`079acbd`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/079acbd),
-and [`1a57175`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/1a57175).
+[`1a57175`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/1a57175),
+[`ad028b6`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/ad028b6),
+and the follow-up benchmark note is in
+[`f032986`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/f032986).
 
 ## Current situation
 
@@ -168,8 +171,8 @@ release action as completed evidence.
 ## Verified local commands
 
 The following commands passed in the final local gate run on 2026-09-07 at code
-revision `a0f148b` (documentation reconciliation follows this implementation
-update)
+revision `a0f148b`; documentation reconciliation is recorded in `ad028b6` and
+the post-change benchmark note in `f032986`
 using Node.js
 `v23.10.0` on macOS `Darwin 25.6.0 arm64`. A fresh dependency install with
 `npm ci --ignore-scripts --no-audit --no-fund` completed before the test run:

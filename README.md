@@ -26,8 +26,9 @@ added in `13990ce`).
 Unknown JavaScript API limit fields fail closed in `74563b1`; the latest local
 Node 22/24 release evidence is recorded in `17020ad`.
 CLI inline values and Git revision inputs are hardened in `ab27679`.
-Documentation and clean-install evidence are reconciled in `079acbd` and
-`1a57175`.
+Documentation and clean-install evidence were reconciled in `079acbd` and
+`1a57175`; the diagnostic-bound update is in `ad028b6` with the follow-up
+benchmark note in `f032986`.
 Required JavaScript API fields are validated before work begins in `b1f6477`.
 TypeScript unused locals and parameters are rejected by the compiler in
 `473b4da`.
