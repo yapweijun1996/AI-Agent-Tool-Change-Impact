@@ -72,9 +72,10 @@ tests, including cycle-safe traversal, complete empty-impact results, and
 external-helper, symlink-escape isolation, malformed API request validation, and
 snapshot-aware diagnostics. The full 28-case suite, clean lockfile installs,
 type check, and package check pass in temporary Node 22 and Node 24 Linux
-checkouts using only the locked npm cache; the latest clean clone rerun after
-`1e61baf` also passed the documentation check, and an earlier clean run
-established tarball API smoke in those containers. Bounded fan-out measurements are recorded in
+checkouts. The package smoke uses a cache-preferred install with normal registry
+fallback when metadata is absent; the latest clean clone rerun after `273a344`
+also passed the documentation check and exercised packaged API/CLI analysis end
+to end. Bounded fan-out measurements are recorded in
 [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md). The schema is
 draft; Windows/hosted matrix execution, cancellation/isolation measurements,
 registry publication, and clean registry installation have not been verified.
