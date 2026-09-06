@@ -21,9 +21,11 @@ export function main(argv: readonly string[] = process.argv.slice(2)): number {
     maxOutputBytes = limits.maxOutputBytes;
     switch (args.command) {
       case "capabilities":
+        assertPositionalCount(args, 0);
         result = capabilities();
         break;
       case "file":
+        assertPositionalCount(args, 1);
         result = analyzeFile({
           file: requiredPositional(args, 0, "file"),
           root: flagString(args, "root"),
@@ -33,19 +35,21 @@ export function main(argv: readonly string[] = process.argv.slice(2)): number {
         break;
       case "symbol":
         {
+          assertPositionalCount(args, 2);
           const location = parseAt(args);
-        result = analyzeSymbol({
-          file: requiredPositional(args, 0, "file"),
-          name: requiredPositional(args, 1, "symbol"),
-          line: location?.line,
-          column: location?.column,
-          root: flagString(args, "root"),
-          project: flagString(args, "project"),
-          limits,
-        });
+          result = analyzeSymbol({
+            file: requiredPositional(args, 0, "file"),
+            name: requiredPositional(args, 1, "symbol"),
+            line: location?.line,
+            column: location?.column,
+            root: flagString(args, "root"),
+            project: flagString(args, "project"),
+            limits,
+          });
         }
         break;
       case "changed":
+        assertPositionalCount(args, 0);
         result = analyzeChanged({
           base: requiredFlag(args, "base"),
           head: flagString(args, "head"),
@@ -154,6 +158,12 @@ function requiredPositional(args: ParsedArgs, index: number, name: string): stri
     throw new ImpactError("INVALID_ARGUMENT", `${name} is required`);
   }
   return value;
+}
+
+function assertPositionalCount(args: ParsedArgs, expected: number): void {
+  if (args.positional.length !== expected) {
+    throw new ImpactError("INVALID_ARGUMENT", `${args.command || "command"} expects ${expected} positional argument${expected === 1 ? "" : "s"}`);
+  }
 }
 
 function requiredFlag(args: ParsedArgs, name: string): string {

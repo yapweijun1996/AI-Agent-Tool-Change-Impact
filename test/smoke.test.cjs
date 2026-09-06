@@ -235,6 +235,9 @@ test("invalid invocations return exit code 2 and one JSON document", () => {
   const payload = JSON.parse(cli.stdout);
   assert.equal(payload.ok, false);
   assert.equal(payload.error.code, "INVALID_ARGUMENT");
+  const extra = spawnSync(process.execPath, [join(__dirname, "..", "dist", "cli.js"), "file", "src/math.ts", "extra", "--json"], { encoding: "utf8" });
+  assert.equal(extra.status, 2);
+  assert.equal(JSON.parse(extra.stdout).error.code, "INVALID_ARGUMENT");
 });
 
 test("changed analysis rejects missing comparison endpoints and missing roots", () => {
