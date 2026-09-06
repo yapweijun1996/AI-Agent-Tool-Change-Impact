@@ -121,7 +121,7 @@ registry publication, and clean registry installation have not been verified.
 | CI-06 | Add candidate-test classification and graph-linked results | Done for scope | CI-04, CI-05 | Filename candidates retain edge IDs/evidence and make no coverage claim; V-14 |
 | CI-07 | Implement two-snapshot changed-target analysis and fallback | Done for tested cases | CI-03, CI-04, CI-05 | Modification/deletion/rename/configuration/unsupported/worktree cases; V-10, V-11, V-12 |
 | CI-08 | Enforce budgets, deterministic results, isolation, and measured limits | In progress | CI-05, CI-06, CI-07 | Local limits/determinism/read-only checks and bounded fan-out API/CLI measurements across macOS and Node 22/24 Linux pass; Windows/hosted measurements, cancellation, and memory isolation remain; V-09, V-15 through V-20 |
-| CI-09 | Verify packaging, freeze contracts, and complete release gates | In progress | CI-08 | Local pack dry-run includes the unreleased changelog, cache-preferred `npm run pack:smoke` installed API/CLI end-to-end analysis smoke, Node 22/24 Linux container checks, and full-history/read-only workflow are committed; Windows/hosted artifact checks, schema freeze, publication remain; V-21, V-22 |
+| CI-09 | Verify packaging, freeze contracts, and complete release gates | In progress | CI-08 | Local pack dry-run includes the unreleased changelog, cache-preferred `npm run pack:smoke` installed API/CLI end-to-end analysis smoke, dependency audit, Node 22/24 Linux container checks, and full-history/read-only workflow are committed; Windows/hosted artifact checks, schema freeze, publication remain; V-21, V-22 |
 
 Requirements and fixture definitions are in [SPEC.md](SPEC.md) and
 [VALIDATION.md](VALIDATION.md). Work-package context is in [EPIC.md](EPIC.md).
