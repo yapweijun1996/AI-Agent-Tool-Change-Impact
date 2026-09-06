@@ -2,7 +2,7 @@
 
 const assert = require("node:assert/strict");
 const { execFileSync } = require("node:child_process");
-const { mkdirSync, mkdtempSync, readdirSync, rmSync } = require("node:fs");
+const { mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } = require("node:fs");
 const { join } = require("node:path");
 const { tmpdir } = require("node:os");
 
@@ -22,6 +22,14 @@ function runNpm(args, cwd) {
   });
 }
 
+function runGit(args, cwd) {
+  return execFileSync("git", args, {
+    cwd,
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+}
+
 try {
   const packDirectory = join(tempRoot, "pack");
   const appDirectory = join(tempRoot, "app");
@@ -33,10 +41,24 @@ try {
   runNpm(["init", "-y"], appDirectory);
   runNpm(["install", "--prefer-offline", "--omit=dev", "--ignore-scripts", "--no-audit", "--no-fund", join(packDirectory, tarballs[0])], appDirectory);
 
+  const fixtureDirectory = join(tempRoot, "fixture");
+  mkdirSync(join(fixtureDirectory, "src"), { recursive: true });
+  writeFileSync(join(fixtureDirectory, "tsconfig.json"), JSON.stringify({
+    compilerOptions: { target: "ES2022", module: "CommonJS", strict: true },
+    include: ["src/**/*.ts"],
+  }));
+  writeFileSync(join(fixtureDirectory, "src", "base.ts"), "export const value = 1;\n");
+  writeFileSync(join(fixtureDirectory, "src", "consumer.ts"), "import { value } from './base';\nexport const consumer = value;\n");
+  runGit(["init", "-q"], fixtureDirectory);
+  runGit(["config", "user.email", "pack-smoke@example.com"], fixtureDirectory);
+  runGit(["config", "user.name", "Agent Impact Pack Smoke"], fixtureDirectory);
+  runGit(["add", "."], fixtureDirectory);
+  runGit(["commit", "-qm", "fixture"], fixtureDirectory);
+
   const apiProbe = execFileSync(process.execPath, [
     "-e",
-    "const result = require('agent-change-impact').capabilities(); if (!result.ok || result.schemaVersion !== '0.1-draft') process.exit(1);",
-  ], { cwd: appDirectory, encoding: "utf8" });
+    "const api = require('agent-change-impact'); const result = api.capabilities(); const impact = api.analyzeFile({ root: process.env.IMPACT_SMOKE_ROOT, project: 'tsconfig.json', file: 'src/base.ts' }); if (!result.ok || result.schemaVersion !== '0.1-draft' || !impact.ok || impact.operation !== 'file-impact' || impact.analysis.limits.depth !== 2 || !impact.impact.direct.some((item) => item.node && impact.graph.nodes.some((node) => node.id === item.node && node.file === 'src/consumer.ts'))) process.exit(1);",
+  ], { cwd: appDirectory, encoding: "utf8", env: { ...process.env, IMPACT_SMOKE_ROOT: fixtureDirectory } });
   assert.equal(apiProbe, "");
 
   const cliName = process.platform === "win32" ? "agent-impact.cmd" : "agent-impact";
@@ -50,7 +72,17 @@ try {
   const cliResult = JSON.parse(cliOutput);
   assert.equal(cliResult.ok, true);
   assert.equal(cliResult.operation, "capabilities");
-  process.stdout.write("pack-smoke: pass (installed API and CLI)\n");
+  const installedCliScript = join(appDirectory, "node_modules", "agent-change-impact", "dist", "cli.js");
+  const cliImpactOutput = execFileSync(process.execPath, [installedCliScript, "file", "src/base.ts", "--root", fixtureDirectory, "--project", "tsconfig.json", "--json"], {
+    cwd: appDirectory,
+    encoding: "utf8",
+  });
+  const cliImpact = JSON.parse(cliImpactOutput);
+  assert.equal(cliImpact.ok, true);
+  assert.equal(cliImpact.operation, "file-impact");
+  assert.equal(cliImpact.analysis.limits.depth, 2);
+  assert.ok(cliImpact.impact.direct.some((item) => cliImpact.graph.nodes.some((node) => node.id === item.node && node.file === "src/consumer.ts")));
+  process.stdout.write("pack-smoke: pass (installed API and CLI analysis)\n");
 } finally {
   rmSync(tempRoot, { recursive: true, force: true });
 }
