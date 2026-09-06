@@ -153,8 +153,10 @@ release action as completed evidence.
 
 ## Verified local commands
 
-The following commands passed in the final local gate run on 2026-09-07 at
-`ab27679` using Node.js `v23.10.0` on macOS `Darwin 25.6.0 arm64`:
+The following commands passed in the final local gate run on 2026-09-07 at code
+revision `ab27679` (documentation reconciliation `079acbd`) using Node.js
+`v23.10.0` on macOS `Darwin 25.6.0 arm64`. A fresh dependency install with
+`npm ci --ignore-scripts --no-audit --no-fund` completed before the test run:
 
 | Command | Result |
 | --- | --- |
