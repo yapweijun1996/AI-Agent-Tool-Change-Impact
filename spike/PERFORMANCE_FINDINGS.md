@@ -67,6 +67,21 @@ Timing and RSS varied with process state:
 
 This rerun is additional local evidence, not a release performance threshold.
 
+At revision `a0f148b`, the same 241-file fixture was rerun after diagnostic
+collection was bounded. Semantic results again matched the earlier runs:
+defaults stopped at 100 nodes/99 edges with `NODE_LIMIT`, and hard caps
+returned 241 nodes/240 edges.
+
+| Mode | Wall time | API work time | RSS delta | Result |
+| --- | ---: | ---: | ---: | --- |
+| API default | 433.0 ms | 326.4 ms | 87.4 MiB | `partial`, 100 nodes/99 edges, `NODE_LIMIT` |
+| API hard caps | 409.5 ms | 303.4 ms | 85.6 MiB | `complete`, 241 nodes/240 edges |
+| CLI default | 408.1 ms | — | — | `partial`, 100 nodes/99 edges, `NODE_LIMIT` |
+| CLI hard caps | 400.7 ms | — | — | `complete`, 241 nodes/240 edges |
+
+This is a single post-change observation and does not establish a release
+performance threshold or sustained-memory guarantee.
+
 ## Repeated cold-start observation
 
 On 2026-09-07, the default 241-file fixture was run three consecutive times on
