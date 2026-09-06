@@ -14,6 +14,7 @@ Last reconciled: 2026-09-06. Current implementation revision: `940effd`.
 | [ROADMAP.md](ROADMAP.md) | Milestone/release order and future priorities | Published releases or delivery dates |
 | [VALIDATION.md](VALIDATION.md) | Fixture plan, evidence, verification state, release gates | A pass for an unexecuted test or remote workflow |
 | [`spike/PROJECT_HOST_FINDINGS.md`](spike/PROJECT_HOST_FINDINGS.md) | Local project-host feasibility observations | Cross-platform or performance guarantees |
+| [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) | Reproducible bounded fan-out performance observation | A release performance SLA |
 
 For implementation work, read TASK, SPEC, DESIGN, then the relevant epic and
 validation rows. For product orientation, begin with README.

@@ -26,9 +26,11 @@ documentation reconciliation follows the implementation revision above.
 The repository now contains a CommonJS TypeScript implementation, a draft JSON
 Schema, a CLI, a JavaScript API, a fixture-backed Node test suite, package
 metadata/lockfile, and a configured cross-platform workflow. Local verification
-on Node.js `23.10.0` / macOS `Darwin 25.6.0 arm64` passes. The schema is draft;
-Node 22/24 on Linux/macOS/Windows, stress/cancellation measurements, registry
-publication, and clean registry installation have not been verified.
+on Node.js `23.10.0` / macOS `Darwin 25.6.0 arm64` passes. A bounded fan-out
+measurement is recorded in [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md).
+The schema is draft; Node 22/24 on Linux/macOS/Windows, cancellation/isolation
+measurements, registry publication, and clean registry installation have not
+been verified.
 
 ## Status definitions
 
@@ -46,8 +48,8 @@ publication, and clean registry installation have not been verified.
 | --- | --- | --- | --- |
 | DOC-01 | Inspect implementation baseline and working-tree state | Done | Git history/tree/status reconciled before and after `b57321d`/`0cdd08f`/`13e9f14`/`6b43c58`/`ca5453e`/`0169580`/`5d29c4c`/`954f6dc`/`bbfeb58`/`940effd` |
 | DOC-02 | Review supplied product design and technical assumptions | Done | Review dispositions preserved in [DESIGN.md](DESIGN.md) |
-| DOC-03 | Maintain coordinated product/design/epic/roadmap/task docs | Done | This reconciliation updates the eight product/status Markdown documents and the feasibility note |
-| DOC-04 | Validate links, references, consistency, and final changes | Done | Inline validator: 9 Markdown files, 74 link/anchor references, identifiers, DAG, fences, whitespace, and `.gitattributes` preservation all pass |
+| DOC-03 | Maintain coordinated product/design/epic/roadmap/task docs | Done | This reconciliation updates the eight product/status Markdown documents, the feasibility note, and the performance note |
+| DOC-04 | Validate links, references, consistency, and final changes | Done | Inline validator: 10 Markdown files, 82 link/anchor references, identifiers, DAG, fences, whitespace, and `.gitattributes` preservation all pass |
 
 ## Implementation backlog
 
@@ -60,7 +62,7 @@ publication, and clean registry installation have not been verified.
 | CI-05 | Implement evidence graph traversal and result projection | Done for scope | CI-02, CI-04 | Reverse BFS, stable IDs, paths, cycles, graph caps; one path per target; V-08, V-09, V-13 |
 | CI-06 | Add candidate-test classification and graph-linked results | Done for scope | CI-04, CI-05 | Filename candidates retain edge IDs/evidence and make no coverage claim; V-14 |
 | CI-07 | Implement two-snapshot changed-target analysis and fallback | Done for tested cases | CI-03, CI-04, CI-05 | Modification/deletion/rename/configuration/unsupported/worktree cases; V-10, V-11, V-12 |
-| CI-08 | Enforce budgets, deterministic results, isolation, and measured limits | In progress | CI-05, CI-06, CI-07 | Local limits/determinism/read-only checks pass; large-project, cancellation, memory, and cross-platform measurements remain; V-09, V-15 through V-20 |
+| CI-08 | Enforce budgets, deterministic results, isolation, and measured limits | In progress | CI-05, CI-06, CI-07 | Local limits/determinism/read-only checks and bounded fan-out API/CLI measurement pass; repeated-size, cancellation, memory isolation, and cross-platform measurements remain; V-09, V-15 through V-20 |
 | CI-09 | Verify packaging, freeze contracts, and complete release gates | In progress | CI-08 | Local pack dry-run, offline tarball install/API smoke, and workflow committed; schema freeze, platform artifact checks, publication remain; V-21, V-22 |
 
 Requirements and fixture definitions are in [SPEC.md](SPEC.md) and
@@ -77,6 +79,7 @@ The following commands passed after the implementation commit:
 | `npm audit --omit=dev` | Pass: 0 production vulnerabilities |
 | `npm pack --dry-run --ignore-scripts` | Pass: 37 package files, no development sources/tests included |
 | Pack-and-install smoke | Pass: local tarball installed with `npm install --offline --omit=dev`; packaged API returned `0.1-draft` |
+| `node spike/performance-benchmark.cjs` | Pass locally: 241-file fan-out; default limits returned partial at 100 nodes, hard caps returned complete at 241 nodes; API/CLI child-process observations recorded in [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) |
 | `git diff --check` | Pass: no whitespace errors |
 
 ## Pending decisions
@@ -89,13 +92,14 @@ The following commands passed after the implementation commit:
 | Precise module-widening rules | CI-02, CI-05 | Current file mode is module-level; symbol mode retains bound references |
 | Frozen schema/enums/API signatures | CI-02, CI-09 | Keep `0.1-draft` until all acceptance and release gates pass |
 | Node/platform compatibility | CI-09 | `engines.node >=22`; workflow targets Node 22/24 on three OSes, only Node 23/macOS is locally run |
-| Input/provider/output thresholds | CI-08 | Defaults and hard caps are implemented; performance thresholds await measurement |
+| Input/provider/output thresholds | CI-08 | Defaults and hard caps are implemented; one local fan-out observation exists, while release thresholds await repeated/platform measurement |
 
 ## Blockers and limitations
 
 - Local implementation has no failing verification. The remaining release gate is
   evidence unavailable in this checkout: the configured GitHub Actions matrix has
-  not executed, and no Windows/Linux artifact run is available locally.
+  not executed, no Windows/Linux artifact run is available locally, and
+  cancellation/isolation behavior has not been measured.
 - Schema freeze and registry publication require review and release credentials.
   Publishing, pushing, and deployment are intentionally outside this authorized
   work; no published package or registry installation is claimed.
@@ -107,8 +111,8 @@ The following commands passed after the implementation commit:
 
 1. Run the committed CI workflow on Node 22/24 and Linux/macOS/Windows; capture
    job IDs and artifact checks in [VALIDATION.md](VALIDATION.md).
-2. Add larger fan-out/depth fixtures, then record measured cold-start, memory,
-   cancellation, and output-bound behavior.
+2. Repeat the fan-out/depth benchmark at larger sizes and add cancellation,
+   memory-isolation, and output-bound measurements.
 3. Review the draft schema/API against the completed fixtures and freeze only the
    fields and enums supported by that evidence.
 4. With explicit release authorization, publish the package and verify a clean

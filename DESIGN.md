@@ -141,7 +141,7 @@ as follows:
 | Graph loses direction or paths | D-04 | Reverse file/symbol impact assertions and draft schema validation |
 | Evidence strength is confused with completeness | D-05 | Dynamic/missing module cases produce `partial` with observations |
 | Imports are presented as test coverage | D-06 | Candidate role and dependency edge IDs are separate fields |
-| Output caps do not bound work | D-08 | File/graph/provider/output limits are enforced; stress/cancellation measurements remain open |
+| Output caps do not bound work | D-08 | File/graph/provider/output limits are enforced; one bounded fan-out observation exists, while repeated stress/cancellation measurements remain open |
 | Scan/read/execution boundaries conflict | D-07 | Git flags, symlink checks, unchanged-Git assertions, and offline/read-only API |
 
 ## Open design questions
@@ -155,4 +155,5 @@ These are remaining investigations, not hidden implementation claims:
 - What cold-start and memory thresholds should become release gates?
 
 The current release status and evidence are maintained in [TASK.md](TASK.md) and
-[VALIDATION.md](VALIDATION.md).
+[VALIDATION.md](VALIDATION.md). The bounded local resource observation is
+preserved in [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md).

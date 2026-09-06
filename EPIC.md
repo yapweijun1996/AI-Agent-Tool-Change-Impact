@@ -18,12 +18,14 @@ Package checks now build compiled entry points in
 [`ca5453e`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/ca5453e).
 CLI positional-argument validation was added in
 [`0169580`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/0169580).
-Boundary hardening was added in
+Cross-platform resolution-path hardening was added in
+[`954f6dc`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/954f6dc).
+Concurrent worktree-content detection was added in
 [`bbfeb58`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/bbfeb58).
 Git change-state fixture coverage was expanded in
 [`940effd`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/940effd).
 The draft schema and local verification pass; cross-platform execution,
-stress/cancellation evidence, schema freeze, and publication remain open.
+cancellation/isolation evidence, schema freeze, and publication remain open.
 [TASK.md](TASK.md) is the authoritative status ledger.
 
 ## Work packages
@@ -37,7 +39,7 @@ stress/cancellation evidence, schema freeze, and publication remain open.
 | E-05: Evidence graph and impact | CI-05 | Done for scope | Reverse traversal, stable IDs, retained paths, depth/node/edge caps |
 | E-06: Candidate-test projection | CI-06 | Done for scope | Filename candidates linked to retained dependency edges |
 | E-07: Changed-target orchestration | CI-07 | Done for tested cases | Modification, deletion, rename, configuration, unsupported-file, worktree projections |
-| E-08: Resource and correctness hardening | CI-08 | In progress | Deterministic limits/read-only checks are present; stress, cancellation, memory, and platform runs remain |
+| E-08: Resource and correctness hardening | CI-08 | In progress | Deterministic limits/read-only checks and one bounded fan-out measurement are present; cancellation, isolation, repeated-size, and platform runs remain |
 | E-09: Package and release gates | CI-09 | In progress | Local pack dry-run and CI workflow are present; schema freeze, cross-platform artifact checks, and registry evidence remain |
 
 ## Acceptance by work package
@@ -95,9 +97,11 @@ explicitly rather than returning a false empty result.
 ### E-08: Verify actual work and output bounds
 
 File, graph, provider-observation, and serialized-output limits are enforced;
-deterministic ordering and unchanged-Git assertions are covered locally. Large
-repository benchmarks, cancellation/resource-abort behavior, and all target
-platforms still require execution evidence.
+deterministic ordering and unchanged-Git assertions are covered locally. A
+bounded fan-out benchmark records default versus hard-cap behavior and separate
+API/CLI cold-start observations. Larger repeated runs, cancellation/resource-
+abort behavior, memory isolation, and all target platforms still require
+execution evidence.
 
 ### E-09: Release only what the artifact proves
 

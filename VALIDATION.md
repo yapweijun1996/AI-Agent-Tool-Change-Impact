@@ -15,13 +15,14 @@ reconciliation that follows this implementation revision.
 | Draft contract | Ajv `8.20.0` validates capabilities, success, partial, and error envelopes | Pass |
 | Production dependency audit | `npm audit --omit=dev` | Pass: 0 vulnerabilities |
 | Package contents | `npm pack --dry-run --ignore-scripts`; temporary tarball offline install/API smoke | Pass locally: 37 files; development tests/sources excluded; packaged API loaded |
+| Bounded resource observation | `node spike/performance-benchmark.cjs` on a temporary 241-file fan-out/depth repository | Pass locally: default node cap produced partial; hard caps completed; API/CLI child-process timings and RSS recorded in [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) |
 | Git/read-only behavior | Temporary repositories, revision/worktree cases, unchanged Git assertions | Pass for tested cases |
 | Cross-platform workflow | `.github/workflows/ci.yml` configured for Node 22/24 × Ubuntu/macOS/Windows | Configured; remote execution not yet recorded |
 | Registry release | No publish or registry install was requested or authorized | Not run |
 
 The local suite covers the core vertical slice. It does not establish
-cross-platform behavior, performance thresholds, cancellation latency, memory
-isolation, project-reference support, or registry provenance.
+cross-platform behavior, release performance thresholds, cancellation latency,
+memory isolation, project-reference support, or registry provenance.
 
 ## Documentation checks
 
@@ -36,7 +37,7 @@ An inline Python validator was run after this reconciliation for:
   separation, candidate-test terminology, dependencies, and release status.
 - Byte-identical preservation of `.gitattributes`.
 
-Result: **Pass** on 2026-09-06. It checked 9 Markdown files, 74 link/anchor
+Result: **Pass** on 2026-09-06. It checked 10 Markdown files, 82 link/anchor
 references, all identifier definitions/references, an acyclic CI dependency graph,
 balanced fences, final newlines, whitespace, and byte-identical `.gitattributes`.
 The previous eight-file baseline had 37 links; the increase reflects the
@@ -66,7 +67,7 @@ open. “Not run” means no evidence is available.
 | V-12 | Top-level side effects, tsconfig/package changes, unsupported asset | Partial | `tsconfig.json` and `package.json` configuration changes plus unsupported-file projection pass; side-effect and broader package matrix remain |
 | V-13 | Empty complete, partial, unresolved observations elsewhere in scope | Partial | Complete and dynamic partial results pass; explicit empty/irrelevant-observation fixture remains |
 | V-14 | Test imports/type-only/unused/mock/skipped/unrelated/external test project | Partial | Filename candidate and dependency separation pass; negative test matrix remains |
-| V-15 | Large files/projects, fan-out/deep graph, cancellation, repeated sessions | Partial | Deterministic hard input/provider/graph caps are implemented; benchmarks, cancellation, and memory evidence are not run |
+| V-15 | Large files/projects, fan-out/deep graph, cancellation, repeated sessions | Partial | 241-file fan-out/depth benchmark confirms default versus hard-cap behavior and records API/CLI child-process observations; larger repeated runs, cancellation, and memory-isolation evidence remain |
 | V-16 | Long paths, many diagnostics, tight byte budget, invalid budget, oversized graph | Pass for tested cases | Output/argument limits and valid JSON error behavior pass; long-path/diagnostic stress remains |
 | V-17 | Identical snapshots/config/dependencies/provider; changed provider/resolution input | Partial | Repeated identical API payloads compare equal; cross-provider/input invalidation is untested |
 | V-18 | External diff/textconv, executable plugin/config, automatic type acquisition | Partial | Git disables external helpers and no code is executed in tests; adversarial helper fixture remains |

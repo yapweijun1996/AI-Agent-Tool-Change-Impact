@@ -15,7 +15,7 @@ dates. Detailed status belongs in [TASK.md](TASK.md).
 | M-04: Verified release candidate | Bounded work/output, stable results, platform checks, packaged artifact | In progress | CI-08 and pre-publication CI-09 |
 
 M-00 through M-03 are implemented in commits `b57321d`, `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`, `954f6dc`, `bbfeb58`, and `940effd`. M-04 is
-intentionally open while the configured workflow, stress/cancellation measurements, schema
+intentionally open while the configured workflow, cancellation/isolation measurements, schema
 freeze, and artifact/platform evidence are outstanding.
 
 ## Release targets

@@ -39,6 +39,9 @@ without modifying the checkout. `npm test` builds TypeScript before running the
 21 smoke/integration cases.
 The packaged tarball was also installed offline in a temporary directory and
 loaded successfully on the local macOS runtime.
+The bounded fan-out benchmark in
+[`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) records local
+API/CLI cold-start and limit behavior without making a performance guarantee.
 
 ## CLI
 
@@ -95,3 +98,4 @@ ownership and reading order.
 - [TASK.md](TASK.md): authoritative task ledger, evidence, blockers, and next steps.
 - [VALIDATION.md](VALIDATION.md): fixture status and exact verification evidence.
 - [`spike/PROJECT_HOST_FINDINGS.md`](spike/PROJECT_HOST_FINDINGS.md): local project-host feasibility findings.
+- [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md): bounded local resource observations.

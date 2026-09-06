@@ -31,7 +31,7 @@ reasoning, and automatic dependency installation are outside this version.
 | R-07 | Preserve module/configuration/unsupported changes that cannot map to symbols | Implemented with explicit partial/error limits | V-12 |
 | R-08 | Distinguish edge resolution from analysis completeness | Implemented | V-03, V-07, V-13 |
 | R-09 | Return candidate tests with separate classification and dependency evidence | Implemented | V-14 |
-| R-10 | Bound discovery, provider work, traversal, diagnostics, and serialized bytes | Implemented; stress thresholds pending | V-15, V-16 |
+| R-10 | Bound discovery, provider work, traversal, diagnostics, and serialized bytes | Implemented; broader thresholds pending | V-15, V-16 |
 | R-11 | Produce deterministic semantic results for identical declared inputs | Implemented locally; cross-platform pending | V-09, V-17 |
 | R-12 | Keep analysis read-only, offline, and free of repository-code execution | Implemented by design/tests | V-18, V-19 |
 | R-13 | Provide one consistent CLI/API contract with machine-readable errors | Implemented draft | V-05, V-16, V-20 |
