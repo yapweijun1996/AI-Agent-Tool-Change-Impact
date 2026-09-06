@@ -72,6 +72,12 @@ and schema metadata validation is in
 [`4d770e0`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/4d770e0);
 repeated resource observations are recorded in
 [`aeef862`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/aeef862);
+Linux release-check evidence is in
+[`17020ad`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/17020ad),
+the CI dependency audit is in
+[`850f106`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/850f106),
+and the latest limit-validation reconciliation is in
+[`beb003e`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/beb003e);
 documentation reconciliation follows the implementation revision above.
 
 ## Current situation

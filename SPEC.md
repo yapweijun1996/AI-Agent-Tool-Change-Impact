@@ -5,6 +5,8 @@ backward compatibility.
 Last updated: 2026-09-07. Core implementation revision: `8bb3651`.
 Latest package/verification hardening: `273a344`.
 Latest release metadata validation: `4d770e0`.
+Latest API limit validation: `74563b1`.
+Latest local release evidence: `17020ad`.
 Runtime evidence is tracked in [VALIDATION.md](VALIDATION.md); task status is
 authoritative in [TASK.md](TASK.md).
 
@@ -41,7 +43,7 @@ reasoning, and automatic dependency installation are outside this version.
 
 ## Draft CLI
 
-The executable name is `agent-impact`. From a checkout, run `npm ci` and
+The executable name is `agent-impact`. From a checkout, run `npm ci --ignore-scripts` and
 `npm run build`, then use:
 
 ```sh

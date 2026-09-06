@@ -11,3 +11,4 @@ pass.
 - Add the `agent-impact` CLI and CommonJS/TypeScript API with machine-readable draft envelopes and structured errors.
 - Add Git/worktree snapshot safety checks for conflicts, concurrent content changes, symlink escapes, and configured external helper isolation.
 - Add package, documentation, Linux container, and installed API/CLI smoke verification.
+- Run CI and release-check dependency installs with lifecycle scripts disabled to keep verification read-only and reproducible.
