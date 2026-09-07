@@ -22,6 +22,7 @@ Latest provider resolution read boundary: `ba0538a`.
 Latest CLI formatted-output bound: `c6296e4`.
 Latest cross-platform snapshot path handling: `6b1c9b5`.
 Latest platform-aware capture test harness: `261c47a`.
+Latest Git clean-filter isolation: `c32634e`.
 
 ## Reading order and ownership
 
@@ -54,7 +55,7 @@ fixture-backed tests under `test/`, `package.json`/`package-lock.json`, and the
 draft schema under `schemas/`. The changelog records intended release contents
 but does not establish publication. The core implementation commits are `b57321d`,
 `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`,
-`954f6dc`, `bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, `89f5286`, `db809f4`, `143e9f7`, `d385ff5`, `798594c`, `83f398d`, `661cb4d`, and `8bb3651`. Delivery hardening then added `1e61baf`, `0644fda`, `343750a`, `0902d49`, `2a68521`, `1c195af`, `b248f10`, `48f102e`, `273a344`, `c4dca94`, `74563b1`, `2262658`, `13990ce`, `4d770e0`, `17020ad`, `850f106`, `beb003e`, `f64fbb6`, `ab27679`, `b1f6477`, `473b4da`, `32fd01a`, `a0f148b`, `149e0fa`, `dd212e4`, `2f3c482`, `0c8a130`, `f8a580e`, `f9f904b`, `ba0538a`, `c6296e4`, `55a10bb`, and `3472b13`; documentation and evidence reconciliation followed in `3a7bc99`, `079acbd`, `1a57175`, `ad028b6`, and `f032986`. Runtime-floor, audit, release metadata, stable-capture, API-validation, lifecycle-safe installation, CLI/revision-input, required-field-validation, TypeScript unused-code-check, provider-observation-bound, diagnostic-bound, pre-decode source-bound, real-path isolation, revision-blob-bound, snapshot-diagnostic-identity, internal-symlink-source, repository-root-symlink-boundary, provider-resolution-read-boundary, final CLI-formatting-byte-bound, test-fixture-cleanup, installed-artifact-formatting-smoke, and Windows path-semantics evidence are recorded in the current task ledger. Hosted run 34083270577 is recorded separately: Linux/macOS passed and Windows tests failed on the prior tree; no publication is claimed.
+`954f6dc`, `bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, `89f5286`, `db809f4`, `143e9f7`, `d385ff5`, `798594c`, `83f398d`, `661cb4d`, and `8bb3651`. Delivery hardening then added `1e61baf`, `0644fda`, `343750a`, `0902d49`, `2a68521`, `1c195af`, `b248f10`, `48f102e`, `273a344`, `c4dca94`, `74563b1`, `2262658`, `13990ce`, `4d770e0`, `17020ad`, `850f106`, `beb003e`, `f64fbb6`, `ab27679`, `b1f6477`, `473b4da`, `32fd01a`, `a0f148b`, `149e0fa`, `dd212e4`, `2f3c482`, `0c8a130`, `f8a580e`, `f9f904b`, `ba0538a`, `c6296e4`, `55a10bb`, and `3472b13`; documentation and evidence reconciliation followed in `3a7bc99`, `079acbd`, `1a57175`, `ad028b6`, and `f032986`, and `c32634e`. Runtime-floor, audit, release metadata, stable-capture, API-validation, lifecycle-safe installation, CLI/revision-input, required-field-validation, TypeScript unused-code-check, provider-observation-bound, diagnostic-bound, pre-decode source-bound, real-path isolation, revision-blob-bound, snapshot-diagnostic-identity, internal-symlink-source, repository-root-symlink-boundary, provider-resolution-read-boundary, final CLI-formatting-byte-bound, test-fixture-cleanup, installed-artifact-formatting-smoke, and Windows path-semantics evidence are recorded in the current task ledger. Hosted run 34083270577 is recorded separately: Linux/macOS passed and Windows tests failed on the prior tree; no publication is claimed.
 TASK owns status; SPEC owns requirements and observable contracts; DESIGN owns
 architecture; VALIDATION owns evidence. Links connect these responsibilities
 instead of duplicating competing status tables.
@@ -79,7 +80,7 @@ replace local tests:
 | [TypeScript Language Service API](https://github.com/microsoft/TypeScript-wiki/blob/main/Using-the-Language-Service-API.md) | Host owns input context; a service instance is project-specific |
 | [TypeScript project references](https://www.typescriptlang.org/docs/handbook/project-references.html) | Referenced projects and source redirects need explicit handling |
 | [TypeScript module resolution](https://www.typescriptlang.org/docs/handbook/modules/reference.html) | Configuration, package metadata, declarations, and links affect resolution |
-| [Git diff](https://git-scm.com/docs/git-diff) | Endpoint versus merge-base semantics and external diff/textconv behavior |
+| [Git diff](https://git-scm.com/docs/git-diff) | Endpoint versus merge-base semantics, external diff/textconv behavior, and safe tree/index comparisons |
 | [CodeQL JavaScript call graph](https://codeql.github.com/docs/codeql-language-guides/codeql-library-for-javascript/#call-graph) | Static call analysis can be incomplete or imprecise |
 | [Node.js releases](https://nodejs.org/en/about/previous-releases) | Node 22/24 are maintained targets; local verification uses Node 23.10.0 on macOS and Node 22/24 Linux containers |
 | [SCIP repository](https://github.com/scip-code/scip) | Future index-provider direction only |

@@ -1,5 +1,6 @@
 # Task Status
 
+Latest Git clean-filter isolation: [`c32634e`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/c32634e)
 Status date: 2026-09-07. This is the authoritative execution ledger. The
 implementation commits are [`b57321d`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/b57321d)
 and [`0cdd08f`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/0cdd08f),
@@ -121,6 +122,8 @@ cross-platform snapshot path handling and repository-path preservation are in
 [`6b1c9b5`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/6b1c9b5),
 and the Windows capture-test harness limitation is recorded in
 [`261c47a`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/261c47a);
+worktree Git filter isolation and raw-content range handling are in
+[`c32634e`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/c32634e);
 documentation reconciliation is recorded in
 [`3a7bc99`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/3a7bc99),
 [`079acbd`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/079acbd),
@@ -141,7 +144,9 @@ snapshot-aware diagnostics, bounded high-fan-out unresolved-module observations,
 and bounded high-fan-out diagnostic collection. Internal symlinked sources and
 repository-root aliases stay inside the repository boundary while escaping
 symlinks are skipped. Snapshot lookups now follow Windows case-insensitive path
-semantics and preserve in-root symlink aliases for the Language Service. Source,
+semantics and preserve in-root symlink aliases for the Language Service.
+Worktree Git comparison now hashes raw files without clean filters and derives
+unstaged ranges through content-only diffs outside repository attributes. Source,
 Git-blob, permitted external-declaration, and provider module-resolution reads
 are bounded before UTF-8 decoding. Current Node 22/24 Linux
 container copies also pass the 34-case
@@ -182,12 +187,12 @@ commits, registry publication, and clean registry installation remain open.
 | --- | --- | --- | --- | --- |
 | CI-01 | Run a configured TypeScript project-host feasibility spike | Done locally | None | Config-bound host and [`spike/PROJECT_HOST_FINDINGS.md`](spike/PROJECT_HOST_FINDINGS.md); V-02, V-03, V-06, V-15 local subset |
 | CI-02 | Define executable draft result/CLI/API contracts and fixtures | Done as draft | CI-01 | `src/types.ts`, draft schema, strict TypeScript unused-code checks, CLI/API runtime validation including required fields, unknown limit rejection, effective analysis limits including `maxDiagnostics`, canonical repository paths, line-bounded coordinate handling, inline `=` values, revision trimming/NUL rejection, and Ajv fixtures; V-04, V-05, V-08, V-13, V-16, V-20 local subset |
-| CI-03 | Implement bounded snapshot access and local Git comparison | Done for tested cases | CI-02 | Git trees/worktree, two-read content-hashed capture, bounded descriptor/Git-blob reads with pre-decode overflow classification, validated real-path reads, snapshot-tagged file-read loader diagnostics, post-read byte checks, untracked/read-only, deletion/rename, conflict, concurrent-content, internal source/root and external symlink, and helper-isolation fixtures pass; broader workspace symlink and exhaustive staged/unstaged matrices remain; V-01, V-10, V-11, V-18, V-19 |
+| CI-03 | Implement bounded snapshot access and local Git comparison | Done for tested cases | CI-02 | Git trees/worktree, two-read content-hashed capture, bounded descriptor/Git-blob reads with pre-decode overflow classification, validated real-path reads, snapshot-tagged file-read loader diagnostics, post-read byte checks, untracked/read-only, deletion/rename, conflict, concurrent-content, internal source/root and external symlink, and helper-isolation fixtures pass, including configured clean-filter isolation; broader workspace symlink and exhaustive staged/unstaged matrices remain; V-01, V-10, V-11, V-18, V-19 |
 | CI-04 | Implement the context-bound TypeScript semantic provider | Done for scope | CI-01, CI-02, CI-03 | JS/TS/TSX targets, imports/re-exports, references/calls, extends/implements, bounded unresolved provider observations, and bounded provider module-resolution reads; project references deferred; V-02 through V-07 |
 | CI-05 | Implement evidence graph traversal and result projection | Done for scope | CI-02, CI-04 | Reverse BFS, stable IDs, paths, per-seed cycle termination, graph caps, and complete empty impacts; one path per target; V-08, V-09, V-13 |
 | CI-06 | Add candidate-test classification and graph-linked results | Done for scope | CI-04, CI-05 | Filename candidates retain edge IDs/evidence and make no coverage claim; V-14 |
 | CI-07 | Implement two-snapshot changed-target analysis and fallback | Done for tested cases | CI-03, CI-04, CI-05 | Modification/deletion/rename/configuration/unsupported/worktree cases; V-10, V-11, V-12 |
-| CI-08 | Enforce budgets, deterministic results, isolation, and measured limits | In progress | CI-05, CI-06, CI-07 | Local file/graph/provider/diagnostic/output limits, pre-decode bounded source/external/module-resolution reads, bounded Git revision buffers with `FILE_BUDGET_EXCEEDED` overflow diagnostics, snapshot-tagged base/head loader and project diagnostics, Windows path semantics, determinism/read-only checks, bounded fan-out API/CLI measurements across macOS and Node 22/24 Linux, and high-fan-out unresolved-observation and diagnostic-cap regressions pass; cancellation, memory isolation, and hosted rerun remain; V-09, V-15 through V-20 |
+| CI-08 | Enforce budgets, deterministic results, isolation, and measured limits | In progress | CI-05, CI-06, CI-07 | Local file/graph/provider/diagnostic/output limits, pre-decode bounded source/external/module-resolution reads, bounded Git revision buffers with `FILE_BUDGET_EXCEEDED` overflow diagnostics, snapshot-tagged base/head loader and project diagnostics, Windows path semantics, determinism/read-only checks, bounded fan-out API/CLI measurements across macOS and Node 22/24 Linux, and high-fan-out unresolved-observation and diagnostic-cap regressions pass; clean-filter isolation is covered by raw hashing/content-only range comparison; cancellation, memory isolation, and hosted rerun remain; V-09, V-15 through V-20 |
 | CI-09 | Verify packaging, freeze contracts, and complete release gates | In progress | CI-08 | Local pack dry-run, `npm publish --dry-run`, dependency audit, installed API/CLI end-to-end smoke, Node 22/24 Linux checks, and full-history/read-only workflow are committed; hosted run 34083270577 passed Linux/macOS but failed Windows tests on the prior tree, so the current commits need a rerun; schema freeze and registry publication remain; V-21, V-22 |
 
 Requirements and fixture definitions are in [SPEC.md](SPEC.md) and
@@ -209,7 +214,7 @@ release action as completed evidence.
 ## Verified local commands
 
 The latest macOS-only full gate passed on 2026-09-07 on the tree at revision
-`261c47a`, with cross-platform snapshot handling from `6b1c9b5`, using Node.js
+`c32634e`, with cross-platform snapshot handling from `6b1c9b5`, using Node.js
 `v23.10.0` on macOS `Darwin 25.6.0 arm64`; `npm test` passed 36/36. The latest
 complete cross-runtime gate remains `f9f904b`; its Node 22/24 Linux container
 evidence is retained below. The hosted run 34083270577 is separate evidence
@@ -217,7 +222,7 @@ against `67ef4a1` and failed three Windows tests before package checks.
 
 | Command | Result |
 | --- | --- |
-| `npm test` | Pass: 36/36 on the latest macOS gate at `261c47a`; the complete `f9f904b` cross-runtime gate remains 34/34, and the hosted Windows failures were diagnosed as CRLF fixture matching, Windows path lookup, and a `.cmd` interception harness limitation |
+| `npm test` | Pass: 36/36 on the latest macOS gate at `c32634e`; the complete `f9f904b` cross-runtime gate remains 34/34, and the hosted Windows failures were diagnosed as CRLF fixture matching, Windows path lookup, and a `.cmd` interception harness limitation |
 | `npm run typecheck` | Pass: strict TypeScript check with unused locals/parameters rejected |
 | `npm run docs:check` | Pass: 11 Markdown files; links/anchors, identifiers, task DAG, fences, whitespace, Git references, and `.gitattributes` preservation |
 | `npm audit --json` | Pass: 0 vulnerabilities across production and development dependencies |
@@ -252,8 +257,8 @@ against `67ef4a1` and failed three Windows tests before package checks.
 - Local implementation and release checks pass on the current tree. Hosted run
   34083270577 executed the committed workflow at `67ef4a1`: four Linux/macOS jobs
   passed, while Node 22/24 Windows jobs failed the same three tests before package
-  checks. The fixes are committed locally in `6b1c9b5` and `261c47a`; the branch is
-  two commits ahead of `origin/main` and has not been pushed. Cancellation and
+  checks. The fixes are committed locally in `6b1c9b5`, `261c47a`, and `c32634e`; the branch is
+  four commits ahead of `origin/main` and has not been pushed. Cancellation and
   memory-isolation behavior remain unmeasured.
 - Schema freeze still requires contract review. Registry publication is blocked by
   npm authentication (`npm whoami` returned E401); `npm publish --dry-run` passed,

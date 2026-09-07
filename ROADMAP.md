@@ -16,6 +16,7 @@ Latest CLI formatted-output bound: `c6296e4`.
 Latest installed artifact output-limit smoke: `3472b13`.
 Latest cross-platform snapshot path handling: `6b1c9b5`.
 Latest platform-aware capture test harness: `261c47a`.
+Latest Git clean-filter isolation: `c32634e`.
 
 ## Before v0.1
 
@@ -32,7 +33,7 @@ Provider resolution-read hardening is in `ba0538a`; the regression verifies that
 oversized external package metadata becomes an unresolved observation before
 the resolver can classify the package as out of scope.
 Documentation and evidence reconciliation after the implementation hardening is
-recorded in `3a7bc99`, `079acbd`, `1a57175`, `ad028b6`, and `f032986`.
+recorded in `3a7bc99`, `079acbd`, `1a57175`, `ad028b6`, and `f032986`; Git clean-filter isolation is in `c32634e`.
 
 ## Release targets
 
@@ -62,7 +63,6 @@ evidence paths needed by downstream agents.
 Local tests, a local package dry-run, remote CI, registry installation, and a
 published release are separate evidence stages. Record each separately in
 [TASK.md](TASK.md) and [VALIDATION.md](VALIDATION.md). Publishing or pushing is
-not part of the current authorized work. Cross-platform workflow execution and
-registry provenance and a hosted rerun remain the next external release
-actions. `npm publish --dry-run` passes locally, but actual publication requires
+not part of the current authorized work. Cross-platform workflow execution, registry provenance, and a hosted rerun
+remain the next external release actions. `npm publish --dry-run` passes locally, but actual publication requires
 npm authentication and final release authorization.

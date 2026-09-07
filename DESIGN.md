@@ -22,6 +22,7 @@ Latest CLI formatted-output bound: [`c6296e4`](https://github.com/yapweijun1996/
 Latest installed artifact output-limit smoke: [`3472b13`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/3472b13)
 Latest cross-platform snapshot path handling: [`6b1c9b5`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/6b1c9b5)
 Latest platform-aware capture test harness: [`261c47a`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/261c47a)
+Latest Git clean-filter isolation: [`c32634e`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/c32634e)
 Last reconciled: 2026-09-07
 
 This document owns architecture and design decisions. [SPEC.md](SPEC.md) owns
@@ -134,7 +135,10 @@ automatic type acquisition, external diff drivers, textconv filters, and
 `core.fsmonitor` hooks are never executed. Working-tree files are opened through
 the real path that passed the root-boundary check, and permitted external
 declaration reads re-check their real path before opening. Git commands disable
-external diff/textconv, `core.fsmonitor`, and optional locks.
+external diff/textconv, `core.fsmonitor`, and optional locks. Worktree change
+collection compares immutable trees and the index, hashes raw working-tree
+files with filters disabled, and runs content-only diffs outside the repository
+attribute scope, so configured clean filters are not executed.
 
 ### D-08: Bound work before serialization
 
@@ -209,7 +213,7 @@ as follows:
 | Evidence strength is confused with completeness | D-05 | Dynamic/missing module cases produce `partial` with observations |
 | Imports are presented as test coverage | D-06 | Candidate role and dependency edge IDs are separate fields |
 | Output caps do not bound work | D-08 | File/graph/provider/diagnostic/output limits are enforced before projection; high-fan-out unresolved observations, oversized external resolution metadata, and 20,000 oversized-file diagnostics emit bounded outcomes, while stress/cancellation measurements remain open |
-| Scan/read/execution boundaries conflict | D-07 | Git flags disable external diff/textconv/fsmonitor helpers; symlink checks, unchanged-Git assertions, and offline/read-only API |
+| Scan/read/execution boundaries conflict | D-07 | Git flags disable external diff/textconv/fsmonitor helpers, raw worktree hashing avoids clean filters, and content-only range diffs run outside repository attributes; symlink checks, unchanged-Git assertions, and offline/read-only API |
 
 ## Open design questions
 

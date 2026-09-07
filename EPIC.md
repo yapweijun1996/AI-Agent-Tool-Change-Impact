@@ -6,6 +6,8 @@ Deliver a local, read-only Agent Change Impact CLI and JavaScript API for
 explicitly configured JavaScript/TypeScript/TSX projects, with evidence-backed
 file/symbol analysis and a two-snapshot Git change mode.
 
+Latest Git clean-filter isolation: [`c32634e`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/c32634e).
+
 Status: the implementation vertical slice was delivered by
 [`b57321d`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/b57321d)
 and bounded provider resolution was fixed in
@@ -109,6 +111,9 @@ Windows case-insensitive snapshot lookup and repository-path preservation are
 in [`6b1c9b5`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/6b1c9b5);
 the capture mutation test records its Windows `.cmd` harness limitation in
 [`261c47a`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/261c47a).
+Worktree comparison now avoids configured clean filters by hashing raw files
+and deriving unstaged ranges with content-only diffs outside repository
+attributes in [`c32634e`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/c32634e).
 [TASK.md](TASK.md) is the authoritative status ledger.
 
 ## Work packages
@@ -117,7 +122,7 @@ the capture mutation test records its Windows `.cmd` harness limitation in
 | --- | --- | --- | --- |
 | E-01: Project-host feasibility | CI-01 | Done locally | Config-bound virtual host and [`spike/PROJECT_HOST_FINDINGS.md`](spike/PROJECT_HOST_FINDINGS.md) |
 | E-02: Executable draft contracts | CI-02 | Done as draft | TypeScript contracts with unused-code compiler checks, draft JSON Schema, CLI/API runtime validation including required-field and unknown-limit rejection, and error fixtures |
-| E-03: Snapshot and Git boundary | CI-03 | Done for tested cases | Revision/worktree snapshots, two-read content-hashed worktree capture, canonical repository paths, validated real-path reads, internal source/root and external symlink boundary, endpoint diff, read-only flags, conflict, concurrent-content, and external diff/textconv/fsmonitor helper fixtures |
+| E-03: Snapshot and Git boundary | CI-03 | Done for tested cases | Revision/worktree snapshots, two-read content-hashed worktree capture, canonical repository paths, validated real-path reads, internal source/root and external symlink boundary, endpoint diff, raw worktree hashing without clean filters, content-only unstaged ranges outside repository attributes, read-only flags, conflict, concurrent-content, and external diff/textconv/fsmonitor/clean-filter helper fixtures |
 | E-04: TypeScript semantic provider | CI-04 | Done for scope | JS/TS/TSX targets, imports/re-exports, calls/references, extends/implements |
 | E-05: Evidence graph and impact | CI-05 | Done for scope | Reverse traversal, stable IDs, retained paths, cycle-safe depth/node/edge caps |
 | E-06: Candidate-test projection | CI-06 | Done for scope | Filename candidates linked to retained dependency edges |
@@ -148,9 +153,11 @@ checkout/reset; reads use a real path that passed the root-boundary check, and
 changed worktree analysis uses two content-hashed reads to
 detect mutations while files are being captured. `src/git.ts` implements endpoint comparison, untracked files,
 old/new ranges, rename status, conflict detection, and worktree capture-change
-diagnostics. The capture signature combines status and raw tracked diffs, and
-the smoke suite exercises conflict, concurrent-content, and configured external
-helper isolation in temporary repositories.
+diagnostics. The capture signature combines immutable tree/index diffs, raw working-tree
+hashes, untracked paths, and unmerged entries. Unstaged ranges come from
+content-only diffs outside repository attributes. The smoke suite exercises
+conflict, concurrent-content, and configured external/helper isolation in
+temporary repositories.
 
 ### E-04: Resolve semantics without hiding scope gaps
 
@@ -212,7 +219,8 @@ platform-aware harness change require a rerun.
 Node 22/24 × Linux/macOS/Windows workflow are present. `npm pack --dry-run`,
 `npm run release:check`, `npm run pack:smoke`, and a cache-preferred install/API
 plus fsmonitor-isolation smoke
-check pass locally. The current 36-case macOS suite passes, and current Node
+check pass locally. The current 36-case macOS suite passes, including the clean-filter isolation
+regression, and current Node
 22/24 Linux container copies recorded at `f9f904b` also pass the 34-case suite,
 clean lockfile `npm ci`,
 cache-preferred package install, type checks, and package checks pass. Earlier

@@ -27,3 +27,4 @@ pass.
 - Extend installed tarball smoke to exercise the packaged CLI's formatted-output byte limit.
 - Preserve in-root symlinked repository paths across Windows case-insensitive lookups and keep the deletion fixture valid with CRLF checkouts.
 - Record the Windows `execFile`/`.cmd` test-harness limitation for concurrent capture mutation instead of treating the unexecuted shim as product evidence.
+- Keep worktree Git comparison read-only when repositories configure clean filters by hashing raw files and deriving unstaged ranges with content-only diffs outside repository attributes.

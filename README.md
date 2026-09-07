@@ -62,7 +62,7 @@ not a published release: the public schema is still `0.1-draft`, local macOS
 and Linux container verification passes, and the hosted run
 [34083270577](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34083270577)
 passed Linux/macOS but found three Windows test failures on the earlier tree.
-The local fixes are committed in `6b1c9b5` and `261c47a` but are not pushed; no
+The local fixes are committed in `6b1c9b5`, `261c47a`, and `c32634e` but are not pushed; no
 npm publication has been performed.
 
 | Surface | Current state |
@@ -103,7 +103,9 @@ runtime. Hosted run 34083270577 passed Linux and macOS but failed the three
 Windows test cases on its older commit; the current local fixes need a hosted
 rerun. The Windows capture-mutation assertion is intentionally skipped by the
 current test harness because Node `execFile` cannot intercept Git with a `.cmd`
-shim on Windows.
+shim on Windows. Worktree comparison also avoids configured clean filters by
+hashing raw files and deriving unstaged ranges through content-only diffs outside
+repository attributes.
 The packaged tarball was also installed in temporary directories and its API and
 CLI were loaded successfully on the local macOS runtime and Node 22/24 Linux
 containers; the smoke prefers the npm cache, permits registry fallback for
@@ -179,8 +181,10 @@ Analysis reads Git objects and the current working tree; changed worktree mode
 compares two bounded content-hashed reads and reports a mismatch as partial. It
 never checks out,
 resets, writes source, installs dependencies, runs repository code, runs tests,
-loads executable configuration, invokes external diff/textconv/fsmonitor
-helpers, or uses a network service. Historical snapshots may use the current local
+loads executable configuration, invokes external diff/textconv/fsmonitor or
+clean-filter helpers, or uses a network service. Worktree Git comparison hashes
+raw files without filters and derives unstaged ranges outside repository
+attributes. Historical snapshots may use the current local
 `node_modules` and TypeScript standard library for resolution, so historical
 dependency fidelity is reported as a limitation. Project references, multiple
 workspace projects, full data-flow/runtime dispatch, heuristic matching, Python,

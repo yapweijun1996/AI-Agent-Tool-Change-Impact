@@ -2,7 +2,7 @@
 
 Date: 2026-09-07
 Evidence implementation revision: `db809f4`; latest core implementation revision: `8bb3651`; latest package verification revision: `273a344`; latest provider observation bounding: `32fd01a`; latest diagnostic collection bounding: `a0f148b`; latest bounded source reads: `149e0fa`; latest validated real-path reads: `dd212e4`; latest bounded revision blob reads: `2f3c482`; latest snapshot diagnostic identity: `0c8a130`; latest internal symlink coverage: `f9f904b`; latest provider resolution read boundary: `ba0538a`; latest CLI formatted-output bound: `c6296e4`; latest installed artifact output-limit smoke: `3472b13`; latest Windows path
-handling: `6b1c9b5`; latest platform-aware capture harness: `261c47a`
+handling: `6b1c9b5`; latest platform-aware capture harness: `261c47a`; latest Git clean-filter isolation: `c32634e`
 
 This note records the bounded feasibility check that informed the first provider.
 It is evidence for project-host behavior, not a performance guarantee.
@@ -23,7 +23,9 @@ It is evidence for project-host behavior, not a performance guarantee.
    files outside that project are not returned as ordinary source nodes.
 2. The provider resolves local imports, re-exports, JavaScript calls, TSX
    references, interface `implements`, and reverse symbol references without
-   executing repository code or changing Git state.
+   executing repository code or changing Git state. Worktree change collection
+   avoids configured clean filters through raw file hashing and content-only
+   range comparison outside repository attributes.
 3. A missing or ambiguous configuration/target fails with a structured error.
    A dynamic or missing literal module is retained as an unresolved observation
    and downgrades an otherwise usable result to `partial`.
@@ -43,8 +45,8 @@ It is evidence for project-host behavior, not a performance guarantee.
    regressions were added; it also passed dependency audit,
    and docs checks.
    Hosted run 34083270577 passed Linux/macOS and exposed three Windows test
-   failures on the prior tree; the current path and harness fixes are local and
-   await a rerun. The concurrent-content test is skipped on Windows because
+   failures on the prior tree; the current path, harness, and clean-filter fixes
+   are local and await a rerun. The concurrent-content test is skipped on Windows because
    Node `execFile` cannot intercept Git with a `.cmd` shim. This does not establish
    sustained cross-platform performance,
    cancellation latency, or memory limits. Working-tree and permitted external

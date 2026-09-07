@@ -23,6 +23,7 @@ Latest CLI formatted-output bound: `c6296e4`.
 Latest installed artifact output-limit smoke: `3472b13`.
 Latest cross-platform snapshot path handling: `6b1c9b5`.
 Latest platform-aware capture test harness: `261c47a`.
+Latest Git clean-filter isolation: `c32634e`.
 Runtime evidence is tracked in [VALIDATION.md](VALIDATION.md); task status is
 authoritative in [TASK.md](TASK.md).
 
@@ -166,10 +167,13 @@ matching name.
   selected project configuration is an explicit operation error.
 - Missing refs, conflict state, and a worktree status change during capture are
   surfaced as Git errors/partial diagnostics. No fetch, checkout, reset, build,
-  install, source write, external diff, textconv, or `core.fsmonitor` helper is
-  performed. A symlink is included only when its resolved real path remains
-  inside the repository root; an escaping symlink is skipped with a diagnostic.
-  The API also accepts a repository root supplied through an internal symlink.
+  install, source write, external diff, textconv, clean-filter, or `core.fsmonitor`
+  helper is performed. Worktree changes are collected from immutable tree/index
+  diffs and raw file hashes; unstaged ranges use content-only diffs outside the
+  repository attribute scope. A symlink is included only when its resolved real
+  path remains inside the repository root; an escaping symlink is skipped with a
+  diagnostic. The API also accepts a repository root supplied through an internal
+  symlink.
 
 ## Limits, errors, and dependencies
 
