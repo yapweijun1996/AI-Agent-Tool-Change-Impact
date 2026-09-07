@@ -58,7 +58,7 @@ function checkMarkdown(files) {
     const text = readFileSync(file, "utf8");
     texts.set(relativeFile, text);
     assert(text.endsWith("\n"), `${relativeFile} has no final newline`);
-    assert(!text.split("\n").some((line) => /\s$/.test(line)), `${relativeFile} has trailing whitespace`);
+    assert(!text.split(/\r?\n/).some((line) => /[ \t]$/.test(line)), `${relativeFile} has trailing whitespace`);
     const fenceCount = text.match(/```/g)?.length ?? 0;
     assert(fenceCount % 2 === 0, `${relativeFile} has unbalanced code fences`);
     fencedBlocks += fenceCount / 2;
@@ -140,9 +140,9 @@ function checkGitReferences(texts) {
   for (const revision of revisions) {
     execFileSync("git", ["cat-file", "-e", `${revision}^{commit}`], { cwd: root, stdio: "ignore" });
   }
-  const expected = execFileSync("git", ["show", "HEAD:.gitattributes"], { cwd: root });
-  const actual = readFileSync(join(root, ".gitattributes"));
-  assert(expected.equals(actual), ".gitattributes differs from HEAD");
+  const expected = execFileSync("git", ["show", "HEAD:.gitattributes"], { cwd: root }).toString("utf8").replaceAll("\r\n", "\n");
+  const actual = readFileSync(join(root, ".gitattributes"), "utf8").replaceAll("\r\n", "\n");
+  assert(expected === actual, ".gitattributes differs from HEAD");
 }
 
 try {
