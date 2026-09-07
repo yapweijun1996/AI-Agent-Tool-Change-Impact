@@ -8,10 +8,10 @@ file/symbol analysis and a two-snapshot Git change mode.
 
 Latest Git clean-filter isolation: [`c32634e`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/c32634e).
 
-Current implementation tree: `d5f75d5`. The latest Windows short-path
+Current implementation tree: `7cf02d0`. The latest Windows short-path
 boundary fix is [`0b72a83`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/0b72a83),
 and the hosted Node 22/24 matrix is green in
-[run 34096243103](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34096243103)
+[run 34123415471](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34123415471)
 across Ubuntu, macOS, and Windows.
 
 Status: the implementation vertical slice was delivered by
@@ -67,7 +67,7 @@ Windows `.cmd` invocation handling was hardened in
 the package-smoke fixture now uses a space-containing temporary path to exercise
 quoting (`1c195af`) and disables install scripts during the temporary install
 (`b248f10`); cache-preferred dependency resolution is in
-[`48f102e`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/48f102e); hosted run 34096243103 now passes all six Node 22/24 Ubuntu, macOS,
+[`48f102e`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/48f102e); hosted run 34123415471 now passes all six Node 22/24 Ubuntu, macOS,
 and Windows jobs. The Windows concurrent-content assertion remains skipped by
 the test harness because Node `execFile` cannot intercept a `.cmd` shim.
 Packaged API/CLI end-to-end analysis smoke was added in
@@ -138,7 +138,7 @@ attributes in [`c32634e`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-
 | E-06: Candidate-test projection | CI-06 | Done for scope | Filename candidates linked to retained dependency edges |
 | E-07: Changed-target orchestration | CI-07 | Done for tested cases | Modification, deletion, rename, configuration, unsupported-file, worktree projections |
 | E-08: Resource and correctness hardening | CI-08 | Done for declared scope | Deterministic file/graph/provider/diagnostic/output limits, bounded descriptor/Git/external reads, repeated cold starts, high-fan-out regressions, bounded fan-out measurements, clean-filter isolation, and the green Node 22/24 Ubuntu/macOS/Windows matrix are present; cancellation and memory isolation remain deferred |
-| E-09: Package and release gates | CI-09 | Done and published | Local pack/publish dry-runs, release metadata, dependency audit, installed API/CLI smoke, schema/API freeze review, hosted run 34096243103, npm publication, and clean registry install pass; npm signature metadata is present and provenance is unavailable for the interactive release |
+| E-09: Package and release gates | CI-09 | Done and published | Local pack/publish dry-runs, release metadata, dependency audit, installed API/CLI smoke, schema/API freeze review, hosted run 34123415471, npm publication, and clean registry install pass; npm signature metadata is present and provenance is unavailable for the interactive release |
 
 ## Acceptance by work package
 
@@ -220,7 +220,7 @@ across four sizes on macOS and the 241-file fixture on Node 22/24 Linux, with
 separate API/CLI cold-start observations. A 20,000-oversized-file stress script
 confirms the default diagnostic cap returns 1,000 warnings and a 154,605-byte
 partial result. The hosted run
-[34096243103](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34096243103)
+[34123415471](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34123415471)
 passes all six Node 22/24 Ubuntu, macOS, and Windows jobs. The Windows
 concurrent-content assertion remains skipped by the harness because Node
 `execFile` cannot intercept a `.cmd` shim. Cancellation/resource-abort behavior
@@ -243,7 +243,7 @@ snapshot-aware, provider-observation, diagnostic-limit, oversized revision-blob,
 distinct base/head diagnostic-snapshot, internal-symlink, and repository-root
 symlink-alias fixtures. Package-only Node 22.23.2 and 24.20.0
 Linux checkouts also pass clean `npm ci` and `release:check`.
-The latest hosted result is run 34096243103, with all six jobs passing package
+The latest hosted result is run 34123415471, with all six jobs passing package
 checks and documentation checks. Package `agent-change-impact@0.1.0` is published
 with `latest: 0.1.0`; a clean registry install loads the API and CLI and confirms
 the `0.1-draft` schema identifier. Registry integrity, SHA-1 shasum, and npm

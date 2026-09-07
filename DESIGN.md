@@ -4,7 +4,7 @@ Status: implemented and published v0.1 draft; declared-scope, artifact, hosted,
 and registry clean-install gates pass for `agent-change-impact@0.1.0`. The
 registry provides npm signature metadata; no provenance attestation is present
 because publication used interactive authentication.
-Current implementation tree: `d5f75d5`.
+Current implementation tree: `7cf02d0`.
 Latest Windows path-boundary fix: [`0b72a83`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/0b72a83)
 Latest documentation line-ending check: [`e85c573`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/e85c573)
 Core implementation revision: [`8bb3651`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/8bb3651)

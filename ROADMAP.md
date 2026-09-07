@@ -3,8 +3,8 @@
 Status date: 2026-09-07. Current phase: **v0.1 published and entering
 post-release observation**. Version labels describe package contracts and do not
 promise delivery dates. Detailed status belongs in [TASK.md](TASK.md).
-Current implementation tree: `d5f75d5`; hosted matrix: [run
-34096243103](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34096243103).
+Current implementation tree: `7cf02d0`; hosted matrix: [run
+34123415471](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34123415471).
 Previous documentation and clean-install evidence reconciliation: `1a57175`.
 Latest provider observation bounding: `32fd01a`.
 Latest diagnostic collection bounding: `a0f148b`.
@@ -30,7 +30,7 @@ Latest documentation line-ending check: `e85c573`.
 | M-01: Feasibility and contract draft | Config-bound project host and executable draft result fixtures | Done locally | CI-01, CI-02; local Node test evidence |
 | M-02: Static target analysis | Snapshot access, file/symbol relationships, and evidence paths | Done for supported scope | CI-03, CI-04, CI-05; local smoke tests |
 | M-03: Change analysis and candidate tests | Two snapshots, deletion/rename/configuration handling, candidate tests | Done for tested cases | CI-06, CI-07; local smoke tests |
-| M-04: Verified release candidate | Bounded work/output, stable results, platform checks, reviewed draft contract, and packaged artifact | Done and published | CI-08 and CI-09; hosted run 34096243103 passes all six Node 22/24 Ubuntu/macOS/Windows jobs; npm registry publication and clean-install verification pass for `agent-change-impact@0.1.0` |
+| M-04: Verified release candidate | Bounded work/output, stable results, platform checks, reviewed draft contract, and packaged artifact | Done and published | CI-08 and CI-09; hosted run 34123415471 passes all six Node 22/24 Ubuntu/macOS/Windows jobs; npm registry publication and clean-install verification pass for `agent-change-impact@0.1.0` |
 
 M-00 through M-03 are implemented in commits `b57321d`, `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`, `954f6dc`, `bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, `89f5286`, `db809f4`, `143e9f7`, `d385ff5`, `798594c`, `83f398d`, `661cb4d`, and `8bb3651`; the NUL-byte regression is in `1e61baf`. M-04 hardening includes `0644fda`, `343750a`, `0902d49`, `2a68521`, `1c195af`, `b248f10`, `48f102e`, `273a344`, `c4dca94`, `74563b1`, `2262658`, `13990ce`, `4d770e0`, `17020ad`, `850f106`, `beb003e`, `f64fbb6`, `ab27679`, `b1f6477`, `473b4da`, `32fd01a`, `a0f148b`, `149e0fa`, `dd212e4`, `2f3c482`, `0c8a130`, `f8a580e`, `f9f904b`, `ba0538a`, `c6296e4`, `55a10bb`, `3472b13`, `6b1c9b5`, `261c47a`, `c32634e`, `0b72a83`, and `e85c573`; repeated resource observations are recorded in `aeef862`, and the diagnostic stress script is `spike/diagnostic-limit.cjs`. Cancellation and memory isolation remain deferred rather than release blockers for the bounded v0.1 scope.
 Provider resolution-read hardening is in `ba0538a`; the regression verifies that

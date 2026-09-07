@@ -2,9 +2,9 @@
 
 Last updated: 2026-09-07. This document owns verification evidence and release
 gates; implementation status is authoritative in [TASK.md](TASK.md).
-Current implementation tree: `d5f75d5`; latest Windows short-path boundary fix:
+Current implementation tree: `7cf02d0`; latest Windows short-path boundary fix:
 `0b72a83`; latest hosted matrix: [run
-34096243103](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34096243103).
+34123415471](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34123415471).
 
 ## Current evidence
 
@@ -35,8 +35,8 @@ parse, and `git diff --check` all passed. The current Node 22/24 Linux container
 copies recorded at `f9f904b` also pass their 34-case package gates.
 
 Hosted workflow run
-[34096243103](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34096243103)
-uses the current tree at `d5f75d5`. All six Node 22/24 Ubuntu, macOS, and Windows
+[34123415471](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34123415471)
+uses the current tree at `7cf02d0`. All six Node 22/24 Ubuntu, macOS, and Windows
 jobs pass typecheck, tests, package checks, pack smoke, dependency audit, and
 documentation checks. The Windows concurrent-content assertion is intentionally
 skipped because the harness cannot intercept a `.cmd` shim through Node
@@ -73,11 +73,11 @@ would be required to refresh the registry README.
 | Package contents | `npm pack --dry-run --ignore-scripts`; `npm publish --dry-run --ignore-scripts --access public`; `npm run release:check`; `npm run pack:smoke`; Node 22/24 Linux tarball checks | Pass: release metadata and 38-file tarball set agree, packaged API/CLI smoke passes, pretty output is bounded, development sources are excluded, and the published package metadata matches the tarball |
 | Bounded resource observation | `node spike/performance-benchmark.cjs` on temporary 21-, 121-, 241-, and 501-file fan-out/depth repositories on macOS, plus the 241-file fixture on Node 22/24 Linux containers; three repeated 241-file cold starts on macOS; 12,000-missing-import and 20,000-oversized-file reproductions under default limits; direct pre-decode bounded-reader assertion in the diagnostic-limit test | Pass locally: default node cap stops at 100 nodes for larger fixtures; hard caps complete; semantic counts and stop reasons remain stable across three repeated runs; the high-fan-out provider reproduction returns 299 unresolved observations with `PROVIDER_OBSERVATION_LIMIT` in a 163,378-byte envelope, `node spike/diagnostic-limit.cjs` returns 1,000 warnings with `DIAGNOSTIC_LIMIT` in a 154,605-byte envelope, and the bounded reader rejects a 4 KiB file after 513 bytes under a 512-byte budget; API/CLI child-process timings and RSS across macOS/Linux are recorded in [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) |
 | Git/read-only behavior | Temporary repositories, revision/worktree cases, unchanged Git assertions, internal source/root and escaping symlink paths, configured clean filters/external helpers, and an oversized revision blob under a tight `maxFileBytes` limit | Pass for tested cases; oversized Git output is rejected before UTF-8 decoding and reported as `FILE_BUDGET_EXCEEDED`, duplicate base/head loader warnings retain distinct snapshot IDs, internal source/root symlinks remain in-root, escaping symlinks are skipped, and configured external diff/textconv/fsmonitor/clean-filter helpers are not executed |
-| Cross-platform workflow | `.github/workflows/ci.yml` with Node 22/24 × Ubuntu/macOS/Windows, full Git history, read-only contents, and low-severity audit | Pass in hosted run [34096243103](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34096243103): all six jobs pass typecheck, tests, package checks, pack smoke, audit, and docs check; the Windows capture-mutation test is intentionally skipped because `execFile` cannot launch a `.cmd` shim |
+| Cross-platform workflow | `.github/workflows/ci.yml` with Node 22/24 × Ubuntu/macOS/Windows, full Git history, read-only contents, and low-severity audit | Pass in hosted run [34123415471](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34123415471): all six jobs pass typecheck, tests, package checks, pack smoke, audit, and docs check; the Windows capture-mutation test is intentionally skipped because `execFile` cannot launch a `.cmd` shim |
 | Registry release | Authorized `npm publish --access public`; `npm view`; clean temporary-directory install with `npm install --ignore-scripts --omit=dev` | Pass: `agent-change-impact@0.1.0` is visible with `latest: 0.1.0`; API/CLI/schema checks pass after clean install; registry integrity and SHA-1 shasum match the published tarball, and npm signature metadata is present. No provenance attestation is present for the interactive release |
 
 The local suite covers the core vertical slice on macOS and Linux container
-runtimes, and hosted run 34096243103 verifies the declared CI matrix across
+runtimes, and hosted run 34123415471 verifies the declared CI matrix across
 Ubuntu, macOS, and Windows. The evidence does not establish exact byte-for-byte
 cross-platform equivalence, release performance thresholds, cancellation latency,
 memory isolation, project-reference support, or registry provenance. The Windows
@@ -138,9 +138,9 @@ open. “Not run” means no evidence is available.
 | V-16 | Long paths, many diagnostics, tight byte budget, invalid budget, oversized graph | Pass for tested cases | API and CLI output/argument limits, including final pretty-format byte enforcement, explicit diagnostic-cap behavior, high-diagnostic stress, and valid JSON error behavior pass; long-path stress remains |
 | V-17 | Identical snapshots/config/dependencies/provider; changed provider/resolution input | Partial | Repeated identical API payloads compare equal; cross-provider/input invalidation is untested |
 | V-18 | External diff/textconv/fsmonitor/clean filters, executable plugin/config, automatic type acquisition | Pass for tested cases | Marker-based external diff/textconv/fsmonitor/clean-filter fixture confirms configured helpers are not executed on macOS; raw worktree hashing and content-only range diffs stay outside repository attributes; broader executable-config and automatic-type-acquisition matrix remains |
-| V-19 | Symlink escape, workspace symlink, external declarations, source/Git snapshots | Pass for tested cases | Internal workspace source symlinks and repository roots addressed through internal symlinks are analyzed, while symlink escapes are skipped and reported; Windows short-path identity handling passes in hosted run 34096243103; snapshot IDs, old/new evidence, bounded provider module-resolution reads, and read boundaries pass; broader external-input matrix remains |
+| V-19 | Symlink escape, workspace symlink, external declarations, source/Git snapshots | Pass for tested cases | Internal workspace source symlinks and repository roots addressed through internal symlinks are analyzed, while symlink escapes are skipped and reported; Windows short-path identity handling passes in hosted run 34123415471; snapshot IDs, old/new evidence, bounded provider module-resolution reads, and read boundaries pass; broader external-input matrix remains |
 | V-20 | CLI/API success, partial, validation/operation errors, malformed requests, coordinate handoff | Pass for tested cases | CLI JSON/exit behavior, API parity, malformed JavaScript API requests including missing required fields and unknown limits, line-bounded `--at`, inline values containing `=`, trimmed/NUL-rejected revisions, partials, and coordinate handoff pass; UTF-16/old-coordinate cases remain |
-| V-21 | Packaged artifact outside checkout on Node 22/24 and Linux/macOS/Windows | Pass for tested cases | Node 23/macOS and Node 22/24 Linux pass tests, typecheck, pack checks, and installed API/CLI end-to-end analysis smoke; hosted run 34096243103 passes package checks on all six Node 22/24 Ubuntu/macOS/Windows jobs; the Windows capture-mutation test remains harness-skipped |
+| V-21 | Packaged artifact outside checkout on Node 22/24 and Linux/macOS/Windows | Pass for tested cases | Node 23/macOS and Node 22/24 Linux pass tests, typecheck, pack checks, and installed API/CLI end-to-end analysis smoke; hosted run 34123415471 passes package checks on all six Node 22/24 Ubuntu/macOS/Windows jobs; the Windows capture-mutation test remains harness-skipped |
 | V-22 | Authorized publication and clean registry installation | Pass for tested release | `agent-change-impact@0.1.0` is published with `latest: 0.1.0`; a clean registry install loads the API and CLI, confirms `0.1-draft`, and matches registry integrity/SHA-1 metadata. npm signature metadata is present; provenance is unavailable for the interactive release |
 
 Fixtures for callbacks and dynamic dispatch should continue to verify honest

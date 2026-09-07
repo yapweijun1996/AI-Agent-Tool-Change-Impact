@@ -1,8 +1,8 @@
 # Project-host feasibility findings
 
 Date: 2026-09-07
-Evidence implementation revision: `d5f75d5`; latest Windows short-path boundary fix: `0b72a83`; latest package verification revision: `d5f75d5`; latest provider observation bounding: `32fd01a`; latest diagnostic collection bounding: `a0f148b`; latest bounded source reads: `149e0fa`; latest validated real-path reads: `dd212e4`; latest bounded revision blob reads: `2f3c482`; latest snapshot diagnostic identity: `0c8a130`; latest internal symlink coverage: `f9f904b`; latest provider resolution read boundary: `ba0538a`; latest CLI formatted-output bound: `c6296e4`; latest installed artifact output-limit smoke: `3472b13`; latest Windows path
-handling: `0b72a83`; latest platform-aware capture harness: `261c47a`; latest Git clean-filter isolation: `c32634e`; latest hosted matrix: `34096243103`
+Evidence implementation revision: `7cf02d0`; latest Windows short-path boundary fix: `0b72a83`; latest package verification revision: `7cf02d0`; latest provider observation bounding: `32fd01a`; latest diagnostic collection bounding: `a0f148b`; latest bounded source reads: `149e0fa`; latest validated real-path reads: `dd212e4`; latest bounded revision blob reads: `2f3c482`; latest snapshot diagnostic identity: `0c8a130`; latest internal symlink coverage: `f9f904b`; latest provider resolution read boundary: `ba0538a`; latest CLI formatted-output bound: `c6296e4`; latest installed artifact output-limit smoke: `3472b13`; latest Windows path
+handling: `0b72a83`; latest platform-aware capture harness: `261c47a`; latest Git clean-filter isolation: `c32634e`; latest hosted matrix: `34123415471`
 
 This note records the bounded feasibility check that informed the first provider.
 It is evidence for project-host behavior, not a performance guarantee.
@@ -44,7 +44,7 @@ It is evidence for project-host behavior, not a performance guarantee.
    snapshot-diagnostic, internal-source-symlink, and repository-root-symlink
    regressions were added; it also passed dependency audit,
    and docs checks.
-   Hosted run 34096243103 passes all six Node 22/24 Ubuntu/macOS/Windows jobs
+   Hosted run 34123415471 passes all six Node 22/24 Ubuntu/macOS/Windows jobs
    after the path, harness, and clean-filter fixes. The concurrent-content test is
    skipped on Windows because Node `execFile` cannot intercept Git with a `.cmd`
    shim. This does not establish

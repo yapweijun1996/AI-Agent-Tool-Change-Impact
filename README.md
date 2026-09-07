@@ -20,7 +20,7 @@ The draft result contract was reviewed against capabilities, file, symbol,
 changed, and error payloads with Ajv 8.20.0. It is frozen for package `0.1.0`
 while retaining the compatibility identifier `0.1-draft`; permissive draft
 fields remain intentional. Hosted workflow run
-[34096243103](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34096243103)
+[34123415471](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34123415471)
 passed all six Node 22/24 Ubuntu, macOS, and Windows jobs. Package
 `agent-change-impact@0.1.0` was published to the public npm registry on
 2026-09-07. A clean registry install loaded both the API and CLI and confirmed
@@ -68,7 +68,7 @@ verifies that an internal symlinked source file and a repository root addressed
 through an internal symlink remain within the repository boundary.
 The 34-case suite and package checks recorded at `f9f904b` pass in current
 Node.js 22 and 24 Linux container copies using fresh lockfile installs. The
-latest hosted run `34096243103` adds green Node 22/24 Ubuntu, macOS, and Windows
+latest hosted run `34123415471` adds green Node 22/24 Ubuntu, macOS, and Windows
 jobs. The Windows concurrent-content assertion remains intentionally skipped by
 the current harness because Node `execFile` cannot intercept Git with a `.cmd`
 shim on Windows; this is a test-harness limitation, not an untested product
