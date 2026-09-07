@@ -192,6 +192,9 @@ export function createProjectContext(snapshot: SourceSnapshot, requestedProject?
   const absoluteFiles = projectFiles.map((fileName) => snapshot.absolutePath(fileName));
   const compilerOptions = {
     ...parsedCommandLine.options,
+    // Keep repository-relative symlink aliases addressable in the virtual
+    // snapshot. An explicit project setting still takes precedence.
+    ...(parsedCommandLine.options.preserveSymlinks === undefined ? { preserveSymlinks: true } : {}),
     ...(configPath.toLowerCase().endsWith("jsconfig.json") && parsedCommandLine.options.allowJs === undefined ? { allowJs: true } : {}),
   };
   const host = makeLanguageServiceHost(snapshot, compilerOptions, absoluteFiles, limits.maxFileBytes);
