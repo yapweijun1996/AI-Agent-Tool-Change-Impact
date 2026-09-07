@@ -49,32 +49,29 @@ it exposed the CRLF, Windows path, and `.cmd` harness issues that were fixed in
 
 The schema/API review on 2026-09-07 used Ajv 8.20.0 with all-errors reporting
 against capabilities, file, symbol, changed, and error envelopes. Every payload
-class validated successfully. The result contract is frozen for package `0.1.0`
-while keeping the schema `$id` and `schemaVersion` identifier `0.1-draft`; open
-draft fields remain intentional.
+class validated successfully. The result contract was frozen for `0.1.0` and is
+carried unchanged by `0.1.1`, while keeping the schema `$id` and `schemaVersion`
+identifier `0.1-draft`; open draft fields remain intentional.
 
 Package `agent-change-impact@0.1.0` is published to the public npm registry.
-`npm view` reports `latest: 0.1.0`; a clean temporary directory install loads the
-API and CLI and confirms the `0.1-draft` schema identifier. The registry's
-SHA-512 integrity, SHA-1 shasum, and npm signature metadata match the published
-38-file tarball. No provenance attestation is present because publication used
-interactive authentication.
-The published `0.1.0` README retains pre-publication status wording because the
-tarball was assembled before this documentation reconciliation; npm artifacts
-are immutable. Repository documentation is current, and a future patch release
-would be required to refresh the registry README.
+`npm view` reports `latest: 0.1.0`; its clean temporary-directory install,
+integrity, SHA-1 shasum, and npm signature metadata were verified. Its README
+retains pre-publication status wording because that tarball was assembled before
+the documentation reconciliation; npm artifacts are immutable. Package `0.1.1`
+contains the current repository documentation and is pending publication after
+the hosted release checks.
 
 | Area | Evidence | Result |
 | --- | --- | --- |
 | Build and type safety | `npm run typecheck`; `npm test` builds with strict `tsc -p tsconfig.json`, including unused locals/parameters checks | Pass |
 | Runtime smoke/integration | `npm test` on Node.js `v23.10.0`, macOS `Darwin 25.6.0 arm64`, plus fresh clean copies at `f9f904b` using Node.js `v22.23.2` and `v24.20.0` Alpine runtimes | Pass: 36 tests on the latest macOS gate; 34 tests on each current Linux runtime at `f9f904b`, with installed API/CLI smoke and clean lockfile installs |
-| Draft contract | Ajv `8.20.0` all-errors review validates capabilities, file, symbol, changed, success/partial, and error envelopes, including effective `analysis.limits` | Pass and frozen for package `0.1.0`; the schema identifier remains `0.1-draft` |
+| Draft contract | Ajv `8.20.0` all-errors review validates capabilities, file, symbol, changed, success/partial, and error envelopes, including effective `analysis.limits` | Pass and frozen across the `0.1.x` package line; the schema identifier remains `0.1-draft` |
 | Dependency audit | `npm audit --json` (production and development dependency graph) | Pass: 0 vulnerabilities |
-| Package contents | `npm pack --dry-run --ignore-scripts`; `npm publish --dry-run --ignore-scripts --access public`; `npm run release:check`; `npm run pack:smoke`; Node 22/24 Linux tarball checks | Pass: release metadata and 38-file tarball set agree, packaged API/CLI smoke passes, pretty output is bounded, development sources are excluded, and the published package metadata matches the tarball |
+| Package contents | `npm pack --dry-run --ignore-scripts`; `npm publish --dry-run --ignore-scripts --access public`; `npm run release:check`; `npm run pack:smoke`; Node 22/24 Linux tarball checks | Pass for the `0.1.1` candidate: release metadata and 38-file tarball set agree, packaged API/CLI smoke passes, pretty output is bounded, and development sources are excluded |
 | Bounded resource observation | `node spike/performance-benchmark.cjs` on temporary 21-, 121-, 241-, and 501-file fan-out/depth repositories on macOS, plus the 241-file fixture on Node 22/24 Linux containers; three repeated 241-file cold starts on macOS; 12,000-missing-import and 20,000-oversized-file reproductions under default limits; direct pre-decode bounded-reader assertion in the diagnostic-limit test | Pass locally: default node cap stops at 100 nodes for larger fixtures; hard caps complete; semantic counts and stop reasons remain stable across three repeated runs; the high-fan-out provider reproduction returns 299 unresolved observations with `PROVIDER_OBSERVATION_LIMIT` in a 163,378-byte envelope, `node spike/diagnostic-limit.cjs` returns 1,000 warnings with `DIAGNOSTIC_LIMIT` in a 154,605-byte envelope, and the bounded reader rejects a 4 KiB file after 513 bytes under a 512-byte budget; API/CLI child-process timings and RSS across macOS/Linux are recorded in [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) |
 | Git/read-only behavior | Temporary repositories, revision/worktree cases, unchanged Git assertions, internal source/root and escaping symlink paths, configured clean filters/external helpers, and an oversized revision blob under a tight `maxFileBytes` limit | Pass for tested cases; oversized Git output is rejected before UTF-8 decoding and reported as `FILE_BUDGET_EXCEEDED`, duplicate base/head loader warnings retain distinct snapshot IDs, internal source/root symlinks remain in-root, escaping symlinks are skipped, and configured external diff/textconv/fsmonitor/clean-filter helpers are not executed |
 | Cross-platform workflow | `.github/workflows/ci.yml` with Node 22/24 × Ubuntu/macOS/Windows, full Git history, read-only contents, and low-severity audit | Pass in hosted run [34123415471](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34123415471): all six jobs pass typecheck, tests, package checks, pack smoke, audit, and docs check; the Windows capture-mutation test is intentionally skipped because `execFile` cannot launch a `.cmd` shim |
-| Registry release | Authorized `npm publish --access public`; `npm view`; clean temporary-directory install with `npm install --ignore-scripts --omit=dev` | Pass: `agent-change-impact@0.1.0` is visible with `latest: 0.1.0`; API/CLI/schema checks pass after clean install; registry integrity and SHA-1 shasum match the published tarball, and npm signature metadata is present. No provenance attestation is present for the interactive release |
+| Registry release | Authorized `npm publish --access public`; `npm view`; clean temporary-directory install with `npm install --ignore-scripts --omit=dev` | `0.1.0` pass: registry metadata, clean install, API/CLI/schema, integrity, SHA-1 shasum, and npm signature checks pass; `0.1.1` publication is pending hosted release validation. No provenance attestation is present for the interactive release |
 
 The local suite covers the core vertical slice on macOS and Linux container
 runtimes, and hosted run 34123415471 verifies the declared CI matrix across
@@ -141,7 +138,7 @@ open. “Not run” means no evidence is available.
 | V-19 | Symlink escape, workspace symlink, external declarations, source/Git snapshots | Pass for tested cases | Internal workspace source symlinks and repository roots addressed through internal symlinks are analyzed, while symlink escapes are skipped and reported; Windows short-path identity handling passes in hosted run 34123415471; snapshot IDs, old/new evidence, bounded provider module-resolution reads, and read boundaries pass; broader external-input matrix remains |
 | V-20 | CLI/API success, partial, validation/operation errors, malformed requests, coordinate handoff | Pass for tested cases | CLI JSON/exit behavior, API parity, malformed JavaScript API requests including missing required fields and unknown limits, line-bounded `--at`, inline values containing `=`, trimmed/NUL-rejected revisions, partials, and coordinate handoff pass; UTF-16/old-coordinate cases remain |
 | V-21 | Packaged artifact outside checkout on Node 22/24 and Linux/macOS/Windows | Pass for tested cases | Node 23/macOS and Node 22/24 Linux pass tests, typecheck, pack checks, and installed API/CLI end-to-end analysis smoke; hosted run 34123415471 passes package checks on all six Node 22/24 Ubuntu/macOS/Windows jobs; the Windows capture-mutation test remains harness-skipped |
-| V-22 | Authorized publication and clean registry installation | Pass for tested release | `agent-change-impact@0.1.0` is published with `latest: 0.1.0`; a clean registry install loads the API and CLI, confirms `0.1-draft`, and matches registry integrity/SHA-1 metadata. npm signature metadata is present; provenance is unavailable for the interactive release |
+| V-22 | Authorized publication and clean registry installation | Pass for `0.1.0`; pending for `0.1.1` | `0.1.0` is published with `latest: 0.1.0` and has a verified clean install, API/CLI schema, integrity/SHA-1 metadata, and npm signature. Repeat the same checks for `0.1.1` after publication; provenance is unavailable for the interactive release |
 
 Fixtures for callbacks and dynamic dispatch should continue to verify honest
 limitations. Unsupported features must remain absent from capability claims and
@@ -171,10 +168,10 @@ known limitations. Do not retain secrets or large raw logs. Local package
 installation, remote CI, registry installation, and publication are separate
 gates.
 
-The schema is frozen for package `0.1.0` at its reviewed draft boundary; the
-identifier remains `0.1-draft` and permissive draft fields are intentional. Any
-future tightening or unsupported requirement must be versioned and backed by new
-fixtures before changing the public contract. Registry publication and clean
-installation are separate evidence gates; both pass for `agent-change-impact@0.1.0`.
-The registry signature is present, while provenance is unavailable for this
-interactive release.
+The schema was frozen for package `0.1.0` at its reviewed draft boundary and is
+carried unchanged by `0.1.1`; the identifier remains `0.1-draft` and permissive
+draft fields are intentional. Any future tightening or unsupported requirement
+must be versioned and backed by new fixtures before changing the public contract.
+Registry publication and clean installation are separate evidence gates: they
+pass for `0.1.0` and remain pending for `0.1.1`. The registry signature is
+present, while provenance is unavailable for this interactive release.

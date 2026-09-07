@@ -77,12 +77,13 @@ Release metadata and tarball-set validation was added in
 Schema metadata and optional versioned-tag validation were added in
 [`4d770e0`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/4d770e0)
 and [`13990ce`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/13990ce).
-The draft schema and local verification pass. The schema/API surface is reviewed
-and frozen for package `0.1.0` while retaining the `0.1-draft` identifier.
+The draft schema and local verification pass. The schema/API surface was reviewed
+for `0.1.0` and is carried unchanged by package `0.1.1` while retaining the
+`0.1-draft` identifier.
 Cancellation and memory-isolation measurements remain deferred. Package
-`agent-change-impact@0.1.0` is published, and clean registry installation,
-integrity, and npm signature checks pass; no provenance attestation is present
-because publication used interactive authentication.
+`agent-change-impact@0.1.1` is prepared as the documentation patch release;
+registry publication, clean installation, integrity, and signature checks remain
+the final external release step.
 Provider unresolved observations are now bounded before result projection, with
 an explicit partial-result marker and regression coverage in
 [`32fd01a`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/32fd01a).
@@ -131,14 +132,14 @@ attributes in [`c32634e`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-
 | Work package | Task | Status | Deliverable/evidence |
 | --- | --- | --- | --- |
 | E-01: Project-host feasibility | CI-01 | Done locally | Config-bound virtual host and [`spike/PROJECT_HOST_FINDINGS.md`](spike/PROJECT_HOST_FINDINGS.md) |
-| E-02: Executable draft contracts | CI-02 | Done and frozen for v0.1.0 | TypeScript contracts with unused-code compiler checks, draft JSON Schema, CLI/API runtime validation including required-field and unknown-limit rejection, Ajv review of all public envelopes, and error fixtures |
+| E-02: Executable draft contracts | CI-02 | Done and frozen for v0.1.x | TypeScript contracts with unused-code compiler checks, draft JSON Schema, CLI/API runtime validation including required-field and unknown-limit rejection, Ajv review of all public envelopes, and error fixtures |
 | E-03: Snapshot and Git boundary | CI-03 | Done for tested cases | Revision/worktree snapshots, two-read content-hashed worktree capture, canonical repository paths, validated real-path reads, internal source/root symlink aliases with Windows short-path identity fallback, external symlink boundary, endpoint diff, raw worktree hashing without clean filters, content-only unstaged ranges outside repository attributes, read-only flags, conflict, concurrent-content, and external diff/textconv/fsmonitor/clean-filter helper fixtures |
 | E-04: TypeScript semantic provider | CI-04 | Done for scope | JS/TS/TSX targets, imports/re-exports, calls/references, extends/implements |
 | E-05: Evidence graph and impact | CI-05 | Done for scope | Reverse traversal, stable IDs, retained paths, cycle-safe depth/node/edge caps |
 | E-06: Candidate-test projection | CI-06 | Done for scope | Filename candidates linked to retained dependency edges |
 | E-07: Changed-target orchestration | CI-07 | Done for tested cases | Modification, deletion, rename, configuration, unsupported-file, worktree projections |
 | E-08: Resource and correctness hardening | CI-08 | Done for declared scope | Deterministic file/graph/provider/diagnostic/output limits, bounded descriptor/Git/external reads, repeated cold starts, high-fan-out regressions, bounded fan-out measurements, clean-filter isolation, and the green Node 22/24 Ubuntu/macOS/Windows matrix are present; cancellation and memory isolation remain deferred |
-| E-09: Package and release gates | CI-09 | Done and published | Local pack/publish dry-runs, release metadata, dependency audit, installed API/CLI smoke, schema/API freeze review, hosted run 34123415471, npm publication, and clean registry install pass; npm signature metadata is present and provenance is unavailable for the interactive release |
+| E-09: Package and release gates | CI-09 | Release candidate; publication pending | Local pack/publish dry-runs, release metadata, dependency audit, installed API/CLI smoke, schema/API freeze review, and hosted run 34123415471 pass; npm publication, clean registry install, integrity, and signature evidence remain pending for `0.1.1` |
 
 ## Acceptance by work package
 
@@ -244,11 +245,9 @@ distinct base/head diagnostic-snapshot, internal-symlink, and repository-root
 symlink-alias fixtures. Package-only Node 22.23.2 and 24.20.0
 Linux checkouts also pass clean `npm ci` and `release:check`.
 The latest hosted result is run 34123415471, with all six jobs passing package
-checks and documentation checks. Package `agent-change-impact@0.1.0` is published
-with `latest: 0.1.0`; a clean registry install loads the API and CLI and confirms
-the `0.1-draft` schema identifier. Registry integrity, SHA-1 shasum, and npm
-signature metadata match the published tarball. No provenance attestation is
-present because the release used interactive authentication.
+checks and documentation checks. Package `agent-change-impact@0.1.1` is ready
+for publication; the registry install, integrity, SHA-1 shasum, signature, and
+provenance results will be recorded after the publish command.
 
 The current workflow uses full-history checkout, read-only contents permission,
 and `npm ci --ignore-scripts`; this policy is recorded in [`f64fbb6`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/f64fbb6).
@@ -259,11 +258,12 @@ Git revision inputs; regression coverage is in [`ab27679`](https://github.com/ya
 
 The declared v0.1 implementation scope and release gates are complete: every
 in-scope requirement has evidence in [VALIDATION.md](VALIDATION.md), the draft
-schema/API is reviewed and frozen for package `0.1.0`, platform/artifact gates
-pass, and the package is published with a verified clean registry install.
-The registry exposes npm signature metadata; no provenance attestation is
-present because the release used interactive authentication. Cancellation and
-memory isolation remain deferred product work.
+schema/API is reviewed and frozen across the `0.1.x` line, platform/artifact
+gates pass, and package `0.1.1` is ready for the final registry release checks.
+The prior `0.1.0` registry artifact exposes npm signature metadata and no
+provenance attestation because that release used interactive authentication;
+`0.1.1` publication is still pending. Cancellation and memory isolation remain
+deferred product work.
 
 ## Dependencies and external prerequisites
 

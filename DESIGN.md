@@ -1,9 +1,9 @@
 # Design
 
-Status: implemented and published v0.1 draft; declared-scope, artifact, hosted,
-and registry clean-install gates pass for `agent-change-impact@0.1.0`. The
-registry provides npm signature metadata; no provenance attestation is present
-because publication used interactive authentication.
+Status: implemented v0.1 draft; declared-scope, artifact, and hosted gates pass
+for the `0.1.1` release candidate. Registry clean-install evidence remains a
+separate post-publication check; the prior `0.1.0` release has npm signature
+metadata and no provenance attestation because it used interactive authentication.
 Current implementation tree: `7cf02d0`.
 Latest Windows path-boundary fix: [`0b72a83`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/0b72a83)
 Latest documentation line-ending check: [`e85c573`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/e85c573)
@@ -211,13 +211,13 @@ floor requires separate compatibility evidence and a deliberate support
 decision. This keeps the published engine range aligned with tested behavior
 instead of implying unverified historical runtime support.
 
-### D-12: Freeze the reviewed draft contract for v0.1.0
+### D-12: Freeze the reviewed draft contract for v0.1.x
 
 The result schema, public TypeScript types, CLI/API operation names, and error
 envelope were reviewed together against capabilities, file, symbol, changed, and
-error payloads with Ajv 8.20.0. Those fields and enums are frozen for package
-`0.1.0` so downstream agents can rely on one documented draft contract. The
-schema identifier and `schemaVersion` remain `0.1-draft` for compatibility, and
+error payloads with Ajv 8.20.0. Those fields and enums were frozen for package
+`0.1.0` and are carried unchanged by `0.1.1`, so downstream agents can rely on
+one documented draft contract. The schema identifier and `schemaVersion` remain `0.1-draft` for compatibility, and
 its permissive `additionalProperties` areas remain deliberate forward-compatible
 draft behavior. Tightening or renaming the contract requires a new versioned
 decision and fixtures.
@@ -239,7 +239,7 @@ as follows:
 | Imports are presented as test coverage | D-06 | Candidate role and dependency edge IDs are separate fields |
 | Output caps do not bound work | D-08 | File/graph/provider/diagnostic/output limits are enforced before projection; high-fan-out unresolved observations, oversized external resolution metadata, and 20,000 oversized-file diagnostics emit bounded outcomes; cancellation and memory-isolation measurements remain deferred |
 | Scan/read/execution boundaries conflict | D-07 | Git flags disable external diff/textconv/fsmonitor helpers, raw worktree hashing avoids clean filters, and content-only range diffs run outside repository attributes; symlink checks, unchanged-Git assertions, and offline/read-only API |
-| Draft schema/API drift between surfaces | D-12 | Ajv 8.20.0 review covers capabilities, file, symbol, changed, and error envelopes; TypeScript types, CLI/API operations, release checks, and `0.1-draft` identifiers agree for package `0.1.0` |
+| Draft schema/API drift between surfaces | D-12 | Ajv 8.20.0 review covers capabilities, file, symbol, changed, and error envelopes; TypeScript types, CLI/API operations, release checks, and `0.1-draft` identifiers agree across the `0.1.x` package line |
 
 ## Open design questions
 

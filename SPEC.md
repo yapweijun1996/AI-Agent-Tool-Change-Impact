@@ -1,8 +1,8 @@
 # Product Specification
 
 Status: implemented v0.1 draft; the executable schema and API are reviewed and
-frozen for package `0.1.0` while retaining the `0.1-draft` compatibility
-identifier.
+frozen across the `0.1.x` package line while retaining the `0.1-draft`
+compatibility identifier. Package `0.1.1` is the current documentation release.
 Last updated: 2026-09-07. Core implementation revision: `8bb3651`.
 Latest package/verification hardening: `273a344`.
 Latest release metadata validation: `4d770e0`.
@@ -58,8 +58,8 @@ reasoning, and automatic dependency installation are outside this version.
 | R-10 | Bound discovery, provider work, traversal, diagnostics, and serialized bytes | Implemented for declared budgets; broader thresholds pending | V-15, V-16 |
 | R-11 | Produce deterministic semantic results for identical declared inputs | Implemented for the tested Node 22/24 Ubuntu, macOS, and Windows matrix; a general byte-for-byte cross-platform guarantee is outside the draft contract | V-09, V-17 |
 | R-12 | Keep analysis read-only, offline, and free of repository-code execution | Implemented by design/tests | V-18, V-19 |
-| R-13 | Provide one consistent CLI/API contract with machine-readable errors | Implemented and frozen as the v0.1.0 draft contract after Ajv review of all public operation envelopes | V-05, V-16, V-20 |
-| R-14 | Verify packaging/platform support before advertising a release | Local artifact/runtime checks, hosted run 34123415471 across all six Node 22/24 Ubuntu/macOS/Windows jobs, npm publication, registry clean-install, integrity, and signature checks pass; no provenance attestation is present for the interactive release | V-21, V-22 |
+| R-13 | Provide one consistent CLI/API contract with machine-readable errors | Implemented and frozen across the 0.1.x package line after Ajv review of all public operation envelopes | V-05, V-16, V-20 |
+| R-14 | Verify packaging/platform support before advertising a release | Local artifact/runtime checks and hosted run 34123415471 across all six Node 22/24 Ubuntu/macOS/Windows jobs pass for the `0.1.1` candidate; npm publication, registry clean-install, integrity, and signature checks are pending | V-21, V-22 |
 
 ## Draft CLI
 
@@ -114,9 +114,10 @@ with Ajv. JavaScript API entry points validate request objects and return
 `INVALID_ARGUMENT` envelopes for malformed runtime inputs, including missing
 required fields.
 
-For package `0.1.0`, the schema and public API surface are frozen at this draft
-boundary. A review using Ajv 8.20.0 validated capabilities, file, symbol, changed,
-and error payloads with all-errors reporting enabled. The schema `$id` and
+For package `0.1.1`, the schema and public API surface are unchanged from the
+reviewed `0.1.0` draft boundary. A review using Ajv 8.20.0 validated
+capabilities, file, symbol, changed, and error payloads with all-errors reporting
+enabled. The schema `$id` and
 `schemaVersion` intentionally remain `0.1-draft`; open `additionalProperties`
 areas preserve forward-compatible draft fields. A future tightening or rename
 requires a new versioned contract and fixture set.
@@ -232,10 +233,8 @@ and Node.js 22/24 in Linux containers. Hosted run
 passes all six Node 22/24 Ubuntu, macOS, and Windows jobs. The Windows
 concurrent-content assertion remains skipped because the test harness cannot
 intercept a `.cmd` shim through Node `execFile`. Package
-`agent-change-impact@0.1.0` is published to the public npm registry; a clean
-registry install loads the API and CLI and confirms `schemaVersion:
-"0.1-draft"`. Registry integrity, SHA-1 shasum, and npm signature metadata match
-the published tarball. No provenance attestation is present because this release
-used interactive authentication. See
+`agent-change-impact@0.1.1` is prepared for public npm publication; the registry
+install, integrity, SHA-1 shasum, signature, and provenance results will be
+recorded after the publish command. See
 [DESIGN.md](DESIGN.md) for ownership decisions and
 [VALIDATION.md](VALIDATION.md) for release gates.

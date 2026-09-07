@@ -1,6 +1,6 @@
 {
   "name": "agent-change-impact",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Bounded, evidence-backed change impact analysis for AI coding agents",
   "license": "MIT",
   "type": "commonjs",

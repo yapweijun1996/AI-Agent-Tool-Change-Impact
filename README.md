@@ -17,33 +17,25 @@ identity handling and checkout line-ending normalization are covered by the
 latest implementation fixes in `0b72a83` and `e85c573`.
 
 The draft result contract was reviewed against capabilities, file, symbol,
-changed, and error payloads with Ajv 8.20.0. It is frozen for package `0.1.0`
-while retaining the compatibility identifier `0.1-draft`; permissive draft
-fields remain intentional. Hosted workflow run
+changed, and error payloads with Ajv 8.20.0. It remains unchanged across the
+`0.1.x` package line while retaining the compatibility identifier `0.1-draft`;
+permissive draft fields remain intentional. Hosted workflow run
 [34123415471](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34123415471)
 passed all six Node 22/24 Ubuntu, macOS, and Windows jobs. Package
-`agent-change-impact@0.1.0` was published to the public npm registry on
-2026-09-07. A clean registry install loaded both the API and CLI and confirmed
-`schemaVersion: "0.1-draft"`; the registry metadata matches the published
-tarball (`sha512-ufe0wPbMgtLpVgMxqExB8Hlvt+D2JL7y1yuSxB2SUwwYZ3b/gbCMqakkN/rYkVUm+yye5NjK6g42xD26azKufA==`,
-SHA-1 `89938e925f54b3bc7e41063829fb1776c7142797`). npm supplied a registry
-signature, but no provenance attestation is present because this release used
-interactive authentication.
-
-The `0.1.0` npm tarball was assembled before this final repository-documentation
-reconciliation, so its immutable registry README retains the pre-publication
-status wording. The repository documentation is current; a future patch release
-is required to refresh text already published for `0.1.0`.
+line `0.1.x` carries the reviewed implementation and `0.1-draft` contract. The
+public registry link and exact artifact evidence are recorded in
+[VALIDATION.md](VALIDATION.md); the release package version is defined by
+`package.json`.
 
 | Surface | Current state |
 | --- | --- |
-| npm package name | `agent-change-impact@0.1.0` ([public registry](https://www.npmjs.com/package/agent-change-impact)) |
+| npm package name | `agent-change-impact` ([public registry](https://www.npmjs.com/package/agent-change-impact)) |
 | CLI | `agent-impact` via `dist/cli.js` |
 | JavaScript API | `dist/index.js` exports `capabilities`, `analyzeFile`, `analyzeSymbol`, and `analyzeChanged` |
 | Supported source | JavaScript, TypeScript, and TSX in one selected `tsconfig.json` or `jsconfig.json` project |
 | Provider | TypeScript `5.9.3` Language Service plus AST inspection |
 | Runtime floor | Node.js `22` or newer according to `package.json`; Node.js `23.10.0` on macOS and Node.js 22/24 Linux containers have been run locally |
-| Release state | Published `0.1.0`; draft contract frozen and registry clean-install verified |
+| Release state | `0.1.x` package line; unchanged draft contract and bounded artifact checks |
 
 ## Install and verify from a checkout
 
@@ -85,9 +77,10 @@ byte budget.
 changelog heading, draft schema version, required entry points, and the actual
 dry-run tarball file set. Set `AGENT_IMPACT_RELEASE_TAG=v<package.version>` when
 validating a release tag. It does not publish or create a release.
-`npm publish --dry-run --ignore-scripts --access public` and the authorized
-`npm publish --access public` both passed for `0.1.0`; the clean registry install
-and metadata checks are recorded in [VALIDATION.md](VALIDATION.md).
+`npm publish --dry-run --ignore-scripts --access public` passes for the current
+package. The authorized `npm publish --access public` and clean registry install
+are the remaining external release checks for `0.1.1`; results are recorded in
+[VALIDATION.md](VALIDATION.md).
 The bounded fan-out benchmark in
 [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) records local
 API/CLI cold-start and limit behavior without making a performance guarantee.
@@ -171,6 +164,6 @@ ownership and reading order.
 - [ROADMAP.md](ROADMAP.md): milestone order and future priorities.
 - [TASK.md](TASK.md): authoritative task ledger, evidence, blockers, and next steps.
 - [VALIDATION.md](VALIDATION.md): fixture status and exact verification evidence.
-- [CHANGELOG.md](CHANGELOG.md): `0.1.0` release record; publication status is tracked above and in [VALIDATION.md](VALIDATION.md).
+- [CHANGELOG.md](CHANGELOG.md): `0.1.1` release record and `0.1.0` history; publication status is tracked above and in [VALIDATION.md](VALIDATION.md).
 - [`spike/PROJECT_HOST_FINDINGS.md`](spike/PROJECT_HOST_FINDINGS.md): local project-host feasibility findings.
 - [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md): bounded local resource observations.

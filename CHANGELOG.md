@@ -1,8 +1,15 @@
 # Changelog
 
-All notable changes to this project are documented here. Version `0.1.0` was
-published to the public npm registry on 2026-09-07; registry integrity and
-installation evidence are recorded in [VALIDATION.md](VALIDATION.md).
+All notable changes to this project are documented here. Version `0.1.1` is the
+current release candidate; registry integrity and installation evidence are
+recorded in [VALIDATION.md](VALIDATION.md) after publication.
+
+## [0.1.1] - 2026-09-07
+
+- Refresh the package documentation with reconciled release and availability
+  wording before republishing the patch version.
+- Preserve the reviewed `0.1-draft` schema/API contract and implementation
+  behavior from `0.1.0`; this patch contains no code behavior changes.
 
 ## [0.1.0] - 2026-09-07
 
