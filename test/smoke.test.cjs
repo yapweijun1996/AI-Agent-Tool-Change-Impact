@@ -524,6 +524,10 @@ test("worktree retains internal symlinked source files", () => {
         entryIsSymbolicLink: entry?.isSymbolicLink(),
         lstatIsSymbolicLink: lstatSync(link).isSymbolicLink(),
         isFile: statSync(link).isFile(),
+        root: loaded.snapshot.root,
+        canonicalRoot: realpathSync(loaded.snapshot.root),
+        relativeAlias: require("node:path").relative(loaded.snapshot.root, link),
+        relativeReal: require("node:path").relative(realpathSync(loaded.snapshot.root), realpathSync(link)),
         realPath: realpathSync(link),
         checkIgnore: spawnSync("git", ["check-ignore", "-q", "--no-index", "--", "src/internal-link.ts"], { cwd: root }).status,
       };
