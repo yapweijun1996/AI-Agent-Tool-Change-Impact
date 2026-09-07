@@ -1,5 +1,6 @@
 import { execFileSync } from "node:child_process";
-import { closeSync, existsSync, openSync, realpathSync, readSync, statSync } from "node:fs";
+import { closeSync, existsSync, lstatSync, openSync, readdirSync, realpathSync, readSync, statSync } from "node:fs";
+import type { Dirent } from "node:fs";
 import { isAbsolute, join, relative, resolve, sep } from "node:path";
 import { ImpactError } from "./errors";
 import type { Diagnostic, SnapshotRef } from "./types";
@@ -257,8 +258,106 @@ function parseNullList(output: string): string[] {
   return output.split("\0").filter(Boolean).map(normalizeRepoPath);
 }
 
+function isGitIgnoredPath(root: string, relativePath: string): boolean {
+  try {
+    execFileSync("git", ["-c", "core.fsmonitor=false", "check-ignore", "-q", "--no-index", "--", relativePath], {
+      cwd: root,
+      stdio: ["ignore", "ignore", "ignore"],
+      env: {
+        ...process.env,
+        GIT_OPTIONAL_LOCKS: "0",
+        GIT_TERMINAL_PROMPT: "0",
+      },
+    });
+    return true;
+  } catch (error) {
+    // Exit code 1 means the path is not ignored. Other failures are treated
+    // conservatively as visible so a Git helper problem cannot hide source.
+    const status = typeof error === "object" && error !== null && "status" in error
+      ? (error as { status?: unknown }).status
+      : undefined;
+    return status === 0;
+  }
+}
+
+function discoverInternalSymlinks(root: string, existingPaths: readonly string[], limits: Limits): string[] {
+  const canonicalRoot = realpathSync(root);
+  const existing = new Set(existingPaths.map((pathName) => process.platform === "win32" ? pathName.toLowerCase() : pathName));
+  const discovered: string[] = [];
+  const pending = [root];
+  const visitedDirectories = new Set<string>();
+  while (pending.length > 0 && existing.size < limits.maxFiles) {
+    const directory = pending.pop();
+    if (!directory) {
+      break;
+    }
+    let canonicalDirectory: string;
+    try {
+      canonicalDirectory = realpathSync(directory);
+    } catch {
+      continue;
+    }
+    const directoryKey = process.platform === "win32" ? canonicalDirectory.toLowerCase() : canonicalDirectory;
+    if (visitedDirectories.has(directoryKey)) {
+      continue;
+    }
+    visitedDirectories.add(directoryKey);
+    let entries: Dirent[];
+    try {
+      entries = readdirSync(directory, { withFileTypes: true, encoding: "utf8" });
+    } catch {
+      continue;
+    }
+    for (const entry of entries) {
+      if (existing.size >= limits.maxFiles) {
+        break;
+      }
+      if (entry.name === ".git" || entry.name === "node_modules" || entry.name === "dist" || entry.name === "coverage") {
+        continue;
+      }
+      const absolutePath = join(directory, entry.name);
+      if (entry.isDirectory()) {
+        pending.push(absolutePath);
+        continue;
+      }
+      if (!entry.isSymbolicLink()) {
+        continue;
+      }
+      let realPath: string;
+      try {
+        realPath = realpathSync(absolutePath);
+        const relativeReal = relative(canonicalRoot, realPath);
+        const outside = relativeReal === ".." || relativeReal.startsWith(`..${sep}`) || isAbsolute(relativeReal);
+        if (outside || !statSync(realPath).isFile()) {
+          continue;
+        }
+      } catch {
+        continue;
+      }
+      const relativePath = normalizeRepoPath(relative(root, absolutePath).split(sep).join("/"));
+      const key = process.platform === "win32" ? relativePath.toLowerCase() : relativePath;
+      if (existing.has(key) || !shouldIncludePath(relativePath) || isGitIgnoredPath(root, relativePath)) {
+        continue;
+      }
+      // lstat guards against a path changing from a symlink between readdir
+      // and this read, keeping the supplemental scan deterministic.
+      try {
+        if (!lstatSync(absolutePath).isSymbolicLink()) {
+          continue;
+        }
+      } catch {
+        continue;
+      }
+      discovered.push(relativePath);
+      existing.add(key);
+    }
+  }
+  return discovered.sort(compareText);
+}
+
 function loadWorkingTreeFiles(root: string, limits: Limits): { files: Map<string, string>; diagnostics: Diagnostic[] } {
   const names = parseNullList(runGit(root, ["ls-files", "--cached", "--others", "--exclude-standard", "-z"]));
+  names.push(...discoverInternalSymlinks(root, names, limits));
   const files = new Map<string, string>();
   const diagnostics = createDiagnosticCollector(limits.maxDiagnostics);
   const canonicalRoot = realpathSync(root);
