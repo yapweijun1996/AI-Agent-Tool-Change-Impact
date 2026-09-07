@@ -261,6 +261,7 @@ function loadWorkingTreeFiles(root: string, limits: Limits): { files: Map<string
   const names = parseNullList(runGit(root, ["ls-files", "--cached", "--others", "--exclude-standard", "-z"]));
   const files = new Map<string, string>();
   const diagnostics = createDiagnosticCollector(limits.maxDiagnostics);
+  const canonicalRoot = realpathSync(root);
   let totalBytes = 0;
   for (const relativePath of names.sort(compareText)) {
     if (!shouldIncludePath(relativePath)) {
@@ -277,7 +278,7 @@ function loadWorkingTreeFiles(root: string, limits: Limits): { files: Map<string
         continue;
       }
       const real = realpathSync(absolutePath);
-      const relativeReal = relative(root, real);
+      const relativeReal = relative(canonicalRoot, real);
       const outside = relativeReal === ".." || relativeReal.startsWith(`..${sep}`) || isAbsolute(relativeReal);
       if (outside) {
         diagnostics.add({ code: "PATH_OUTSIDE_ROOT", message: `Skipped symlink outside root: ${relativePath}`, file: relativePath, severity: "warning" });
