@@ -397,7 +397,10 @@ test("changed analysis handles deleted symbols using the base snapshot", () => {
   const root = createRepo();
   const base = git(root, ["rev-parse", "HEAD"]);
   const mathPath = join(root, "src", "math.ts");
-  writeFileSync(mathPath, readFileSync(mathPath, "utf8").replace(/export function calculateTotal[\s\S]*?\n\nexport class/, "export class"));
+  const mathSource = readFileSync(mathPath, "utf8");
+  const deletedSource = mathSource.replace(/export function calculateTotal[\s\S]*?[\r\n]+export class/, "export class");
+  assert.notEqual(deletedSource, mathSource);
+  writeFileSync(mathPath, deletedSource);
   git(root, ["add", "src/math.ts"]);
   git(root, ["commit", "-qm", "delete-symbol"]);
   const head = git(root, ["rev-parse", "HEAD"]);

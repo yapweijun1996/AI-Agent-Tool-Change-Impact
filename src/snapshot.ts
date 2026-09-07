@@ -23,6 +23,7 @@ export class SourceSnapshot {
   public readonly ref: SnapshotRef;
   public readonly files: ReadonlyMap<string, string>;
   public readonly externalFallback: boolean;
+  private readonly lookupKeys: ReadonlyMap<string, string>;
 
   public constructor(
     root: string,
@@ -33,6 +34,14 @@ export class SourceSnapshot {
   ) {
     this.root = resolve(root);
     this.files = new Map(files);
+    const lookup = new Map<string, string>();
+    for (const file of this.files.keys()) {
+      const key = process.platform === "win32" ? file.toLowerCase() : file;
+      if (!lookup.has(key)) {
+        lookup.set(key, file);
+      }
+    }
+    this.lookupKeys = lookup;
     this.externalFallback = externalFallback;
     this.ref = {
       kind,
@@ -44,7 +53,7 @@ export class SourceSnapshot {
   public fileExists(fileName: string): boolean {
     try {
       const relativePath = this.toRepoPath(fileName);
-      return this.files.has(relativePath);
+      return this.lookupKeys.has(this.lookupKey(relativePath));
     } catch {
       return false;
     }
@@ -53,10 +62,15 @@ export class SourceSnapshot {
   public readFile(fileName: string): string | undefined {
     try {
       const relativePath = this.toRepoPath(fileName);
-      return this.files.get(relativePath);
+      const storedPath = this.lookupKeys.get(this.lookupKey(relativePath));
+      return storedPath === undefined ? undefined : this.files.get(storedPath);
     } catch {
       return undefined;
     }
+  }
+
+  private lookupKey(fileName: string): string {
+    return process.platform === "win32" ? fileName.toLowerCase() : fileName;
   }
 
   public absolutePath(fileName: string): string {

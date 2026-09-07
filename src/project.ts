@@ -47,6 +47,14 @@ function pathWithin(parent: string, candidate: string): boolean {
   return normalizedCandidate === normalizedParent || normalizedCandidate.startsWith(`${normalizedParent}${sep}`);
 }
 
+function preserveRepositoryPath(root: string, fileName: string): string {
+  const absolute = resolve(fileName);
+  if (pathWithin(root, absolute)) {
+    return fileName;
+  }
+  return ts.sys.realpath ? ts.sys.realpath(fileName) : fileName;
+}
+
 function readPermittedFile(root: string, fileName: string, snapshot: SourceSnapshot, maxBytes: number): string | undefined {
   if (snapshot.fileExists(fileName)) {
     return snapshot.readFile(fileName);
@@ -94,6 +102,7 @@ function makeParseHost(snapshot: SourceSnapshot, maxBytes: number): ts.ParseConf
     fileExists: (fileName) => fileExists(root, fileName, snapshot),
     readFile: (fileName) => readPermittedFile(root, fileName, snapshot, maxBytes),
     readDirectory: (directory, extensions) => virtualReadDirectory(snapshot, root, directory, extensions),
+    realpath: (fileName) => preserveRepositoryPath(root, fileName),
   };
 }
 
@@ -110,6 +119,7 @@ function makeLanguageServiceHost(snapshot: SourceSnapshot, compilerOptions: ts.C
     fileExists: (fileName) => fileExists(root, fileName, snapshot),
     readFile: (fileName) => readPermittedFile(root, fileName, snapshot, maxBytes),
     readDirectory: (directory, extensions) => virtualReadDirectory(snapshot, root, directory, extensions),
+    realpath: (fileName) => preserveRepositoryPath(root, fileName),
     getScriptSnapshot: (fileName) => {
       const content = readPermittedFile(root, fileName, snapshot, maxBytes);
       return content === undefined ? undefined : ts.ScriptSnapshot.fromString(content);
@@ -147,6 +157,10 @@ function toRepoFile(root: string, fileName: string): string | undefined {
   }
   const value = relative(root, absolute).replaceAll("\\", "/");
   return value ? normalizeRepoPath(value) : undefined;
+}
+
+function sameRepoPath(left: string, right: string): boolean {
+  return process.platform === "win32" ? left.toLowerCase() === right.toLowerCase() : left === right;
 }
 
 export function createProjectContext(snapshot: SourceSnapshot, requestedProject?: string, limits: Limits = DEFAULT_LIMITS): ProjectContext {
@@ -211,7 +225,10 @@ export function createProjectContext(snapshot: SourceSnapshot, requestedProject?
     readFile: (file) => snapshot.readFile(file),
     readResolvedFile: (file) => readPermittedFile(snapshot.root, file, snapshot, limits.maxFileBytes),
     sourceFile: (file) => program.getSourceFile(snapshot.absolutePath(file)),
-    isProjectFile: (file) => projectFiles.includes(snapshot.toRepoPath(file)),
+    isProjectFile: (file) => {
+      const repoFile = snapshot.toRepoPath(file);
+      return projectFiles.some((projectFile) => sameRepoPath(projectFile, repoFile));
+    },
   };
 }
 
