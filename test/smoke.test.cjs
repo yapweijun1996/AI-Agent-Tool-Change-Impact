@@ -1,6 +1,6 @@
 const assert = require("node:assert/strict");
 const { execFileSync, spawnSync } = require("node:child_process");
-const { chmodSync, cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, unlinkSync, writeFileSync } = require("node:fs");
+const { chmodSync, cpSync, existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync, statSync, symlinkSync, unlinkSync, writeFileSync } = require("node:fs");
 const { basename, delimiter, dirname, join } = require("node:path");
 const test = require("node:test");
 
@@ -519,7 +519,15 @@ test("worktree retains internal symlinked source files", () => {
     if (!result.ok) {
       const loaded = loadWorkingTree(root);
       const context = createProjectContext(loaded.snapshot, "tsconfig.json");
-      contextDetails = { snapshotFiles: loaded.snapshot.projectFiles(), projectFiles: context.project.files };
+      const entry = readdirSync(join(root, "src"), { withFileTypes: true }).find((candidate) => candidate.name === "internal-link.ts");
+      const linkInfo = {
+        entryIsSymbolicLink: entry?.isSymbolicLink(),
+        lstatIsSymbolicLink: lstatSync(link).isSymbolicLink(),
+        isFile: statSync(link).isFile(),
+        realPath: realpathSync(link),
+        checkIgnore: spawnSync("git", ["check-ignore", "-q", "--no-index", "--", "src/internal-link.ts"], { cwd: root }).status,
+      };
+      contextDetails = { snapshotFiles: loaded.snapshot.projectFiles(), projectFiles: context.project.files, linkInfo };
     }
     assert.equal(result.ok, true, result.ok ? undefined : JSON.stringify({ result, contextDetails }));
     assert.equal(result.analysis.status, "complete");
