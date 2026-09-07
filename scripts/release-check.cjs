@@ -62,6 +62,9 @@ try {
     packageJson.types,
     typeof packageJson.bin === "string" ? packageJson.bin : packageJson.bin?.["agent-impact"],
     "schemas/result-v0.1-draft.schema.json",
+    "AGENT_GUIDE.md",
+    "skills/agent-change-impact/SKILL.md",
+    "skills/agent-change-impact/agents/openai.yaml",
   ]);
   for (const file of requiredFiles) {
     assert.equal(typeof file, "string", "package entry paths must be strings");

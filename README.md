@@ -86,6 +86,36 @@ The bounded fan-out benchmark in
 API/CLI cold-start and limit behavior without making a performance guarantee.
 The diagnostic stress command is `node spike/diagnostic-limit.cjs`.
 
+## AI agent integration
+
+This is a server-free (serverless in the sense that no long-running service is
+deployed) agent tool. The CLI runs as a local child process and the
+JavaScript API runs in the caller's Node.js process; analysis needs no HTTP
+server, API key, database, MCP connection, or hosted runtime. npm and GitHub are
+distribution channels. An agent may need network access while installing from
+one of them, but the analysis itself reports `network: "disabled"` and does not
+execute repository code.
+
+Read [AGENT_GUIDE.md](AGENT_GUIDE.md) for the install and operating workflow.
+The repository also ships the portable Agent Skills file
+[`skills/agent-change-impact/SKILL.md`](skills/agent-change-impact/SKILL.md),
+which can be copied into Codex's `.agents/skills` directory or Claude Code's
+`.claude/skills` directory. Codex can invoke it as `$agent-change-impact` and
+Claude Code as `/agent-change-impact`; both hosts can also select it
+automatically from its description. The optional
+[`agents/openai.yaml`](skills/agent-change-impact/agents/openai.yaml) supplies
+Codex UI metadata.
+
+For a GitHub checkout, run `npm ci --ignore-scripts`, `npm run build`, and use
+`node dist/cli.js ...`. For an npm install, use `npm install
+agent-change-impact`, then `npx --no-install agent-impact ...`; use
+`npm view agent-change-impact version` when the registry version and the GitHub
+checkout may be at different release stages. The current `0.1.1` candidate
+package includes the guide and skill files so an agent can install the CLI and
+its instructions from the same artifact. Check `npm view
+agent-change-impact version` before relying on those paths from the public
+`latest` tag.
+
 ## CLI
 
 After `npm run build`, the executable can be invoked directly:
@@ -164,6 +194,7 @@ ownership and reading order.
 - [ROADMAP.md](ROADMAP.md): milestone order and future priorities.
 - [TASK.md](TASK.md): authoritative task ledger, evidence, blockers, and next steps.
 - [VALIDATION.md](VALIDATION.md): fixture status and exact verification evidence.
+- [AGENT_GUIDE.md](AGENT_GUIDE.md): install paths, Codex/Claude Code skill setup, CLI workflow, and result interpretation.
 - [CHANGELOG.md](CHANGELOG.md): `0.1.1` release record and `0.1.0` history; publication status is tracked above and in [VALIDATION.md](VALIDATION.md).
 - [`spike/PROJECT_HOST_FINDINGS.md`](spike/PROJECT_HOST_FINDINGS.md): local project-host feasibility findings.
 - [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md): bounded local resource observations.

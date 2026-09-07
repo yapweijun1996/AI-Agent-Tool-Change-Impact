@@ -61,13 +61,20 @@ the documentation reconciliation; npm artifacts are immutable. Package `0.1.1`
 contains the current repository documentation and is pending publication after
 the hosted release checks.
 
+The `0.1.1` candidate also contains the server-free
+`AGENT_GUIDE.md`, portable `skills/agent-change-impact/SKILL.md`, and optional
+Codex metadata. Release-check requires those paths and pack-smoke verifies them
+after installation. The guide documents GitHub and npm distribution plus the
+Codex `.agents/skills` and Claude Code `.claude/skills` copy paths; live host
+menus are outside repository automation.
+
 | Area | Evidence | Result |
 | --- | --- | --- |
 | Build and type safety | `npm run typecheck`; `npm test` builds with strict `tsc -p tsconfig.json`, including unused locals/parameters checks | Pass |
 | Runtime smoke/integration | `npm test` on Node.js `v23.10.0`, macOS `Darwin 25.6.0 arm64`, plus fresh clean copies at `f9f904b` using Node.js `v22.23.2` and `v24.20.0` Alpine runtimes | Pass: 36 tests on the latest macOS gate; 34 tests on each current Linux runtime at `f9f904b`, with installed API/CLI smoke and clean lockfile installs |
 | Draft contract | Ajv `8.20.0` all-errors review validates capabilities, file, symbol, changed, success/partial, and error envelopes, including effective `analysis.limits` | Pass and frozen across the `0.1.x` package line; the schema identifier remains `0.1-draft` |
 | Dependency audit | `npm audit --json` (production and development dependency graph) | Pass: 0 vulnerabilities |
-| Package contents | `npm pack --dry-run --ignore-scripts`; `npm publish --dry-run --ignore-scripts --access public`; `npm run release:check`; `npm run pack:smoke`; Node 22/24 Linux tarball checks | Pass for the `0.1.1` candidate: release metadata and 38-file tarball set agree, packaged API/CLI smoke passes, pretty output is bounded, and development sources are excluded |
+| Package contents | `npm pack --dry-run --ignore-scripts`; `npm publish --dry-run --ignore-scripts --access public`; `npm run release:check`; `npm run pack:smoke`; Node 22/24 Linux tarball checks | Pass for the `0.1.1` candidate: release metadata and 41-file tarball set agree, packaged API/CLI smoke passes, pretty output is bounded, guide/skill files install correctly, and development sources are excluded |
 | Bounded resource observation | `node spike/performance-benchmark.cjs` on temporary 21-, 121-, 241-, and 501-file fan-out/depth repositories on macOS, plus the 241-file fixture on Node 22/24 Linux containers; three repeated 241-file cold starts on macOS; 12,000-missing-import and 20,000-oversized-file reproductions under default limits; direct pre-decode bounded-reader assertion in the diagnostic-limit test | Pass locally: default node cap stops at 100 nodes for larger fixtures; hard caps complete; semantic counts and stop reasons remain stable across three repeated runs; the high-fan-out provider reproduction returns 299 unresolved observations with `PROVIDER_OBSERVATION_LIMIT` in a 163,378-byte envelope, `node spike/diagnostic-limit.cjs` returns 1,000 warnings with `DIAGNOSTIC_LIMIT` in a 154,605-byte envelope, and the bounded reader rejects a 4 KiB file after 513 bytes under a 512-byte budget; API/CLI child-process timings and RSS across macOS/Linux are recorded in [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) |
 | Git/read-only behavior | Temporary repositories, revision/worktree cases, unchanged Git assertions, internal source/root and escaping symlink paths, configured clean filters/external helpers, and an oversized revision blob under a tight `maxFileBytes` limit | Pass for tested cases; oversized Git output is rejected before UTF-8 decoding and reported as `FILE_BUDGET_EXCEEDED`, duplicate base/head loader warnings retain distinct snapshot IDs, internal source/root symlinks remain in-root, escaping symlinks are skipped, and configured external diff/textconv/fsmonitor/clean-filter helpers are not executed |
 | Cross-platform workflow | `.github/workflows/ci.yml` with Node 22/24 × Ubuntu/macOS/Windows, full Git history, read-only contents, and low-severity audit | Pass in hosted run [34123415471](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34123415471): all six jobs pass typecheck, tests, package checks, pack smoke, audit, and docs check; the Windows capture-mutation test is intentionally skipped because `execFile` cannot launch a `.cmd` shim |
@@ -101,7 +108,7 @@ Node 22 and Node 24 lockfile installs.
 - Byte-identical preservation of `.gitattributes`; CI uses a full-history checkout
   because the validator verifies historical commit references.
 
-Result: **Pass** on 2026-09-07. It checked all 11 Markdown files, relative
+Result: **Pass** on 2026-09-07. It checked all 12 Markdown files, relative
 links/anchors, identifier definitions/references, an acyclic CI dependency graph,
 balanced fences, final newlines, whitespace, and byte-identical `.gitattributes`.
 A depth-1 clone reproducibly fails the historical commit check, while a full
@@ -139,6 +146,7 @@ open. “Not run” means no evidence is available.
 | V-20 | CLI/API success, partial, validation/operation errors, malformed requests, coordinate handoff | Pass for tested cases | CLI JSON/exit behavior, API parity, malformed JavaScript API requests including missing required fields and unknown limits, line-bounded `--at`, inline values containing `=`, trimmed/NUL-rejected revisions, partials, and coordinate handoff pass; UTF-16/old-coordinate cases remain |
 | V-21 | Packaged artifact outside checkout on Node 22/24 and Linux/macOS/Windows | Pass for tested cases | Node 23/macOS and Node 22/24 Linux pass tests, typecheck, pack checks, and installed API/CLI end-to-end analysis smoke; hosted run 34123415471 passes package checks on all six Node 22/24 Ubuntu/macOS/Windows jobs; the Windows capture-mutation test remains harness-skipped |
 | V-22 | Authorized publication and clean registry installation | Pass for `0.1.0`; pending for `0.1.1` | `0.1.0` is published with `latest: 0.1.0` and has a verified clean install, API/CLI schema, integrity/SHA-1 metadata, and npm signature. Repeat the same checks for `0.1.1` after publication; provenance is unavailable for the interactive release |
+| V-23 | Agent guide, portable skill, and Codex/Claude Code installation paths | Pass for GitHub source and local `0.1.1` candidate artifact | `AGENT_GUIDE.md`, `skills/agent-change-impact/SKILL.md`, and optional Codex `agents/openai.yaml` are present; release-check and pack-smoke require and install them. Live host discovery is not simulated, and registry availability remains pending until `0.1.1` is published |
 
 Fixtures for callbacks and dynamic dispatch should continue to verify honest
 limitations. Unsupported features must remain absent from capability claims and

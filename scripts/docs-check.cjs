@@ -5,6 +5,7 @@ const { join, resolve } = require("node:path");
 const root = resolve(__dirname, "..");
 const requiredDocs = [
   "README.md",
+  "AGENT_GUIDE.md",
   "DESIGN.md",
   "SPEC.md",
   "EPIC.md",

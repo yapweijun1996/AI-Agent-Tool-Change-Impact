@@ -18,6 +18,8 @@
   "files": [
     "dist",
     "schemas",
+    "skills",
+    "AGENT_GUIDE.md",
     "README.md",
     "CHANGELOG.md",
     "LICENSE"

@@ -4,7 +4,8 @@
 
 Deliver a local, read-only Agent Change Impact CLI and JavaScript API for
 explicitly configured JavaScript/TypeScript/TSX projects, with evidence-backed
-file/symbol analysis and a two-snapshot Git change mode.
+file/symbol analysis and a two-snapshot Git change mode, plus a distributable
+agent guide and host-neutral Agent Skills workflow for Codex and Claude Code.
 
 Latest Git clean-filter isolation: [`c32634e`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/c32634e).
 
@@ -140,6 +141,7 @@ attributes in [`c32634e`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-
 | E-07: Changed-target orchestration | CI-07 | Done for tested cases | Modification, deletion, rename, configuration, unsupported-file, worktree projections |
 | E-08: Resource and correctness hardening | CI-08 | Done for declared scope | Deterministic file/graph/provider/diagnostic/output limits, bounded descriptor/Git/external reads, repeated cold starts, high-fan-out regressions, bounded fan-out measurements, clean-filter isolation, and the green Node 22/24 Ubuntu/macOS/Windows matrix are present; cancellation and memory isolation remain deferred |
 | E-09: Package and release gates | CI-09 | Release candidate; publication pending | Local pack/publish dry-runs, release metadata, dependency audit, installed API/CLI smoke, schema/API freeze review, and hosted run 34123415471 pass; npm publication, clean registry install, integrity, and signature evidence remain pending for `0.1.1` |
+| E-10: Agent host distribution | CI-10 | Done locally for candidate | `AGENT_GUIDE.md`, portable `skills/agent-change-impact/SKILL.md`, optional Codex metadata, GitHub/npm install paths, and CLI/result interpretation are packaged and checked; live host discovery and public registry availability remain separate evidence |
 
 ## Acceptance by work package
 
@@ -254,12 +256,26 @@ and `npm ci --ignore-scripts`; this policy is recorded in [`f64fbb6`](https://gi
 The CLI preserves inline values containing `=` and normalizes/rejects unsafe
 Git revision inputs; regression coverage is in [`ab27679`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/ab27679).
 
+### E-10: Make the tool discoverable by coding agents
+
+`AGENT_GUIDE.md` documents the server-free operating model, GitHub and npm
+distribution paths, CLI/API examples, JSON result handling, and host-specific
+skill directories. The portable
+[`skills/agent-change-impact/SKILL.md`](skills/agent-change-impact/SKILL.md)
+teaches the same workflow to Codex and Claude Code, while
+`skills/agent-change-impact/agents/openai.yaml` supplies optional Codex UI
+metadata. `scripts/release-check.cjs` requires these files in the package and
+`scripts/pack-smoke.cjs` verifies that a tarball install retains them. The live
+Codex/Claude Code host menus are not simulated by repository tests; the guide
+records the host discovery commands and copy paths instead.
+
 ## Completion gate
 
 The declared v0.1 implementation scope and release gates are complete: every
 in-scope requirement has evidence in [VALIDATION.md](VALIDATION.md), the draft
 schema/API is reviewed and frozen across the `0.1.x` line, platform/artifact
-gates pass, and package `0.1.1` is ready for the final registry release checks.
+gates pass, E-10's agent guide and skill artifact are packaged, and package
+`0.1.1` is ready for the final registry release checks.
 The prior `0.1.0` registry artifact exposes npm signature metadata and no
 provenance attestation because that release used interactive authentication;
 `0.1.1` publication is still pending. Cancellation and memory isolation remain

@@ -8,6 +8,11 @@ recorded in [VALIDATION.md](VALIDATION.md) after publication.
 
 - Refresh the package documentation with reconciled release and availability
   wording before republishing the patch version.
+- Add a server-free AI agent guide and a host-neutral Agent Skills workflow for
+  Codex and Claude Code, including GitHub/npm installation and JSON result
+  interpretation guidance.
+- Package the guide, skill, and optional Codex UI metadata with the release
+  artifact; no analysis behavior or draft schema changes are introduced.
 - Preserve the reviewed `0.1-draft` schema/API contract and implementation
   behavior from `0.1.0`; this patch contains no code behavior changes.
 

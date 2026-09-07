@@ -60,6 +60,7 @@ reasoning, and automatic dependency installation are outside this version.
 | R-12 | Keep analysis read-only, offline, and free of repository-code execution | Implemented by design/tests | V-18, V-19 |
 | R-13 | Provide one consistent CLI/API contract with machine-readable errors | Implemented and frozen across the 0.1.x package line after Ajv review of all public operation envelopes | V-05, V-16, V-20 |
 | R-14 | Verify packaging/platform support before advertising a release | Local artifact/runtime checks and hosted run 34123415471 across all six Node 22/24 Ubuntu/macOS/Windows jobs pass for the `0.1.1` candidate; npm publication, registry clean-install, integrity, and signature checks are pending | V-21, V-22 |
+| R-15 | Give AI coding agents an installable, host-neutral usage workflow | Implemented in the GitHub source and `0.1.1` candidate artifact with `AGENT_GUIDE.md`, a portable Agent Skills file, Codex metadata, npm/GitHub installation paths, and CLI/API/result guidance; public registry availability follows the package release | V-23 |
 
 ## Draft CLI
 
@@ -102,6 +103,25 @@ segments are removed, while parent segments and NUL bytes return
 `FILE_OUTSIDE_ROOT`.
 Inline CLI values preserve embedded `=` characters. Comparison revisions are
 trimmed consistently and NUL-containing revisions fail with `INVALID_ARGUMENT`.
+
+## AI agent hosts and distribution
+
+The repository includes [AGENT_GUIDE.md](AGENT_GUIDE.md) and the portable
+[`skills/agent-change-impact/SKILL.md`](skills/agent-change-impact/SKILL.md).
+The same skill file is intended for both [Codex skills](https://developers.openai.com/codex/skills/)
+and [Claude Code skills](https://code.claude.com/docs/en/skills): copy it into
+`.agents/skills/agent-change-impact/SKILL.md` or
+`.claude/skills/agent-change-impact/SKILL.md` for a project-scoped workflow, or
+the corresponding user directory for a personal workflow. The optional
+`skills/agent-change-impact/agents/openai.yaml` supplies Codex UI metadata.
+
+GitHub is the source distribution path: clone the repository, install its
+lockfile, build, and invoke `node dist/cli.js`. npm is the package distribution
+path: install `agent-change-impact` locally or globally and invoke the
+`agent-impact` bin; the package also contains the guide and skill files. An
+agent should check `npm view agent-change-impact version` when the registry and
+GitHub checkout may be at different release stages. Neither distribution path
+turns the analysis into a server or hosted service.
 
 ## JavaScript API and result model
 

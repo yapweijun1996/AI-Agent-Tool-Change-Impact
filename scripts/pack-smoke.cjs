@@ -2,7 +2,7 @@
 
 const assert = require("node:assert/strict");
 const { execFileSync } = require("node:child_process");
-const { mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } = require("node:fs");
+const { existsSync, mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } = require("node:fs");
 const { join } = require("node:path");
 const { tmpdir } = require("node:os");
 
@@ -73,6 +73,10 @@ try {
   assert.equal(cliResult.ok, true);
   assert.equal(cliResult.operation, "capabilities");
   const installedCliScript = join(appDirectory, "node_modules", "agent-change-impact", "dist", "cli.js");
+  const installedPackageRoot = join(appDirectory, "node_modules", "agent-change-impact");
+  assert.equal(existsSync(join(installedPackageRoot, "AGENT_GUIDE.md")), true, "packaged agent guide must be installed");
+  assert.equal(existsSync(join(installedPackageRoot, "skills", "agent-change-impact", "SKILL.md")), true, "packaged agent skill must be installed");
+  assert.equal(existsSync(join(installedPackageRoot, "skills", "agent-change-impact", "agents", "openai.yaml")), true, "packaged Codex metadata must be installed");
   const cliImpactOutput = execFileSync(process.execPath, [installedCliScript, "file", "src/base.ts", "--root", fixtureDirectory, "--project", "tsconfig.json", "--json"], {
     cwd: appDirectory,
     encoding: "utf8",

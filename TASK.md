@@ -161,7 +161,10 @@ smoke uses a cache-preferred install with normal registry
 fallback when metadata is absent; the latest clean clone rerun after `273a344`
 also passed the documentation check and exercised packaged API/CLI analysis end
 to end. A local `npm publish --dry-run --ignore-scripts --access public` also
-passes for the 38-file artifact. Bounded fan-out measurements are recorded in
+passes for the 38-file implementation artifact. The `0.1.1` candidate now also
+packages `AGENT_GUIDE.md`, the portable Codex/Claude Code skill, and Codex UI
+metadata; the expanded artifact is verified by CI-10 below. Bounded fan-out
+measurements are recorded in
 [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md). The draft
 schema/API was frozen for `0.1.0` after the Ajv 8.20.0 review and is carried
 unchanged by the `0.1.x` package line; its `0.1-draft` identifier remains.
@@ -185,8 +188,8 @@ checks remain pending. Cancellation and memory isolation remain deferred.
 | --- | --- | --- | --- |
 | DOC-01 | Inspect implementation baseline and working-tree state | Done | Git history/tree/status reconciled before and after `b57321d`/`0cdd08f`/`13e9f14`/`6b43c58`/`ca5453e`/`0169580`/`5d29c4c`/`954f6dc`/`bbfeb58`/`940effd`/`1753c22`/`e55647f`/`e51113d`/`89f5286`/`db809f4`/`143e9f7`/`d385ff5`/`798594c`/`83f398d`/`661cb4d`/`1e61baf`/`0644fda`/`343750a`/`0902d49`/`2a68521`/`1c195af`/`b248f10`/`48f102e`/`273a344`/`e3b848c`/`13e660d`/`d959fc1`/`33ed211`/`e2cc13e`/`2262658`/`aeef862`/`3693612`/`c4dca94`/`d9f777c`/`13990ce`/`4d770e0`/`17020ad`/`850f106`/`beb003e`/`f64fbb6`/`7970752`/`ab27679`/`3a7bc99`/`b1f6477`/`32fd01a`/`a0f148b`/`149e0fa`/`2f3c482`/`0c8a130`/`f8a580e`/`f9f904b`/`ba0538a`/`c6296e4`/`55a10bb`/`3472b13`/`6b1c9b5`/`261c47a`/`c32634e`/`fd17b0d` |
 | DOC-02 | Review supplied product design and technical assumptions | Done | Review dispositions preserved in [DESIGN.md](DESIGN.md) |
-| DOC-03 | Maintain coordinated product/design/epic/roadmap/task docs | Done | This reconciliation updates the coordinated product/status Markdown documents, the versioned changelog, the feasibility note, and the performance note with the current Windows, CI, schema, and release evidence |
-| DOC-04 | Validate links, references, consistency, and final changes | Done | `npm run docs:check`: all 11 Markdown files, relative links/anchors, identifiers, task DAG, fences, whitespace, and `.gitattributes` preservation pass |
+| DOC-03 | Maintain coordinated product/design/epic/roadmap/task docs | Done | This reconciliation updates the coordinated product/status Markdown documents, the versioned changelog, the feasibility note, the performance note, the agent guide, and the portable skill with current installation, host, CI, schema, and release evidence |
+| DOC-04 | Validate links, references, consistency, and final changes | Done | `npm run docs:check`: all 12 Markdown files, relative links/anchors, identifiers, task DAG, fences, whitespace, and `.gitattributes` preservation pass |
 
 ## Implementation backlog
 
@@ -201,6 +204,7 @@ checks remain pending. Cancellation and memory isolation remain deferred.
 | CI-07 | Implement two-snapshot changed-target analysis and fallback | Done for tested cases | CI-03, CI-04, CI-05 | Modification/deletion/rename/configuration/unsupported/worktree cases; V-10, V-11, V-12 |
 | CI-08 | Enforce budgets, deterministic results, isolation, and measured limits | Done for declared scope | CI-05, CI-06, CI-07 | Local file/graph/provider/diagnostic/output limits, pre-decode bounded source/external/module-resolution reads, bounded Git revision buffers with `FILE_BUDGET_EXCEEDED` overflow diagnostics, snapshot-tagged base/head loader and project diagnostics, Windows path semantics, determinism/read-only checks, bounded fan-out API/CLI measurements across macOS and Node 22/24 Linux, high-fan-out unresolved-observation and diagnostic-cap regressions, and clean-filter isolation pass; cancellation and memory isolation are deferred; V-09, V-15 through V-20 |
 | CI-09 | Verify packaging, freeze contracts, and complete release gates | Release candidate; publication pending | CI-08 | Local pack/publish dry-runs, dependency audit, installed API/CLI end-to-end smoke, Node 22/24 Linux checks, full-history/read-only workflow, Ajv contract review, and hosted run 34123415471 pass; npm publication and clean registry installation remain pending for `0.1.1`; V-21, V-22 |
+| CI-10 | Package the AI agent guide and host-neutral skill | Done locally for the `0.1.1` candidate | CI-08 | `AGENT_GUIDE.md`, portable `skills/agent-change-impact/SKILL.md`, and Codex `agents/openai.yaml` are included in the npm file set; release-check requires them and pack-smoke verifies their installed paths; live host discovery and public registry availability remain separate evidence; V-23 |
 
 Requirements and fixture definitions are in [SPEC.md](SPEC.md) and
 [VALIDATION.md](VALIDATION.md). Work-package context is in [EPIC.md](EPIC.md).
@@ -212,7 +216,8 @@ release action as completed evidence.
 
 | Gate slice | Parent | Status | Acceptance criterion | Current blocker or next input |
 | --- | --- | --- | --- | --- |
-| Local artifact and changelog integrity | CI-09 | Done | `npm pack --dry-run`, `npm publish --dry-run --ignore-scripts --access public`, and `npm run release:check` confirm the versioned package, lockfile, schema, compiled entry points, dated `CHANGELOG.md`, and no development sources; installed API/CLI analysis and packaged pretty-output budget rejection pass | Registry publication and artifact checks remain pending |
+| Local artifact and changelog integrity | CI-09 | Done | `npm pack --dry-run`, `npm publish --dry-run --ignore-scripts --access public`, and `npm run release:check` confirm the versioned package, lockfile, schema, compiled entry points, dated `CHANGELOG.md`, no development sources, and the 41-file artifact; installed API/CLI analysis and packaged pretty-output budget rejection pass | Registry publication and registry artifact checks remain pending |
+| Agent guide and skill distribution | CI-10 | Done locally for candidate | `AGENT_GUIDE.md`, `skills/agent-change-impact/SKILL.md`, and `skills/agent-change-impact/agents/openai.yaml` are present in the source tree and installed tarball; the guide documents GitHub/npm distribution and Codex/Claude Code copy paths | Publish the candidate before claiming npm-hosted skill availability |
 | Hosted platform matrix | CI-09 | Done for tested matrix | Six Node 22/24 jobs on Ubuntu, macOS, and Windows pass typecheck, tests, package checks, pack smoke, and docs check in [run 34123415471](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34123415471); the Windows capture-mutation harness skip is explicitly documented | No further hosted rerun is required for the current tree |
 | Provider cancellation and isolation | CI-08 | Deferred | Deterministic work caps and bounded reads are implemented; worker cancellation/timeout and memory-isolation evidence are outside the v0.1 contract | Revisit only when a worker boundary and public query-budget requirement are approved |
 | Schema/API freeze | CI-09 | Done for 0.1.x draft | Ajv 8.20.0 review validates capabilities, file, symbol, changed, and error envelopes; implementation, CLI, types, schema, and changelog retain the `0.1-draft` contract identifier across the patch release | A future tightening or rename requires a new versioned contract |
@@ -231,12 +236,12 @@ macOS, and Windows jobs.
 | --- | --- |
 | `npm test` | Pass: 36/36 on the latest macOS gate; the complete `f9f904b` cross-runtime gate remains 34/34, and hosted run 34123415471 passes the Windows test matrix with the documented `.cmd` harness skip |
 | `npm run typecheck` | Pass: strict TypeScript check with unused locals/parameters rejected |
-| `npm run docs:check` | Pass: 11 Markdown files; links/anchors, identifiers, task DAG, fences, whitespace, Git references, and `.gitattributes` preservation, including CRLF-normalized checks |
+| `npm run docs:check` | Pass: 12 Markdown files; links/anchors, identifiers, task DAG, fences, whitespace, Git references, and `.gitattributes` preservation, including CRLF-normalized checks |
 | `npm audit --json` | Pass: 0 vulnerabilities across production and development dependencies |
-| `npm pack --dry-run --ignore-scripts` | Pass: 38 package files, including `CHANGELOG.md`; no development sources/tests included |
-| `npm run release:check` | Pass: package/lockfile version, dated changelog heading, draft schema version, entry points, and 38-file dry-run tarball set agree; `AGENT_IMPACT_RELEASE_TAG=v0.1.1 npm run release:check` also passes |
-| `npm run pack:smoke` | Pass: local tarball installed with `npm install --prefer-offline --omit=dev --ignore-scripts`; packaged API and CLI analysis returned valid draft results, and packaged pretty output was rejected with `OUTPUT_LIMIT_EXCEEDED` when formatting exceeded the selected byte budget |
-| `npm publish --dry-run --ignore-scripts --access public` | Pass: npm assembled the 38-file `agent-change-impact@0.1.1` artifact |
+| `npm pack --dry-run --ignore-scripts` | Pass: 41 package files, including `CHANGELOG.md`, `AGENT_GUIDE.md`, the portable skill, and Codex metadata; no development sources/tests included |
+| `npm run release:check` | Pass: package/lockfile version, dated changelog heading, draft schema version, required CLI/API/agent entry points, and 41-file dry-run tarball set agree; `AGENT_IMPACT_RELEASE_TAG=v0.1.1 npm run release:check` also passes |
+| `npm run pack:smoke` | Pass: local tarball installed with `npm install --prefer-offline --omit=dev --ignore-scripts`; packaged API and CLI analysis returned valid draft results, packaged pretty output was rejected with `OUTPUT_LIMIT_EXCEEDED` when formatting exceeded the selected byte budget, and guide/skill files were present |
+| `npm publish --dry-run --ignore-scripts --access public` | Pass: npm assembled the 41-file `agent-change-impact@0.1.1` artifact |
 | `npm publish --access public` and clean registry install | Pending for `0.1.1`; after hosted release checks pass, publish and verify a fresh temporary-directory install, API/CLI schema, registry integrity/SHA-1 metadata, signature, and provenance state |
 | Node 22/24 package-only release check | Pass: clean Node.js `v22.23.2` and `v24.20.0` Alpine copies install the lockfile with `npm ci --ignore-scripts` and pass `npm run release:check` |
 | Pack-and-install smoke | Pass: local tarball installed with cache-preferred dependency resolution and install scripts disabled; packaged API returned `0.1-draft`, and packaged `analyzeChanged` did not execute a configured fsmonitor marker |
@@ -270,14 +275,17 @@ macOS, and Windows jobs.
 - The schema/API contract was frozen for `0.1.0` after the Ajv review and is
   unchanged in the `0.1.1` patch. The prior `0.1.0` package is published and
   verified; `0.1.1` publication is the active release step.
+- The `0.1.1` candidate includes the guide and host-neutral skill for Codex and
+  Claude Code. GitHub source installation is available now; npm-hosted skill
+  installation remains pending until the candidate is published.
 - Project references, separate project test roots, historical dependency
   reconstruction, runtime/data-flow dispatch, and cancellation isolation remain
   explicit product limitations, not hidden completeness assumptions.
 
 ## Next steps
 
-1. Publish `agent-change-impact@0.1.1` after CI passes, then verify a clean
-   registry install and record the final artifact metadata.
+1. Run the candidate checks for CI-10, publish `agent-change-impact@0.1.1`, then
+   verify a clean registry install and record the final artifact metadata.
 2. Monitor the published package and post-release reports while keeping the
    declared v0.1 scope unchanged.
 3. Revisit cancellation, memory isolation, project references, and historical

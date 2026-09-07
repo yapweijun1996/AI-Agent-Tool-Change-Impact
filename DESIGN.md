@@ -222,6 +222,17 @@ its permissive `additionalProperties` areas remain deliberate forward-compatible
 draft behavior. Tightening or renaming the contract requires a new versioned
 decision and fixtures.
 
+### D-13: Distribute one host-neutral agent skill
+
+The repository ships one open Agent Skills `SKILL.md` with the npm artifact and
+GitHub source. Codex and Claude Code copy that same file into their documented
+repository or user skill directories; Codex-only UI metadata stays optional in
+`agents/openai.yaml`. The skill teaches agents to install and invoke the local
+CLI, parse the draft envelope, and preserve partial-result limits. It does not
+start a service or widen the analysis provider boundary. Keeping one
+authoritative skill file avoids drift between agent hosts while leaving host
+specific discovery paths to each integration.
+
 ## Review disposition
 
 The original design review concerns are now covered by implementation and tests
@@ -240,6 +251,7 @@ as follows:
 | Output caps do not bound work | D-08 | File/graph/provider/diagnostic/output limits are enforced before projection; high-fan-out unresolved observations, oversized external resolution metadata, and 20,000 oversized-file diagnostics emit bounded outcomes; cancellation and memory-isolation measurements remain deferred |
 | Scan/read/execution boundaries conflict | D-07 | Git flags disable external diff/textconv/fsmonitor helpers, raw worktree hashing avoids clean filters, and content-only range diffs run outside repository attributes; symlink checks, unchanged-Git assertions, and offline/read-only API |
 | Draft schema/API drift between surfaces | D-12 | Ajv 8.20.0 review covers capabilities, file, symbol, changed, and error envelopes; TypeScript types, CLI/API operations, release checks, and `0.1-draft` identifiers agree across the `0.1.x` package line |
+| Agent hosts receive different instructions | D-13 | One packaged `skills/agent-change-impact/SKILL.md` is copied into Codex `.agents/skills` or Claude Code `.claude/skills`; the agent guide documents npm and GitHub installation paths |
 
 ## Open design questions
 
