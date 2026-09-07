@@ -1,10 +1,10 @@
 # Changelog
 
-All notable changes to this project are documented here. The `0.1.0` entry is
-prepared for release but remains unpublished until the external release gates
-pass.
+All notable changes to this project are documented here. The `0.1.0` entry
+records the reviewed release contents; registry publication status is tracked in
+[README.md](README.md) and [VALIDATION.md](VALIDATION.md).
 
-## [0.1.0] - Unreleased
+## [0.1.0] - 2026-09-07
 
 - Add bounded, read-only file, symbol, and two-snapshot Git change impact analysis for JavaScript, TypeScript, and TSX projects.
 - Add deterministic reverse evidence graphs with direct/transitive impact paths, candidate-test classification, unresolved observations, diagnostics, and explicit limits.
@@ -28,3 +28,5 @@ pass.
 - Preserve in-root symlinked repository paths across Windows case-insensitive lookups and keep the deletion fixture valid with CRLF checkouts.
 - Record the Windows `execFile`/`.cmd` test-harness limitation for concurrent capture mutation instead of treating the unexecuted shim as product evidence.
 - Keep worktree Git comparison read-only when repositories configure clean filters by hashing raw files and deriving unstaged ranges with content-only diffs outside repository attributes.
+- Discover visible in-root symlink aliases on Windows and handle short-path versus long-path identity during repository-boundary checks.
+- Freeze the reviewed `0.1-draft` schema/API contract for package `0.1.0` after capabilities, file, symbol, changed, and error envelope validation with Ajv.

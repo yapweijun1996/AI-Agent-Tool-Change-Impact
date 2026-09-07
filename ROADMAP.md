@@ -1,8 +1,10 @@
 # Roadmap
 
-Status date: 2026-09-07. Current phase: **v0.1 implementation and release-candidate
-hardening**. Version labels are targets, not published releases or delivery
-dates. Detailed status belongs in [TASK.md](TASK.md).
+Status date: 2026-09-07. Current phase: **v0.1 release candidate ready for
+authorized publication**. Version labels describe package contracts, not registry
+availability or delivery dates. Detailed status belongs in [TASK.md](TASK.md).
+Current implementation tree: `e85c573`; hosted matrix: [run
+34093972824](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34093972824).
 Previous documentation and clean-install evidence reconciliation: `1a57175`.
 Latest provider observation bounding: `32fd01a`.
 Latest diagnostic collection bounding: `a0f148b`.
@@ -17,6 +19,8 @@ Latest installed artifact output-limit smoke: `3472b13`.
 Latest cross-platform snapshot path handling: `6b1c9b5`.
 Latest platform-aware capture test harness: `261c47a`.
 Latest Git clean-filter isolation: `c32634e`.
+Latest Windows short-path boundary fix: `0b72a83`.
+Latest documentation line-ending check: `e85c573`.
 
 ## Before v0.1
 
@@ -26,9 +30,9 @@ Latest Git clean-filter isolation: `c32634e`.
 | M-01: Feasibility and contract draft | Config-bound project host and executable draft result fixtures | Done locally | CI-01, CI-02; local Node test evidence |
 | M-02: Static target analysis | Snapshot access, file/symbol relationships, and evidence paths | Done for supported scope | CI-03, CI-04, CI-05; local smoke tests |
 | M-03: Change analysis and candidate tests | Two snapshots, deletion/rename/configuration handling, candidate tests | Done for tested cases | CI-06, CI-07; local smoke tests |
-| M-04: Verified release candidate | Bounded work/output, stable results, platform checks, packaged artifact | In progress | CI-08 and pre-publication CI-09; hosted run 34083270577 needs rerun after local Windows fixes |
+| M-04: Verified release candidate | Bounded work/output, stable results, platform checks, reviewed draft contract, and packaged artifact | Release-ready; registry gate pending | CI-08 and CI-09; hosted run 34093972824 passes all six Node 22/24 Ubuntu/macOS/Windows jobs; npm authentication is required for publication and clean-install verification |
 
-M-00 through M-03 are implemented in commits `b57321d`, `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`, `954f6dc`, `bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, `89f5286`, `db809f4`, `143e9f7`, `d385ff5`, `798594c`, `83f398d`, `661cb4d`, and `8bb3651`; the NUL-byte regression is in `1e61baf`. M-04 hardening includes `0644fda`, `343750a`, `0902d49`, `2a68521`, `1c195af`, `b248f10`, `48f102e`, `273a344`, `c4dca94`, `74563b1`, `2262658`, `13990ce`, `4d770e0`, `17020ad`, `850f106`, `beb003e`, `f64fbb6`, `ab27679`, `b1f6477`, `473b4da`, `32fd01a`, `a0f148b`, `149e0fa`, `dd212e4`, `2f3c482`, `0c8a130`, `f8a580e`, and `f9f904b`; provider resolution-read hardening is in `ba0538a`; CLI formatted-output enforcement is in `c6296e4`; installed artifact formatted-output smoke is in `3472b13`; repeated resource observations are recorded in `aeef862`, and the diagnostic stress script is `spike/diagnostic-limit.cjs`. M-04 is intentionally open while cancellation/isolation measurements, schema freeze, and artifact/platform evidence are outstanding.
+M-00 through M-03 are implemented in commits `b57321d`, `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`, `954f6dc`, `bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, `89f5286`, `db809f4`, `143e9f7`, `d385ff5`, `798594c`, `83f398d`, `661cb4d`, and `8bb3651`; the NUL-byte regression is in `1e61baf`. M-04 hardening includes `0644fda`, `343750a`, `0902d49`, `2a68521`, `1c195af`, `b248f10`, `48f102e`, `273a344`, `c4dca94`, `74563b1`, `2262658`, `13990ce`, `4d770e0`, `17020ad`, `850f106`, `beb003e`, `f64fbb6`, `ab27679`, `b1f6477`, `473b4da`, `32fd01a`, `a0f148b`, `149e0fa`, `dd212e4`, `2f3c482`, `0c8a130`, `f8a580e`, `f9f904b`, `ba0538a`, `c6296e4`, `55a10bb`, `3472b13`, `6b1c9b5`, `261c47a`, `c32634e`, `0b72a83`, and `e85c573`; repeated resource observations are recorded in `aeef862`, and the diagnostic stress script is `spike/diagnostic-limit.cjs`. Cancellation and memory isolation remain deferred rather than release blockers for the bounded v0.1 scope.
 Provider resolution-read hardening is in `ba0538a`; the regression verifies that
 oversized external package metadata becomes an unresolved observation before
 the resolver can classify the package as out of scope.
@@ -39,15 +43,15 @@ recorded in `3a7bc99`, `079acbd`, `1a57175`, `ad028b6`, and `f032986`; Git clean
 
 | Target | Intended scope | Entry condition |
 | --- | --- | --- |
-| v0.1 | Configured JS/TS/TSX file, symbol, and Git-change impact; candidate tests; CLI/JS API; evidence paths; explicit limitations | All in-scope validation and release gates pass |
+| v0.1 | Configured JS/TS/TSX file, symbol, and Git-change impact; candidate tests; CLI/JS API; evidence paths; explicit limitations | All implementation, artifact, and hosted validation gates pass; registry publication and clean-install evidence are final external actions |
 | v0.2 | Dedicated `why` presentation and CFML provider feasibility | Verified v0.1 plus evidence that the next capability is useful and implementable |
 | Later, unscheduled | CFML implementation, Python evaluation, SCIP ingestion, broader project coverage, public-surface analysis, optional Test Scope composition | Separate provider/scope contracts and validation evidence |
 | v1.0 | Mature compatibility policy and stable provider/runtime evidence | Demonstrated compatibility and operational quality |
 
-The current package is `0.1.0` but the result contract remains
-`0.1-draft`; package numbering alone does not signal release readiness. The
-dedicated `why` command stays targeted at v0.2 because v0.1 already retains
-evidence paths needed by downstream agents.
+The current package is `0.1.0` and its reviewed result contract remains
+identified as `0.1-draft` for compatibility. Package numbering alone does not
+signal registry publication. The dedicated `why` command stays targeted at v0.2
+because v0.1 already retains evidence paths needed by downstream agents.
 
 ## Sequencing constraints
 
@@ -62,7 +66,8 @@ evidence paths needed by downstream agents.
 
 Local tests, a local package dry-run, remote CI, registry installation, and a
 published release are separate evidence stages. Record each separately in
-[TASK.md](TASK.md) and [VALIDATION.md](VALIDATION.md). Publishing or pushing is
-not part of the current authorized work. Cross-platform workflow execution, registry provenance, and a hosted rerun
-remain the next external release actions. `npm publish --dry-run` passes locally, but actual publication requires
-npm authentication and final release authorization.
+[TASK.md](TASK.md) and [VALIDATION.md](VALIDATION.md). The hosted matrix and
+cross-platform workflow evidence are complete for the tested cases. The next
+external release actions are npm authentication, publication, clean registry
+installation, and provenance inspection. `npm publish --dry-run` passes locally;
+the current account still returns E401 from `npm whoami`.

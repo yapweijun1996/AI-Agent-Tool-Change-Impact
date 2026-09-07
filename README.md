@@ -8,72 +8,34 @@ can inspect the relevant code.
 
 ## Current state
 
-The implementation was introduced in `b57321d`; provider-boundary, Git endpoint,
-conflict-coverage/package/CLI/boundary fixes, and graph traversal hardening are in
-`0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`, `954f6dc`,
-`bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, `89f5286`, `db809f4`, `143e9f7`, `d385ff5`, `798594c`, `83f398d`, `661cb4d`, and `8bb3651`.
-CI token permissions were restricted in `0644fda` and the workflow now fetches
-full history for reproducible documentation validation in `343750a`.
-The installed artifact API/CLI smoke is automated by `npm run pack:smoke` from
-`0902d49`.
-Its Windows `.cmd` invocation path is hardened in `2a68521`; the smoke uses a
-temporary path containing spaces to exercise that quoting boundary (`1c195af`)
-and disables install scripts during the temporary install (`b248f10`), pending
-hosted Windows execution. Cache-preferred package dependency resolution is
-recorded in `48f102e`, packaged API/CLI analysis smoke is in `273a344`, and
-release metadata/schema validation is in `4d770e0` (with optional tag checking
-added in `13990ce`).
-Unknown JavaScript API limit fields fail closed in `74563b1`; Node 22/24
-package-only release-check evidence is recorded in `17020ad`, and the latest
-full 34-case runtime gate is recorded in `f9f904b`.
-Provider module-resolution reads now reuse the bounded, real-path-validated
-reader, with an oversized package-metadata regression in `ba0538a`.
-CLI output is checked again after optional pretty formatting so the final
-serialized body stays within `maxOutputBytes`; the regression is in `c6296e4`.
-The installed tarball smoke now exercises the same compact-versus-pretty output
-limit through the packaged CLI; that artifact coverage is in `3472b13`.
-Cross-platform snapshot path handling and repository-path preservation are in
-`6b1c9b5`; the deletion fixture is newline-agnostic, and the Windows capture
-mutation test records its `execFile`/`.cmd` harness limitation in `261c47a`.
-CLI inline values and Git revision inputs are hardened in `ab27679`.
-Documentation and clean-install evidence were reconciled in `079acbd` and
-`1a57175`; the diagnostic-bound update is in `ad028b6` with the follow-up
-benchmark note in `f032986`.
-Required JavaScript API fields are validated before work begins in `b1f6477`.
-TypeScript unused locals and parameters are rejected by the compiler in
-`473b4da`.
-Provider unresolved observations are bounded by the effective edge budget and
-reported with an explicit truncation marker in `32fd01a`.
-Diagnostic collection and post-read file-size checks are bounded in `a0f148b`;
-large skipped-file inventories report `DIAGNOSTIC_LIMIT` instead of accumulating
-unbounded warnings. Bounded descriptor reads and per-file Git/external-declaration
-read limits are in `149e0fa`, so concurrent file growth is rejected before the
-full file is decoded into memory. Validated real-path reads close the symlink
-replacement window in `dd212e4`. Git revision blobs now use a bounded binary
-buffer and classify output-limit overflow as `FILE_BUDGET_EXCEEDED` in
-`2f3c482`, before UTF-8 decoding. Snapshot file-read and project diagnostics now
-retain the snapshot identity that produced them, including duplicate base/head
-budget warnings, in `0c8a130`.
-Internal symlink targets that resolve inside the repository are covered by a
-regression fixture in `f8a580e`; repository-root access through an internal
-symlink is covered in `f9f904b`.
-It is a working draft,
-not a published release: the public schema is still `0.1-draft`, local macOS
-and Linux container verification passes, and the hosted run
-[34083270577](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34083270577)
-passed Linux/macOS but found three Windows test failures on the earlier tree.
-The local fixes are committed in `6b1c9b5`, `261c47a`, and `c32634e` but are not pushed; no
-npm publication has been performed.
+The v0.1 implementation is complete for its declared JavaScript/TypeScript/TSX
+scope. The current tree includes bounded snapshot reads, Git endpoint/worktree
+comparison, reverse evidence traversal, candidate-test projection, CLI/API
+validation, packaged API/CLI smoke, and read-only helper isolation. Internal
+symlink aliases are discovered without following escapes; Windows short-path
+identity handling and checkout line-ending normalization are covered by the
+latest implementation fixes in `0b72a83` and `e85c573`.
+
+The draft result contract was reviewed against capabilities, file, symbol,
+changed, and error payloads with Ajv 8.20.0. It is frozen for package `0.1.0`
+while retaining the compatibility identifier `0.1-draft`; permissive draft
+fields remain intentional. Hosted workflow run
+[34093972824](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34093972824)
+passed all six Node 22/24 Ubuntu, macOS, and Windows jobs. The package is
+release-ready for the documented bounded local scope, but it has not yet been
+published because the current npm account is unauthenticated (`npm whoami`
+returns E401). Registry publication, clean-install, and provenance evidence are
+therefore still pending.
 
 | Surface | Current state |
 | --- | --- |
-| npm package name | `agent-change-impact` (`0.1.0`, local package only) |
+| npm package name | `agent-change-impact` (`0.1.0`, publication pending authentication) |
 | CLI | `agent-impact` via `dist/cli.js` |
 | JavaScript API | `dist/index.js` exports `capabilities`, `analyzeFile`, `analyzeSymbol`, and `analyzeChanged` |
 | Supported source | JavaScript, TypeScript, and TSX in one selected `tsconfig.json` or `jsconfig.json` project |
 | Provider | TypeScript `5.9.3` Language Service plus AST inspection |
 | Runtime floor | Node.js `22` or newer according to `package.json`; Node.js `23.10.0` on macOS and Node.js 22/24 Linux containers have been run locally |
-| Release state | Draft schema; not published |
+| Release state | Draft contract frozen for `0.1.0`; registry publication pending |
 
 ## Install and verify from a checkout
 
@@ -98,26 +60,26 @@ verifies that an internal symlinked source file and a repository root addressed
 through an internal symlink remain within the repository boundary.
 The 34-case suite and package checks recorded at `f9f904b` pass in current
 Node.js 22 and 24 Linux container copies using fresh lockfile installs. The
-new provider-resolution read-boundary regression is verified on the macOS
-runtime. Hosted run 34083270577 passed Linux and macOS but failed the three
-Windows test cases on its older commit; the current local fixes need a hosted
-rerun. The Windows capture-mutation assertion is intentionally skipped by the
-current test harness because Node `execFile` cannot intercept Git with a `.cmd`
-shim on Windows. Worktree comparison also avoids configured clean filters by
-hashing raw files and deriving unstaged ranges through content-only diffs outside
-repository attributes.
+latest hosted run `34093972824` adds green Node 22/24 Ubuntu, macOS, and Windows
+jobs. The Windows concurrent-content assertion remains intentionally skipped by
+the current harness because Node `execFile` cannot intercept Git with a `.cmd`
+shim on Windows; this is a test-harness limitation, not an untested product
+claim. Worktree comparison avoids configured clean filters by hashing raw files
+and deriving unstaged ranges through content-only diffs outside repository
+attributes.
 The packaged tarball was also installed in temporary directories and its API and
 CLI were loaded successfully on the local macOS runtime and Node 22/24 Linux
 containers; the smoke prefers the npm cache, permits registry fallback for
 missing dependency metadata, disables install scripts, and verifies that the
 installed CLI rejects pretty output when formatting would exceed the declared
 byte budget.
-`npm run release:check` verifies package/lockfile versions, the unreleased
+`npm run release:check` verifies package/lockfile versions, the versioned
 changelog heading, draft schema version, required entry points, and the actual
 dry-run tarball file set. Set `AGENT_IMPACT_RELEASE_TAG=v<package.version>` when
-validating a release tag. It does not publish or create a release. `npm publish --dry-run --ignore-scripts
---access public` passes locally for the 38-file artifact; an authenticated
-`npm whoami` is still required before a real publish.
+validating a release tag. It does not publish or create a release. `npm publish
+--dry-run --ignore-scripts --access public` passes locally for the 38-file
+artifact; an authenticated `npm whoami` is required before the authorized real
+publish and the subsequent clean registry install.
 The bounded fan-out benchmark in
 [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) records local
 API/CLI cold-start and limit behavior without making a performance guarantee.
@@ -201,6 +163,6 @@ ownership and reading order.
 - [ROADMAP.md](ROADMAP.md): milestone order and future priorities.
 - [TASK.md](TASK.md): authoritative task ledger, evidence, blockers, and next steps.
 - [VALIDATION.md](VALIDATION.md): fixture status and exact verification evidence.
-- [CHANGELOG.md](CHANGELOG.md): unreleased `0.1.0` change record prepared for publication.
+- [CHANGELOG.md](CHANGELOG.md): `0.1.0` release record; publication status is tracked above and in [VALIDATION.md](VALIDATION.md).
 - [`spike/PROJECT_HOST_FINDINGS.md`](spike/PROJECT_HOST_FINDINGS.md): local project-host feasibility findings.
 - [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md): bounded local resource observations.

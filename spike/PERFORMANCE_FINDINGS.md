@@ -1,8 +1,16 @@
 # Local performance findings
 
 Date: 2026-09-07
-Benchmark implementation revision: `db809f4`; latest core implementation revision: `8bb3651`; latest package verification revision: `273a344`; latest provider observation bounding: `32fd01a`; latest diagnostic collection bounding: `a0f148b`; latest bounded source reads: `149e0fa`; latest validated real-path reads: `dd212e4`; latest bounded revision blob reads: `2f3c482`; latest snapshot diagnostic identity: `0c8a130`; latest provider resolution read boundary: `ba0538a`; latest CLI formatted-output bound: `c6296e4`; latest installed artifact output-limit smoke: `3472b13`; latest Windows path
-handling: `6b1c9b5`; latest platform-aware capture harness: `261c47a`; latest Git clean-filter isolation: `c32634e`
+Benchmark implementation revision: `e85c573`; latest Windows short-path boundary
+fix: `0b72a83`; latest package verification revision: `e85c573`; latest provider
+observation bounding: `32fd01a`; latest diagnostic collection bounding: `a0f148b`;
+latest bounded source reads: `149e0fa`; latest validated real-path reads: `dd212e4`;
+latest bounded revision blob reads: `2f3c482`; latest snapshot diagnostic identity:
+`0c8a130`; latest provider resolution read boundary: `ba0538a`; latest CLI
+formatted-output bound: `c6296e4`; latest installed artifact output-limit smoke:
+`3472b13`; latest Windows path handling: `0b72a83`; latest platform-aware capture
+harness: `261c47a`; latest Git clean-filter isolation: `c32634e`; latest hosted
+matrix: `34093972824`
 
 This note records bounded local resource experiments on macOS and Linux
 containers. It is evidence that the configured limits stop work predictably;
@@ -48,8 +56,8 @@ even though timing and RSS vary by process state.
 The result confirms bounded fan-out behavior across four fixture sizes and
 separate CLI cold-start measurement for this machine and fixture. These runs are
 insufficient to establish release thresholds, sustained-memory behavior,
-cancellation latency, or Windows/hosted performance; those remain open CI-08
-evidence.
+cancellation latency, or a release performance SLA; those remain deferred beyond
+the declared v0.1 scope.
 
 ## Post-cap benchmark rerun
 
@@ -113,7 +121,7 @@ Observed ranges were:
 
 These current post-hardening timings are observations for this fixture and
 machine. They do not establish a latency, throughput, memory, cancellation, or
-release-performance threshold; those remain CI-08 work.
+release-performance threshold; those remain deferred product work.
 
 ## Linux container observations
 
@@ -138,11 +146,11 @@ does not claim stock-image setup, hosted CI behavior, or registry availability.
 | Node 24 / Linux | CLI hard caps | 697.2 ms | — | — | `complete`, 241 nodes/240 edges |
 
 Returned counts and stop reasons match the macOS fixture behavior. These Linux
-observations improve cross-runtime evidence but do not establish Windows or
-hosted performance thresholds, sustained-memory limits, cancellation latency, or
-release performance thresholds. Hosted run 34083270577 passed Linux/macOS but
-failed Windows tests on the prior tree; the current Windows path and Git
-clean-filter fixes have not yet been measured remotely.
+observations improve cross-runtime evidence but do not establish sustained-memory
+limits, cancellation latency, or release performance thresholds. Hosted run
+34093972824 passes the tested Node 22/24 Ubuntu/macOS/Windows matrix after the
+Windows path and Git clean-filter fixes; it is workflow evidence rather than a
+performance SLA.
 
 ## High-fan-out unresolved observations
 

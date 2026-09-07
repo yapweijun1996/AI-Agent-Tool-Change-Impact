@@ -1,6 +1,10 @@
 # Design
 
-Status: implemented v0.1 draft; release gates remain open.
+Status: implemented v0.1 draft; declared-scope gates pass, with registry
+publication still pending npm authentication.
+Current implementation tree: `e85c573`.
+Latest Windows path-boundary fix: [`0b72a83`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/0b72a83)
+Latest documentation line-ending check: [`e85c573`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/e85c573)
 Core implementation revision: [`8bb3651`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/8bb3651)
 Latest package/verification hardening: [`273a344`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/273a344)
 Latest release metadata validation: [`4d770e0`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/4d770e0)
@@ -126,6 +130,12 @@ are skipped; targets that resolve inside it remain eligible source inputs.
 Snapshot lookups follow the host filesystem's case semantics, and the
 Language Service host preserves repository-relative paths for in-root symlinked
 sources so lexical aliases remain analyzable on Windows as well as POSIX hosts.
+The worktree inventory supplements Git's path list with internal symlink aliases
+that are visible to the selected project. Symlink discovery uses `lstat`, skips
+known generated/dependency directories and ignored paths, and accepts a target
+only when its resolved identity remains inside the repository. On Windows, a
+directory-identity fallback handles 8.3 short paths when lexical real-path
+strings do not share the same spelling.
 TypeScript
 standard-library files and local `node_modules` may be read for static
 resolution. Project and provider resolution callbacks share the bounded,
@@ -179,7 +189,9 @@ retain snapshot identity and source range when the same warning occurs in both
 contexts; snapshot loaders and project parsing attach the producing snapshot
 before changed-result diagnostics are deduplicated. The
 smoke suite repeats requests and compares complete payloads byte-for-byte at the
-object level; cross-platform determinism is still unverified.
+object level. The hosted Node 22/24 matrix now passes on Ubuntu, macOS, and
+Windows; this verifies the tested platform cases, while a general byte-for-byte
+cross-platform equivalence guarantee is still outside the draft contract.
 
 ### D-10: Gate expansion on evidence
 
@@ -197,6 +209,17 @@ floor requires separate compatibility evidence and a deliberate support
 decision. This keeps the published engine range aligned with tested behavior
 instead of implying unverified historical runtime support.
 
+### D-12: Freeze the reviewed draft contract for v0.1.0
+
+The result schema, public TypeScript types, CLI/API operation names, and error
+envelope were reviewed together against capabilities, file, symbol, changed, and
+error payloads with Ajv 8.20.0. Those fields and enums are frozen for package
+`0.1.0` so downstream agents can rely on one documented draft contract. The
+schema identifier and `schemaVersion` remain `0.1-draft` for compatibility, and
+its permissive `additionalProperties` areas remain deliberate forward-compatible
+draft behavior. Tightening or renaming the contract requires a new versioned
+decision and fixtures.
+
 ## Review disposition
 
 The original design review concerns are now covered by implementation and tests
@@ -209,11 +232,12 @@ as follows:
 | Language Service ownership is overstated | D-02 | Config-bound host and feasibility note in [`spike/PROJECT_HOST_FINDINGS.md`](spike/PROJECT_HOST_FINDINGS.md) |
 | Graph loses direction or paths | D-04 | Reverse file/symbol impact assertions, cycle/diamond traversal fixtures, and draft schema validation |
 | Location selectors silently cross line boundaries | D-09 | Out-of-range columns return `TARGET_NOT_FOUND`; location disambiguation and boundary regression fixtures |
-| Repository paths are not canonical or escape the root | D-07 | Dot/repeated-separator paths normalize to one repository-relative form; parent and NUL segments fail with `FILE_OUTSIDE_ROOT`; case-insensitive Windows snapshot lookup, internal source/root symlink, and external symlink escape fixtures are covered |
+| Repository paths are not canonical or escape the root | D-07 | Dot/repeated-separator paths normalize to one repository-relative form; parent and NUL segments fail with `FILE_OUTSIDE_ROOT`; case-insensitive Windows snapshot lookup, internal source/root symlink aliases, Windows short-path identity fallback, and external symlink escape fixtures are covered |
 | Evidence strength is confused with completeness | D-05 | Dynamic/missing module cases produce `partial` with observations |
 | Imports are presented as test coverage | D-06 | Candidate role and dependency edge IDs are separate fields |
-| Output caps do not bound work | D-08 | File/graph/provider/diagnostic/output limits are enforced before projection; high-fan-out unresolved observations, oversized external resolution metadata, and 20,000 oversized-file diagnostics emit bounded outcomes, while stress/cancellation measurements remain open |
+| Output caps do not bound work | D-08 | File/graph/provider/diagnostic/output limits are enforced before projection; high-fan-out unresolved observations, oversized external resolution metadata, and 20,000 oversized-file diagnostics emit bounded outcomes; cancellation and memory-isolation measurements remain deferred |
 | Scan/read/execution boundaries conflict | D-07 | Git flags disable external diff/textconv/fsmonitor helpers, raw worktree hashing avoids clean filters, and content-only range diffs run outside repository attributes; symlink checks, unchanged-Git assertions, and offline/read-only API |
+| Draft schema/API drift between surfaces | D-12 | Ajv 8.20.0 review covers capabilities, file, symbol, changed, and error envelopes; TypeScript types, CLI/API operations, release checks, and `0.1-draft` identifiers agree for package `0.1.0` |
 
 ## Open design questions
 

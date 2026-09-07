@@ -1,7 +1,8 @@
 # Product Specification
 
-Status: implemented v0.1 draft; the executable schema and API are not frozen for
-backward compatibility.
+Status: implemented v0.1 draft; the executable schema and API are reviewed and
+frozen for package `0.1.0` while retaining the `0.1-draft` compatibility
+identifier.
 Last updated: 2026-09-07. Core implementation revision: `8bb3651`.
 Latest package/verification hardening: `273a344`.
 Latest release metadata validation: `4d770e0`.
@@ -24,6 +25,8 @@ Latest installed artifact output-limit smoke: `3472b13`.
 Latest cross-platform snapshot path handling: `6b1c9b5`.
 Latest platform-aware capture test harness: `261c47a`.
 Latest Git clean-filter isolation: `c32634e`.
+Latest Windows short-path boundary fix: `0b72a83`.
+Latest documentation line-ending check: `e85c573`.
 Runtime evidence is tracked in [VALIDATION.md](VALIDATION.md); task status is
 authoritative in [TASK.md](TASK.md).
 
@@ -53,10 +56,10 @@ reasoning, and automatic dependency installation are outside this version.
 | R-08 | Distinguish edge resolution from analysis completeness | Implemented | V-03, V-07, V-13 |
 | R-09 | Return candidate tests with separate classification and dependency evidence | Implemented | V-14 |
 | R-10 | Bound discovery, provider work, traversal, diagnostics, and serialized bytes | Implemented for declared budgets; broader thresholds pending | V-15, V-16 |
-| R-11 | Produce deterministic semantic results for identical declared inputs | Implemented on tested runtimes; cross-platform determinism pending | V-09, V-17 |
+| R-11 | Produce deterministic semantic results for identical declared inputs | Implemented for the tested Node 22/24 Ubuntu, macOS, and Windows matrix; a general byte-for-byte cross-platform guarantee is outside the draft contract | V-09, V-17 |
 | R-12 | Keep analysis read-only, offline, and free of repository-code execution | Implemented by design/tests | V-18, V-19 |
-| R-13 | Provide one consistent CLI/API contract with machine-readable errors | Implemented draft | V-05, V-16, V-20 |
-| R-14 | Verify packaging/platform support before advertising a release | Local artifact/runtime checks, including installed API/CLI smoke, pass; hosted run 34083270577 passed Linux/macOS but failed three Windows tests on the earlier tree; local fixes are pending hosted rerun | V-21, V-22 pending |
+| R-13 | Provide one consistent CLI/API contract with machine-readable errors | Implemented and frozen as the v0.1.0 draft contract after Ajv review of all public operation envelopes | V-05, V-16, V-20 |
+| R-14 | Verify packaging/platform support before advertising a release | Local artifact/runtime checks pass; hosted run 34093972824 passes all six Node 22/24 Ubuntu/macOS/Windows jobs; registry publication remains pending authentication | V-21, V-22 pending |
 
 ## Draft CLI
 
@@ -110,6 +113,13 @@ The smoke suite validates capabilities, success, partial, and error envelopes
 with Ajv. JavaScript API entry points validate request objects and return
 `INVALID_ARGUMENT` envelopes for malformed runtime inputs, including missing
 required fields.
+
+For package `0.1.0`, the schema and public API surface are frozen at this draft
+boundary. A review using Ajv 8.20.0 validated capabilities, file, symbol, changed,
+and error payloads with all-errors reporting enabled. The schema `$id` and
+`schemaVersion` intentionally remain `0.1-draft`; open `additionalProperties`
+areas preserve forward-compatible draft fields. A future tightening or rename
+requires a new versioned contract and fixture set.
 
 The envelope contains `schemaVersion`, `ok`, `operation`, context/project and
 snapshot identity, changed seeds or requested target, graph nodes/edges, direct
@@ -172,8 +182,10 @@ matching name.
   diffs and raw file hashes; unstaged ranges use content-only diffs outside the
   repository attribute scope. A symlink is included only when its resolved real
   path remains inside the repository root; an escaping symlink is skipped with a
-  diagnostic. The API also accepts a repository root supplied through an internal
-  symlink.
+  diagnostic. Worktree discovery supplements Git's inventory with visible
+  in-root symlink aliases, uses `lstat`, and falls back to directory identity on
+  Windows when short and long path spellings differ. The API also accepts a
+  repository root supplied through an internal symlink.
 
 ## Limits, errors, and dependencies
 
@@ -215,10 +227,12 @@ are outside the v0.1 support contract until a separate compatibility decision
 and runtime evidence lower the floor. The maintained Node 22/24 and
 Linux/macOS/Windows CI matrix is configured in
 `.github/workflows/ci.yml`. Local execution covers Node.js `23.10.0` on macOS
-and Node.js 22/24 in Linux containers. Hosted run 34083270577 passed the
-Linux/macOS jobs but failed the Windows tests on the prior commit; the current
-path and test-harness fixes are local and await a rerun. The package is not
-published, and `npm publish --dry-run --ignore-scripts --access public` is the
-only publication check completed; authenticated registry installation is not
-claimed. See [DESIGN.md](DESIGN.md) for ownership decisions and
+and Node.js 22/24 in Linux containers. Hosted run
+[34093972824](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34093972824)
+passes all six Node 22/24 Ubuntu, macOS, and Windows jobs. The Windows
+concurrent-content assertion remains skipped because the test harness cannot
+intercept a `.cmd` shim through Node `execFile`. The package is not yet
+published: `npm publish --dry-run --ignore-scripts --access public` passes, but
+`npm whoami` returns E401 and no registry install or provenance is claimed. See
+[DESIGN.md](DESIGN.md) for ownership decisions and
 [VALIDATION.md](VALIDATION.md) for release gates.

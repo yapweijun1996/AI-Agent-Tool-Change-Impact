@@ -1,8 +1,8 @@
 # Project-host feasibility findings
 
 Date: 2026-09-07
-Evidence implementation revision: `db809f4`; latest core implementation revision: `8bb3651`; latest package verification revision: `273a344`; latest provider observation bounding: `32fd01a`; latest diagnostic collection bounding: `a0f148b`; latest bounded source reads: `149e0fa`; latest validated real-path reads: `dd212e4`; latest bounded revision blob reads: `2f3c482`; latest snapshot diagnostic identity: `0c8a130`; latest internal symlink coverage: `f9f904b`; latest provider resolution read boundary: `ba0538a`; latest CLI formatted-output bound: `c6296e4`; latest installed artifact output-limit smoke: `3472b13`; latest Windows path
-handling: `6b1c9b5`; latest platform-aware capture harness: `261c47a`; latest Git clean-filter isolation: `c32634e`
+Evidence implementation revision: `e85c573`; latest Windows short-path boundary fix: `0b72a83`; latest package verification revision: `e85c573`; latest provider observation bounding: `32fd01a`; latest diagnostic collection bounding: `a0f148b`; latest bounded source reads: `149e0fa`; latest validated real-path reads: `dd212e4`; latest bounded revision blob reads: `2f3c482`; latest snapshot diagnostic identity: `0c8a130`; latest internal symlink coverage: `f9f904b`; latest provider resolution read boundary: `ba0538a`; latest CLI formatted-output bound: `c6296e4`; latest installed artifact output-limit smoke: `3472b13`; latest Windows path
+handling: `0b72a83`; latest platform-aware capture harness: `261c47a`; latest Git clean-filter isolation: `c32634e`; latest hosted matrix: `34093972824`
 
 This note records the bounded feasibility check that informed the first provider.
 It is evidence for project-host behavior, not a performance guarantee.
@@ -44,10 +44,10 @@ It is evidence for project-host behavior, not a performance guarantee.
    snapshot-diagnostic, internal-source-symlink, and repository-root-symlink
    regressions were added; it also passed dependency audit,
    and docs checks.
-   Hosted run 34083270577 passed Linux/macOS and exposed three Windows test
-   failures on the prior tree; the current path, harness, and clean-filter fixes
-   are local and await a rerun. The concurrent-content test is skipped on Windows because
-   Node `execFile` cannot intercept Git with a `.cmd` shim. This does not establish
+   Hosted run 34093972824 passes all six Node 22/24 Ubuntu/macOS/Windows jobs
+   after the path, harness, and clean-filter fixes. The concurrent-content test is
+   skipped on Windows because Node `execFile` cannot intercept Git with a `.cmd`
+   shim. This does not establish
    sustained cross-platform performance,
    cancellation latency, or memory limits. Working-tree and permitted external
    declaration reads stop at the per-file budget plus one byte before decoding
@@ -70,4 +70,6 @@ The v0.1 host is intentionally one explicit or unambiguous `tsconfig.json` or
 `jsconfig.json` project. Project references, historical dependency installation,
 full workspace inference, and a worker-based cancellation boundary remain
 unsupported or unmeasured. Those cases must stay visible in capabilities and
-documentation until a separate fixture proves them.
+documentation until a separate fixture proves them. The reviewed schema/API
+contract is frozen for package `0.1.0` at the `0.1-draft` identifier; this note
+does not establish registry publication or a performance guarantee.

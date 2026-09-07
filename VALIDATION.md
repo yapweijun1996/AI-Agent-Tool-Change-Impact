@@ -2,6 +2,9 @@
 
 Last updated: 2026-09-07. This document owns verification evidence and release
 gates; implementation status is authoritative in [TASK.md](TASK.md).
+Current implementation tree: `e85c573`; latest Windows short-path boundary fix:
+`0b72a83`; latest hosted matrix: [run
+34093972824](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34093972824).
 
 ## Current evidence
 
@@ -24,84 +27,55 @@ capture mutation harness limitation is recorded in `261c47a`. Worktree Git
 comparison avoids clean filters through raw hashing and content-only range
 comparison in `c32634e`.
 
-The complete cross-runtime baseline at code revision `f9f904b` used Node.js
-`v23.10.0` on macOS `Darwin 25.6.0 arm64`. After a fresh
-`npm ci --ignore-scripts --no-audit --no-fund`, `npm test` (34/34), `npm run typecheck`,
-`npm run pack:check` (38 files), `npm run release:check` with and without the
-matching tag, `npm run pack:smoke`, `npm audit --audit-level=low --json` (zero
-vulnerabilities), `npm run docs:check`, workflow YAML parsing, and
-`git diff --check` all passed. The earlier macOS rerun at `c6296e4` reported 36/36
-tests, including provider-resolution and formatted-output regressions. The
-`f9f904b` gate remains the latest complete cross-runtime run; the test count there is 34/34
-after provider-,
-diagnostic-, revision-blob-bound, snapshot-identity, internal-source-symlink,
-and repository-root-symlink regression coverage.
-This is local evidence; it does not substitute
-for the unrun hosted matrix or registry gates below.
+The latest local macOS full gate ran on 2026-09-07 with Node.js `v23.10.0` on
+macOS `Darwin 25.6.0 arm64`. After a fresh `npm ci --ignore-scripts`, the 36-case
+suite, typecheck, package/release checks, dependency audit (zero
+vulnerabilities), installed API/CLI smoke, documentation check, workflow YAML
+parse, and `git diff --check` all passed. The current Node 22/24 Linux container
+copies recorded at `f9f904b` also pass their 34-case package gates.
 
-The latest macOS-only full gate ran on the tree at revision `c32634e` and passed
-`npm test` (36/36), typecheck, JSON dependency audit (zero vulnerabilities),
-pack/release checks, installed API/CLI package smoke including the packaged
-formatted-output limit, documentation checks, and `git diff --check`. The
-cross-platform path fix preserves in-root symlink aliases and the deletion
-fixture accepts CRLF checkouts. The complete `f9f904b` Linux container evidence
-remains separate and unchanged.
+Hosted workflow run
+[34093972824](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34093972824)
+uses the current tree at `e85c573`. All six Node 22/24 Ubuntu, macOS, and Windows
+jobs pass typecheck, tests, package checks, pack smoke, dependency audit, and
+documentation checks. The Windows concurrent-content assertion is intentionally
+skipped because the harness cannot intercept a `.cmd` shim through Node
+`execFile`; this limitation is documented and does not represent a product
+success claim.
 
-Hosted workflow run [34083270577](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34083270577)
-used commit `67ef4a1`. Its Node 22/24 Ubuntu and macOS jobs passed; both Windows
-jobs failed three tests before package checks: CRLF-sensitive deletion-fixture
-matching, an in-root symlink target lookup, and the concurrent-content test's
-`.cmd` shim not being intercepted by Node `execFile`. The local fixes are in
-`6b1c9b5`, `261c47a`, and `c32634e`; these changes are unpushed and await an
-authorized hosted rerun.
+The earlier hosted run 34083270577 is retained as historical diagnostic evidence:
+it exposed the CRLF, Windows path, and `.cmd` harness issues that were fixed in
+`0b72a83` and `e85c573`. It is superseded by the green run above.
 
-After the bounded source-read change in `149e0fa`, fresh Node.js `22.23.2` and
-`24.20.0` Alpine containers reran the same lockfile install and passed the 31-case
-suite, type check, dependency audit, package check, release check, installed
-API/CLI smoke, documentation check, and `git diff --check`. These are local
-containers, not hosted runner evidence.
+The schema/API review on 2026-09-07 used Ajv 8.20.0 with all-errors reporting
+against capabilities, file, symbol, changed, and error envelopes. Every payload
+class validated successfully. The result contract is frozen for package `0.1.0`
+while keeping the schema `$id` and `schemaVersion` identifier `0.1-draft`; open
+draft fields remain intentional.
 
-After the revision-blob bound in `2f3c482`, the same fresh Node.js `22.23.2` and
-`24.20.0` Alpine containers passed the 32-case suite, type check, dependency
-audit, package check, both release checks, installed API/CLI smoke, documentation
-check, and `git diff --check`. The new oversized Git-blob fixture passed in both
-runtimes. These are local containers, not hosted runner evidence.
-
-The revision-blob regression now exercises two different revisions and verifies
-that identical `FILE_BUDGET_EXCEEDED` warnings retain two distinct snapshot IDs;
-the macOS and Node 22/24 container suites pass this assertion at `0c8a130`.
-
-After the repository-root symlink fixture was added in `f9f904b`, fresh Node.js
-`22.23.2` and `24.20.0` Alpine containers reran the lockfile install and passed
-the 34-case suite, type check, dependency audit, package check, both release
-checks, installed API/CLI smoke, documentation check, and `git diff --check`.
-The internal source and root symlinks remain analyzable while an escaping symlink
-remains skipped. These are local containers, not hosted runner evidence.
-
-After the real-path read change in `dd212e4`, targeted `npm test`,
-`npm run typecheck`, `npm run docs:check`, and `git diff --check` also passed on
-the macOS runtime. The full package gate above is the current `f9f904b` run; no
-hosted or registry evidence is inferred from either local run.
+The package is still unpublished. `npm publish --dry-run --ignore-scripts
+--access public` passes for the 38-file artifact, while `npm whoami` returns E401.
+No registry installation, integrity lookup, provenance attestation, or published
+version is claimed until authentication succeeds.
 
 | Area | Evidence | Result |
 | --- | --- | --- |
 | Build and type safety | `npm run typecheck`; `npm test` builds with strict `tsc -p tsconfig.json`, including unused locals/parameters checks | Pass |
-| Runtime smoke/integration | `npm test` on Node.js `v23.10.0`, macOS `Darwin 25.6.0 arm64` at `c32634e`, plus fresh clean copies at `f9f904b` using Node.js `v22.23.2` and `v24.20.0` Alpine runtimes | Pass: 36 tests on the latest macOS gate; 34 tests on each current Linux runtime at `f9f904b`, with installed API/CLI smoke; Linux copies use the committed lockfile with fresh `npm ci` installs, followed by typecheck, dependency audit, pack, release, package-smoke, and docs checks |
-| Draft contract | Ajv `8.20.0` validates capabilities, success, partial, and error envelopes, including effective `analysis.limits` | Pass |
+| Runtime smoke/integration | `npm test` on Node.js `v23.10.0`, macOS `Darwin 25.6.0 arm64`, plus fresh clean copies at `f9f904b` using Node.js `v22.23.2` and `v24.20.0` Alpine runtimes | Pass: 36 tests on the latest macOS gate; 34 tests on each current Linux runtime at `f9f904b`, with installed API/CLI smoke and clean lockfile installs |
+| Draft contract | Ajv `8.20.0` all-errors review validates capabilities, file, symbol, changed, success/partial, and error envelopes, including effective `analysis.limits` | Pass and frozen for package `0.1.0`; the schema identifier remains `0.1-draft` |
 | Dependency audit | `npm audit --json` (production and development dependency graph) | Pass: 0 vulnerabilities |
-| Package contents | `npm pack --dry-run --ignore-scripts`; `npm publish --dry-run --ignore-scripts --access public`; `npm run release:check`; `npm run pack:smoke` temporary tarball `--prefer-offline` install with `--ignore-scripts`, API/CLI smoke, formatted-output limit assertion, and a space-containing temporary path; fsmonitor-isolation smoke; Node 22/24 Linux container tarball install/API checks | Pass locally: release metadata and 38-file tarball set agree; both pack and publish dry-runs assemble the same artifact; packaged files include the unreleased changelog and exclude development tests/sources; packaged API and CLI loaded, analysis completed, and pretty output was rejected with `OUTPUT_LIMIT_EXCEEDED`; configured fsmonitor and clean-filter helpers were not executed; clean Node 22.23.2 and Node 24.20.0 Linux package-only checkouts also pass `npm ci --ignore-scripts` and `release:check`; authenticated publication is not verified |
+| Package contents | `npm pack --dry-run --ignore-scripts`; `npm publish --dry-run --ignore-scripts --access public`; `npm run release:check`; `npm run pack:smoke`; Node 22/24 Linux tarball checks | Pass locally: release metadata and 38-file tarball set agree, packaged API/CLI smoke passes, pretty output is bounded, and development sources are excluded; authenticated publication is not verified |
 | Bounded resource observation | `node spike/performance-benchmark.cjs` on temporary 21-, 121-, 241-, and 501-file fan-out/depth repositories on macOS, plus the 241-file fixture on Node 22/24 Linux containers; three repeated 241-file cold starts on macOS; 12,000-missing-import and 20,000-oversized-file reproductions under default limits; direct pre-decode bounded-reader assertion in the diagnostic-limit test | Pass locally: default node cap stops at 100 nodes for larger fixtures; hard caps complete; semantic counts and stop reasons remain stable across three repeated runs; the high-fan-out provider reproduction returns 299 unresolved observations with `PROVIDER_OBSERVATION_LIMIT` in a 163,378-byte envelope, `node spike/diagnostic-limit.cjs` returns 1,000 warnings with `DIAGNOSTIC_LIMIT` in a 154,605-byte envelope, and the bounded reader rejects a 4 KiB file after 513 bytes under a 512-byte budget; API/CLI child-process timings and RSS across macOS/Linux are recorded in [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) |
 | Git/read-only behavior | Temporary repositories, revision/worktree cases, unchanged Git assertions, internal source/root and escaping symlink paths, configured clean filters/external helpers, and an oversized revision blob under a tight `maxFileBytes` limit | Pass for tested cases; oversized Git output is rejected before UTF-8 decoding and reported as `FILE_BUDGET_EXCEEDED`, duplicate base/head loader warnings retain distinct snapshot IDs, internal source/root symlinks remain in-root, escaping symlinks are skipped, and configured external diff/textconv/fsmonitor/clean-filter helpers are not executed |
-| Cross-platform workflow | `.github/workflows/ci.yml` configured for Node 22/24 × Ubuntu/macOS/Windows, full Git history, read-only contents permission, and low-severity dependency audit | Hosted run 34083270577 passed four Ubuntu/macOS jobs; Node 22/24 Windows jobs failed three tests on `67ef4a1` before package checks. Current path, harness, and clean-filter fixes are local and need a rerun; the Windows capture-mutation test is intentionally skipped by the current harness because `execFile` cannot launch a `.cmd` shim |
-| Registry release | `npm publish --dry-run --ignore-scripts --access public` only; no credentials or registry mutation | Dry-run pass for `agent-change-impact@0.1.0`; `npm whoami` returned E401, registry package lookup returned 404, and no publish or clean registry install was performed |
+| Cross-platform workflow | `.github/workflows/ci.yml` with Node 22/24 × Ubuntu/macOS/Windows, full Git history, read-only contents, and low-severity audit | Pass in hosted run [34093972824](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34093972824): all six jobs pass typecheck, tests, package checks, pack smoke, audit, and docs check; the Windows capture-mutation test is intentionally skipped because `execFile` cannot launch a `.cmd` shim |
+| Registry release | `npm publish --dry-run --ignore-scripts --access public` only; no credentials or registry mutation | Blocked by authentication: dry-run passes for `agent-change-impact@0.1.0`, `npm whoami` returns E401, registry lookup returns 404, and no publish or clean registry install has been performed |
 
 The local suite covers the core vertical slice on macOS and Linux container
-runtimes. Hosted run 34083270577 supplies Linux/macOS evidence but failed the
-Windows tests on the prior commit; the current local fixes, including clean-filter isolation, are not hosted
-verified. The Windows concurrent-content assertion is skipped by its harness
-limitation. The evidence does not establish cross-platform determinism, release
-performance thresholds, cancellation latency, memory isolation, project-reference
-support, or registry provenance.
+runtimes, and hosted run 34093972824 verifies the declared CI matrix across
+Ubuntu, macOS, and Windows. The evidence does not establish exact byte-for-byte
+cross-platform equivalence, release performance thresholds, cancellation latency,
+memory isolation, project-reference support, or registry provenance. The Windows
+concurrent-content assertion remains a documented harness skip.
 
 An initial fresh Node 22 cache-only artifact-smoke attempt failed with npm
 `ENOTCACHED` because the temporary install could not reuse the container's
@@ -158,10 +132,10 @@ open. “Not run” means no evidence is available.
 | V-16 | Long paths, many diagnostics, tight byte budget, invalid budget, oversized graph | Pass for tested cases | API and CLI output/argument limits, including final pretty-format byte enforcement, explicit diagnostic-cap behavior, high-diagnostic stress, and valid JSON error behavior pass; long-path stress remains |
 | V-17 | Identical snapshots/config/dependencies/provider; changed provider/resolution input | Partial | Repeated identical API payloads compare equal; cross-provider/input invalidation is untested |
 | V-18 | External diff/textconv/fsmonitor/clean filters, executable plugin/config, automatic type acquisition | Pass for tested cases | Marker-based external diff/textconv/fsmonitor/clean-filter fixture confirms configured helpers are not executed on macOS; raw worktree hashing and content-only range diffs stay outside repository attributes; broader executable-config and automatic-type-acquisition matrix remains |
-| V-19 | Symlink escape, workspace symlink, external declarations, source/Git snapshots | Pass for tested cases | Internal workspace source symlinks and repository roots addressed through internal symlinks are analyzed, while symlink escapes are skipped and reported on macOS and Node 22/24 Linux; Windows path lookup is fixed locally in `6b1c9b5` but awaits hosted rerun; snapshot IDs, old/new evidence, bounded provider module-resolution reads, and read boundaries pass on macOS; broader external-input matrix remains |
+| V-19 | Symlink escape, workspace symlink, external declarations, source/Git snapshots | Pass for tested cases | Internal workspace source symlinks and repository roots addressed through internal symlinks are analyzed, while symlink escapes are skipped and reported; Windows short-path identity handling passes in hosted run 34093972824; snapshot IDs, old/new evidence, bounded provider module-resolution reads, and read boundaries pass; broader external-input matrix remains |
 | V-20 | CLI/API success, partial, validation/operation errors, malformed requests, coordinate handoff | Pass for tested cases | CLI JSON/exit behavior, API parity, malformed JavaScript API requests including missing required fields and unknown limits, line-bounded `--at`, inline values containing `=`, trimmed/NUL-rejected revisions, partials, and coordinate handoff pass; UTF-16/old-coordinate cases remain |
-| V-21 | Packaged artifact outside checkout on Node 22/24 and Linux/macOS/Windows | Partial | Node 23/macOS and Node 22/24 Linux pass tests, typecheck, pack checks, and installed API/CLI end-to-end analysis smoke; hosted run 34083270577 passed Linux/macOS but Windows failed before package checks; current Windows path, harness, and clean-filter fixes await rerun |
-| V-22 | Authorized publication and clean registry installation | Not run | Publish dry-run passes, but actual publication requires npm authentication (`npm whoami` is E401), schema review, hosted green status, explicit release authorization, and post-publish clean-install/provenance checks |
+| V-21 | Packaged artifact outside checkout on Node 22/24 and Linux/macOS/Windows | Pass for tested cases | Node 23/macOS and Node 22/24 Linux pass tests, typecheck, pack checks, and installed API/CLI end-to-end analysis smoke; hosted run 34093972824 passes package checks on all six Node 22/24 Ubuntu/macOS/Windows jobs; the Windows capture-mutation test remains harness-skipped |
+| V-22 | Authorized publication and clean registry installation | Not run (blocked) | Publish dry-run passes, but actual publication requires npm authentication (`npm whoami` is E401); after authentication, publish, registry clean-install, integrity, and provenance checks remain |
 
 Fixtures for callbacks and dynamic dispatch should continue to verify honest
 limitations. Unsupported features must remain absent from capability claims and
@@ -191,7 +165,9 @@ known limitations. Do not retain secrets or large raw logs. Local package
 installation, remote CI, registry installation, and publication are separate
 gates.
 
-The schema remains draft until result fixtures, scope/uncertainty cases,
-output-limit behavior, and platform/artifact checks pass. Any unsupported
-requirement must be resolved or explicitly removed from the release scope before
-claiming release readiness.
+The schema is frozen for package `0.1.0` at its reviewed draft boundary; the
+identifier remains `0.1-draft` and permissive draft fields are intentional. Any
+future tightening or unsupported requirement must be versioned and backed by new
+fixtures before changing the public contract. Registry publication and clean
+installation are separate evidence gates and are currently blocked by npm
+authentication.

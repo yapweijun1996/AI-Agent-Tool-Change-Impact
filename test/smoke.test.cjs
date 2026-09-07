@@ -1,13 +1,11 @@
 const assert = require("node:assert/strict");
 const { execFileSync, spawnSync } = require("node:child_process");
-const { chmodSync, cpSync, existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync, statSync, symlinkSync, unlinkSync, writeFileSync } = require("node:fs");
+const { chmodSync, cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, unlinkSync, writeFileSync } = require("node:fs");
 const { basename, delimiter, dirname, join } = require("node:path");
 const test = require("node:test");
 
 const api = require("../dist/index.js");
 const { readTextFileBounded } = require("../dist/snapshot.js");
-const { createProjectContext } = require("../dist/project.js");
-const { loadWorkingTree } = require("../dist/snapshot.js");
 const Ajv = require("ajv/dist/2020");
 const schema = require("../schemas/result-v0.1-draft.schema.json");
 const fixtureRoot = join(__dirname, "fixtures", "basic");
@@ -515,25 +513,7 @@ test("worktree retains internal symlinked source files", () => {
   }
   try {
     const result = api.analyzeSymbol({ root, project: "tsconfig.json", file: "src/internal-link.ts", name: "calculateTotal" });
-    let contextDetails;
-    if (!result.ok) {
-      const loaded = loadWorkingTree(root);
-      const context = createProjectContext(loaded.snapshot, "tsconfig.json");
-      const entry = readdirSync(join(root, "src"), { withFileTypes: true }).find((candidate) => candidate.name === "internal-link.ts");
-      const linkInfo = {
-        entryIsSymbolicLink: entry?.isSymbolicLink(),
-        lstatIsSymbolicLink: lstatSync(link).isSymbolicLink(),
-        isFile: statSync(link).isFile(),
-        root: loaded.snapshot.root,
-        canonicalRoot: realpathSync(loaded.snapshot.root),
-        relativeAlias: require("node:path").relative(loaded.snapshot.root, link),
-        relativeReal: require("node:path").relative(realpathSync(loaded.snapshot.root), realpathSync(link)),
-        realPath: realpathSync(link),
-        checkIgnore: spawnSync("git", ["check-ignore", "-q", "--no-index", "--", "src/internal-link.ts"], { cwd: root }).status,
-      };
-      contextDetails = { snapshotFiles: loaded.snapshot.projectFiles(), projectFiles: context.project.files, linkInfo };
-    }
-    assert.equal(result.ok, true, result.ok ? undefined : JSON.stringify({ result, contextDetails }));
+    assert.equal(result.ok, true, result.ok ? undefined : JSON.stringify(result));
     assert.equal(result.analysis.status, "complete");
     assert.equal(result.target.file, "src/internal-link.ts");
     assert.ok(!result.warnings.some((warning) => warning.code === "PATH_OUTSIDE_ROOT" && warning.file === "src/internal-link.ts"));
