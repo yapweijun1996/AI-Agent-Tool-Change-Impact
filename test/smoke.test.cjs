@@ -6,6 +6,8 @@ const test = require("node:test");
 
 const api = require("../dist/index.js");
 const { readTextFileBounded } = require("../dist/snapshot.js");
+const { createProjectContext } = require("../dist/project.js");
+const { loadWorkingTree } = require("../dist/snapshot.js");
 const Ajv = require("ajv/dist/2020");
 const schema = require("../schemas/result-v0.1-draft.schema.json");
 const fixtureRoot = join(__dirname, "fixtures", "basic");
@@ -513,7 +515,13 @@ test("worktree retains internal symlinked source files", () => {
   }
   try {
     const result = api.analyzeSymbol({ root, project: "tsconfig.json", file: "src/internal-link.ts", name: "calculateTotal" });
-    assert.equal(result.ok, true, result.ok ? undefined : JSON.stringify(result));
+    let contextDetails;
+    if (!result.ok) {
+      const loaded = loadWorkingTree(root);
+      const context = createProjectContext(loaded.snapshot, "tsconfig.json");
+      contextDetails = { snapshotFiles: loaded.snapshot.projectFiles(), projectFiles: context.project.files };
+    }
+    assert.equal(result.ok, true, result.ok ? undefined : JSON.stringify({ result, contextDetails }));
     assert.equal(result.analysis.status, "complete");
     assert.equal(result.target.file, "src/internal-link.ts");
     assert.ok(!result.warnings.some((warning) => warning.code === "PATH_OUTSIDE_ROOT" && warning.file === "src/internal-link.ts"));
