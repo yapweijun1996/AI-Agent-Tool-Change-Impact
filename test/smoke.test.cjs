@@ -576,7 +576,7 @@ test("conflicted worktrees are reported as partial", () => {
   assert.ok(result.warnings.some((warning) => warning.code === "GIT_CONFLICT_STATE"));
 });
 
-test("worktree content changes during capture are reported as partial", () => {
+test("worktree content changes during capture are reported as partial", { skip: process.platform === "win32" ? "Windows child_process.execFile cannot intercept git with a .cmd shim" : false }, () => {
   const root = createRepo();
   const base = git(root, ["rev-parse", "HEAD"]);
   const target = join(root, "src", "math.ts");
