@@ -1,7 +1,7 @@
 import { execFileSync } from "node:child_process";
 import { closeSync, existsSync, lstatSync, openSync, readdirSync, realpathSync, readSync, statSync } from "node:fs";
 import type { Dirent } from "node:fs";
-import { isAbsolute, join, relative, resolve, sep } from "node:path";
+import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { ImpactError } from "./errors";
 import type { Diagnostic, SnapshotRef } from "./types";
 import { DEFAULT_LIMITS, type Limits, type SnapshotKind } from "./types";
@@ -280,6 +280,39 @@ function isGitIgnoredPath(root: string, relativePath: string): boolean {
   }
 }
 
+function isResolvedPathInside(root: string, canonicalRoot: string, candidate: string): boolean {
+  const relativeCandidate = relative(canonicalRoot, candidate);
+  if (relativeCandidate === "" || (relativeCandidate !== ".." && !relativeCandidate.startsWith(`..${sep}`) && !isAbsolute(relativeCandidate))) {
+    return true;
+  }
+  if (process.platform !== "win32") {
+    return false;
+  }
+  // Windows can return an 8.3 short path for a symlink target while the root
+  // retains its long spelling. Compare directory identities as a fallback so
+  // equivalent spellings do not look like an escape.
+  try {
+    const rootStat = statSync(root);
+    if (rootStat.dev === 0 || rootStat.ino === 0) {
+      return false;
+    }
+    let current = candidate;
+    while (true) {
+      const currentStat = statSync(current);
+      if (currentStat.dev === rootStat.dev && currentStat.ino === rootStat.ino) {
+        return true;
+      }
+      const parent = dirname(current);
+      if (parent === current) {
+        return false;
+      }
+      current = parent;
+    }
+  } catch {
+    return false;
+  }
+}
+
 function discoverInternalSymlinks(root: string, existingPaths: readonly string[], limits: Limits): string[] {
   const canonicalRoot = realpathSync(root);
   const existing = new Set(existingPaths.map((pathName) => process.platform === "win32" ? pathName.toLowerCase() : pathName));
@@ -333,9 +366,7 @@ function discoverInternalSymlinks(root: string, existingPaths: readonly string[]
       let realPath: string;
       try {
         realPath = realpathSync(absolutePath);
-        const relativeReal = relative(canonicalRoot, realPath);
-        const outside = relativeReal === ".." || relativeReal.startsWith(`..${sep}`) || isAbsolute(relativeReal);
-        if (outside || !statSync(realPath).isFile()) {
+        if (!isResolvedPathInside(root, canonicalRoot, realPath) || !statSync(realPath).isFile()) {
           continue;
         }
       } catch {
@@ -375,9 +406,7 @@ function loadWorkingTreeFiles(root: string, limits: Limits): { files: Map<string
         continue;
       }
       const real = realpathSync(absolutePath);
-      const relativeReal = relative(canonicalRoot, real);
-      const outside = relativeReal === ".." || relativeReal.startsWith(`..${sep}`) || isAbsolute(relativeReal);
-      if (outside) {
+      if (!isResolvedPathInside(root, canonicalRoot, real)) {
         diagnostics.add({ code: "PATH_OUTSIDE_ROOT", message: `Skipped symlink outside root: ${relativePath}`, file: relativePath, severity: "warning" });
         continue;
       }
