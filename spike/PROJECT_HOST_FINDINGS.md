@@ -1,7 +1,8 @@
 # Project-host feasibility findings
 
 Date: 2026-09-07
-Evidence implementation revision: `db809f4`; latest core implementation revision: `8bb3651`; latest package verification revision: `273a344`; latest provider observation bounding: `32fd01a`; latest diagnostic collection bounding: `a0f148b`; latest bounded source reads: `149e0fa`; latest validated real-path reads: `dd212e4`; latest bounded revision blob reads: `2f3c482`; latest snapshot diagnostic identity: `0c8a130`; latest internal symlink coverage: `f9f904b`; latest provider resolution read boundary: `ba0538a`; latest CLI formatted-output bound: `c6296e4`; latest installed artifact output-limit smoke: `3472b13`
+Evidence implementation revision: `db809f4`; latest core implementation revision: `8bb3651`; latest package verification revision: `273a344`; latest provider observation bounding: `32fd01a`; latest diagnostic collection bounding: `a0f148b`; latest bounded source reads: `149e0fa`; latest validated real-path reads: `dd212e4`; latest bounded revision blob reads: `2f3c482`; latest snapshot diagnostic identity: `0c8a130`; latest internal symlink coverage: `f9f904b`; latest provider resolution read boundary: `ba0538a`; latest CLI formatted-output bound: `c6296e4`; latest installed artifact output-limit smoke: `3472b13`; latest Windows path
+handling: `6b1c9b5`; latest platform-aware capture harness: `261c47a`
 
 This note records the bounded feasibility check that informed the first provider.
 It is evidence for project-host behavior, not a performance guarantee.
@@ -41,8 +42,11 @@ It is evidence for project-host behavior, not a performance guarantee.
    snapshot-diagnostic, internal-source-symlink, and repository-root-symlink
    regressions were added; it also passed dependency audit,
    and docs checks.
-   It does not establish
-   Windows/hosted-matrix behavior, sustained cross-platform performance,
+   Hosted run 34083270577 passed Linux/macOS and exposed three Windows test
+   failures on the prior tree; the current path and harness fixes are local and
+   await a rerun. The concurrent-content test is skipped on Windows because
+   Node `execFile` cannot intercept Git with a `.cmd` shim. This does not establish
+   sustained cross-platform performance,
    cancellation latency, or memory limits. Working-tree and permitted external
    declaration reads stop at the per-file budget plus one byte before decoding
    and re-open validated real paths. Git revision blobs use bounded binary output

@@ -1,7 +1,8 @@
 # Local performance findings
 
 Date: 2026-09-07
-Benchmark implementation revision: `db809f4`; latest core implementation revision: `8bb3651`; latest package verification revision: `273a344`; latest provider observation bounding: `32fd01a`; latest diagnostic collection bounding: `a0f148b`; latest bounded source reads: `149e0fa`; latest validated real-path reads: `dd212e4`; latest bounded revision blob reads: `2f3c482`; latest snapshot diagnostic identity: `0c8a130`; latest provider resolution read boundary: `ba0538a`; latest CLI formatted-output bound: `c6296e4`; latest installed artifact output-limit smoke: `3472b13`
+Benchmark implementation revision: `db809f4`; latest core implementation revision: `8bb3651`; latest package verification revision: `273a344`; latest provider observation bounding: `32fd01a`; latest diagnostic collection bounding: `a0f148b`; latest bounded source reads: `149e0fa`; latest validated real-path reads: `dd212e4`; latest bounded revision blob reads: `2f3c482`; latest snapshot diagnostic identity: `0c8a130`; latest provider resolution read boundary: `ba0538a`; latest CLI formatted-output bound: `c6296e4`; latest installed artifact output-limit smoke: `3472b13`; latest Windows path
+handling: `6b1c9b5`; latest platform-aware capture harness: `261c47a`
 
 This note records bounded local resource experiments on macOS and Linux
 containers. It is evidence that the configured limits stop work predictably;
@@ -138,8 +139,10 @@ does not claim stock-image setup, hosted CI behavior, or registry availability.
 
 Returned counts and stop reasons match the macOS fixture behavior. These Linux
 observations improve cross-runtime evidence but do not establish Windows or
-hosted CI behavior, sustained-memory limits, cancellation latency, or release
-performance thresholds.
+hosted performance thresholds, sustained-memory limits, cancellation latency, or
+release performance thresholds. Hosted run 34083270577 passed Linux/macOS but
+failed Windows tests on the prior tree; the current Windows path fix has not yet
+been measured remotely.
 
 ## High-fan-out unresolved observations
 

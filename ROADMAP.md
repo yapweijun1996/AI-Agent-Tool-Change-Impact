@@ -14,6 +14,8 @@ Latest internal symlink coverage: `f9f904b`.
 Latest provider resolution read boundary: `ba0538a`.
 Latest CLI formatted-output bound: `c6296e4`.
 Latest installed artifact output-limit smoke: `3472b13`.
+Latest cross-platform snapshot path handling: `6b1c9b5`.
+Latest platform-aware capture test harness: `261c47a`.
 
 ## Before v0.1
 
@@ -23,7 +25,7 @@ Latest installed artifact output-limit smoke: `3472b13`.
 | M-01: Feasibility and contract draft | Config-bound project host and executable draft result fixtures | Done locally | CI-01, CI-02; local Node test evidence |
 | M-02: Static target analysis | Snapshot access, file/symbol relationships, and evidence paths | Done for supported scope | CI-03, CI-04, CI-05; local smoke tests |
 | M-03: Change analysis and candidate tests | Two snapshots, deletion/rename/configuration handling, candidate tests | Done for tested cases | CI-06, CI-07; local smoke tests |
-| M-04: Verified release candidate | Bounded work/output, stable results, platform checks, packaged artifact | In progress | CI-08 and pre-publication CI-09 |
+| M-04: Verified release candidate | Bounded work/output, stable results, platform checks, packaged artifact | In progress | CI-08 and pre-publication CI-09; hosted run 34083270577 needs rerun after local Windows fixes |
 
 M-00 through M-03 are implemented in commits `b57321d`, `0cdd08f`, `13e9f14`, `6b43c58`, `ca5453e`, `0169580`, `5d29c4c`, `954f6dc`, `bbfeb58`, `940effd`, `1753c22`, `e55647f`, `e51113d`, `89f5286`, `db809f4`, `143e9f7`, `d385ff5`, `798594c`, `83f398d`, `661cb4d`, and `8bb3651`; the NUL-byte regression is in `1e61baf`. M-04 hardening includes `0644fda`, `343750a`, `0902d49`, `2a68521`, `1c195af`, `b248f10`, `48f102e`, `273a344`, `c4dca94`, `74563b1`, `2262658`, `13990ce`, `4d770e0`, `17020ad`, `850f106`, `beb003e`, `f64fbb6`, `ab27679`, `b1f6477`, `473b4da`, `32fd01a`, `a0f148b`, `149e0fa`, `dd212e4`, `2f3c482`, `0c8a130`, `f8a580e`, and `f9f904b`; provider resolution-read hardening is in `ba0538a`; CLI formatted-output enforcement is in `c6296e4`; installed artifact formatted-output smoke is in `3472b13`; repeated resource observations are recorded in `aeef862`, and the diagnostic stress script is `spike/diagnostic-limit.cjs`. M-04 is intentionally open while cancellation/isolation measurements, schema freeze, and artifact/platform evidence are outstanding.
 Provider resolution-read hardening is in `ba0538a`; the regression verifies that
@@ -61,4 +63,6 @@ Local tests, a local package dry-run, remote CI, registry installation, and a
 published release are separate evidence stages. Record each separately in
 [TASK.md](TASK.md) and [VALIDATION.md](VALIDATION.md). Publishing or pushing is
 not part of the current authorized work. Cross-platform workflow execution and
-registry provenance remain the next external release actions.
+registry provenance and a hosted rerun remain the next external release
+actions. `npm publish --dry-run` passes locally, but actual publication requires
+npm authentication and final release authorization.

@@ -32,6 +32,9 @@ CLI output is checked again after optional pretty formatting so the final
 serialized body stays within `maxOutputBytes`; the regression is in `c6296e4`.
 The installed tarball smoke now exercises the same compact-versus-pretty output
 limit through the packaged CLI; that artifact coverage is in `3472b13`.
+Cross-platform snapshot path handling and repository-path preservation are in
+`6b1c9b5`; the deletion fixture is newline-agnostic, and the Windows capture
+mutation test records its `execFile`/`.cmd` harness limitation in `261c47a`.
 CLI inline values and Git revision inputs are hardened in `ab27679`.
 Documentation and clean-install evidence were reconciled in `079acbd` and
 `1a57175`; the diagnostic-bound update is in `ad028b6` with the follow-up
@@ -56,8 +59,11 @@ regression fixture in `f8a580e`; repository-root access through an internal
 symlink is covered in `f9f904b`.
 It is a working draft,
 not a published release: the public schema is still `0.1-draft`, local macOS
-and Linux container verification passes, the hosted cross-platform CI matrix
-has not run here, and no npm publication has been performed.
+and Linux container verification passes, and the hosted run
+[34083270577](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34083270577)
+passed Linux/macOS but found three Windows test failures on the earlier tree.
+The local fixes are committed in `6b1c9b5` and `261c47a` but are not pushed; no
+npm publication has been performed.
 
 | Surface | Current state |
 | --- | --- |
@@ -93,7 +99,11 @@ through an internal symlink remain within the repository boundary.
 The 34-case suite and package checks recorded at `f9f904b` pass in current
 Node.js 22 and 24 Linux container copies using fresh lockfile installs. The
 new provider-resolution read-boundary regression is verified on the macOS
-runtime; a hosted cross-platform rerun remains outstanding.
+runtime. Hosted run 34083270577 passed Linux and macOS but failed the three
+Windows test cases on its older commit; the current local fixes need a hosted
+rerun. The Windows capture-mutation assertion is intentionally skipped by the
+current test harness because Node `execFile` cannot intercept Git with a `.cmd`
+shim on Windows.
 The packaged tarball was also installed in temporary directories and its API and
 CLI were loaded successfully on the local macOS runtime and Node 22/24 Linux
 containers; the smoke prefers the npm cache, permits registry fallback for
@@ -103,7 +113,9 @@ byte budget.
 `npm run release:check` verifies package/lockfile versions, the unreleased
 changelog heading, draft schema version, required entry points, and the actual
 dry-run tarball file set. Set `AGENT_IMPACT_RELEASE_TAG=v<package.version>` when
-validating a release tag. It does not publish or create a release.
+validating a release tag. It does not publish or create a release. `npm publish --dry-run --ignore-scripts
+--access public` passes locally for the 38-file artifact; an authenticated
+`npm whoami` is still required before a real publish.
 The bounded fan-out benchmark in
 [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) records local
 API/CLI cold-start and limit behavior without making a performance guarantee.

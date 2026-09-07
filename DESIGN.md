@@ -20,6 +20,8 @@ Latest internal symlink coverage: [`f9f904b`](https://github.com/yapweijun1996/A
 Latest provider resolution read boundary: [`ba0538a`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/ba0538a)
 Latest CLI formatted-output bound: [`c6296e4`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/c6296e4)
 Latest installed artifact output-limit smoke: [`3472b13`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/3472b13)
+Latest cross-platform snapshot path handling: [`6b1c9b5`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/6b1c9b5)
+Latest platform-aware capture test harness: [`261c47a`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/261c47a)
 Last reconciled: 2026-09-07
 
 This document owns architecture and design decisions. [SPEC.md](SPEC.md) owns
@@ -120,6 +122,9 @@ are excluded from source inventory. Repository-relative paths are canonicalized
 before lookup; dot and empty segments are removed, while parent segments and
 NUL bytes are rejected. Symlink targets that resolve outside the repository
 are skipped; targets that resolve inside it remain eligible source inputs.
+Snapshot lookups follow the host filesystem's case semantics, and the
+Language Service host preserves repository-relative paths for in-root symlinked
+sources so lexical aliases remain analyzable on Windows as well as POSIX hosts.
 TypeScript
 standard-library files and local `node_modules` may be read for static
 resolution. Project and provider resolution callbacks share the bounded,
@@ -200,7 +205,7 @@ as follows:
 | Language Service ownership is overstated | D-02 | Config-bound host and feasibility note in [`spike/PROJECT_HOST_FINDINGS.md`](spike/PROJECT_HOST_FINDINGS.md) |
 | Graph loses direction or paths | D-04 | Reverse file/symbol impact assertions, cycle/diamond traversal fixtures, and draft schema validation |
 | Location selectors silently cross line boundaries | D-09 | Out-of-range columns return `TARGET_NOT_FOUND`; location disambiguation and boundary regression fixtures |
-| Repository paths are not canonical or escape the root | D-07 | Dot/repeated-separator paths normalize to one repository-relative form; parent and NUL segments fail with `FILE_OUTSIDE_ROOT`; internal source/root symlink and external symlink escape fixtures pass |
+| Repository paths are not canonical or escape the root | D-07 | Dot/repeated-separator paths normalize to one repository-relative form; parent and NUL segments fail with `FILE_OUTSIDE_ROOT`; case-insensitive Windows snapshot lookup, internal source/root symlink, and external symlink escape fixtures are covered |
 | Evidence strength is confused with completeness | D-05 | Dynamic/missing module cases produce `partial` with observations |
 | Imports are presented as test coverage | D-06 | Candidate role and dependency edge IDs are separate fields |
 | Output caps do not bound work | D-08 | File/graph/provider/diagnostic/output limits are enforced before projection; high-fan-out unresolved observations, oversized external resolution metadata, and 20,000 oversized-file diagnostics emit bounded outcomes, while stress/cancellation measurements remain open |

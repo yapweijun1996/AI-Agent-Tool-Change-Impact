@@ -59,7 +59,8 @@ Windows `.cmd` invocation handling was hardened in
 the package-smoke fixture now uses a space-containing temporary path to exercise
 quoting (`1c195af`) and disables install scripts during the temporary install
 (`b248f10`); cache-preferred dependency resolution is in
-[`48f102e`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/48f102e); hosted Windows execution remains open.
+[`48f102e`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/48f102e); hosted run 34083270577 now exists and passed Linux/macOS, but its
+older tree failed three Windows tests; the current fixes await a rerun.
 Packaged API/CLI end-to-end analysis smoke was added in
 [`273a344`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/273a344).
 Release metadata and tarball-set validation was added in
@@ -104,6 +105,10 @@ exceed the declared serialized-byte budget; regression coverage is in
 The installed tarball smoke now exercises the same formatted-output limit using
 the packaged CLI, with artifact-level regression coverage in
 [`3472b13`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/3472b13).
+Windows case-insensitive snapshot lookup and repository-path preservation are
+in [`6b1c9b5`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/6b1c9b5);
+the capture mutation test records its Windows `.cmd` harness limitation in
+[`261c47a`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/261c47a).
 [TASK.md](TASK.md) is the authoritative status ledger.
 
 ## Work packages
@@ -117,8 +122,8 @@ the packaged CLI, with artifact-level regression coverage in
 | E-05: Evidence graph and impact | CI-05 | Done for scope | Reverse traversal, stable IDs, retained paths, cycle-safe depth/node/edge caps |
 | E-06: Candidate-test projection | CI-06 | Done for scope | Filename candidates linked to retained dependency edges |
 | E-07: Changed-target orchestration | CI-07 | Done for tested cases | Modification, deletion, rename, configuration, unsupported-file, worktree projections |
-| E-08: Resource and correctness hardening | CI-08 | In progress | Deterministic file/graph/provider/diagnostic/output limits, bounded descriptor/Git/external reads, three repeated cold starts, high-fan-out regressions, and bounded fan-out measurements across four sizes are present; cancellation, isolation, and platform runs remain |
-| E-09: Package and release gates | CI-09 | In progress | Local pack dry-run includes the unreleased changelog, `npm run release:check` validates package metadata and the tarball file set, dependency audit and installed API/CLI smoke (including formatted-output limit enforcement) are configured, and CI uses full-history checkout, lifecycle-disabled dependency installation, and `contents: read`; schema freeze, cross-platform artifact checks, and registry evidence remain |
+| E-08: Resource and correctness hardening | CI-08 | In progress | Deterministic file/graph/provider/diagnostic/output limits, bounded descriptor/Git/external reads, three repeated cold starts, high-fan-out regressions, and bounded fan-out measurements across four sizes are present; Windows path handling is fixed locally, while cancellation, isolation, and a hosted rerun remain |
+| E-09: Package and release gates | CI-09 | In progress | Local pack dry-run, `npm publish --dry-run`, release metadata, dependency audit, and installed API/CLI smoke pass; hosted run 34083270577 passed Linux/macOS but failed Windows tests on the prior tree; schema freeze, a rerun on the current commits, and registry evidence remain |
 
 ## Acceptance by work package
 
@@ -196,8 +201,10 @@ across four sizes on macOS and the 241-file fixture on Node 22/24 Linux, with
 separate API/CLI cold-start observations. A 20,000-oversized-file stress script
 confirms the default diagnostic cap returns 1,000 warnings and a 154,605-byte
 partial result. Broader repeated runs,
-cancellation/resource-abort behavior, memory isolation, Windows, and hosted
-matrix execution still require evidence.
+cancellation/resource-abort behavior and memory isolation still require
+measurement. Hosted run 34083270577 provides Linux/macOS evidence but exposed
+three Windows failures on the prior tree; the local Windows path fix and
+platform-aware harness change require a rerun.
 
 ### E-09: Release only what the artifact proves
 
@@ -215,8 +222,10 @@ snapshot-aware, provider-observation, diagnostic-limit, oversized revision-blob,
 distinct base/head diagnostic-snapshot, internal-symlink, and repository-root
 symlink-alias fixtures. Package-only Node 22.23.2 and 24.20.0
 Linux checkouts also pass clean `npm ci` and `release:check`.
-No Windows/hosted workflow result, registry publication, clean registry
-install, or provenance is claimed.
+The only hosted result is run 34083270577: Linux/macOS jobs passed, while
+Node 22/24 Windows jobs failed during tests before package checks. The current
+fixes are local and unpushed; no registry publication, clean registry install,
+or provenance is claimed.
 
 The current workflow uses full-history checkout, read-only contents permission,
 and `npm ci --ignore-scripts`; this policy is recorded in [`f64fbb6`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/f64fbb6).
@@ -230,7 +239,9 @@ The epic is not release-complete until every in-scope requirement in
 [VALIDATION.md](VALIDATION.md), the schema is reviewed/frozen, and platform and
 artifact gates pass. Local implementation work is complete for the advertised
 draft scope; release work remains partial by design because remote execution and
-publication were not authorized or available in this checkout.
+publication is still blocked by npm authentication and final release
+authorization; the current branch also needs a hosted rerun after its local
+Windows fixes.
 
 ## Dependencies and external prerequisites
 

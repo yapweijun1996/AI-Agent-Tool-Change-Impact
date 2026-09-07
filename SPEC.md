@@ -21,6 +21,8 @@ Latest internal symlink coverage: `f9f904b`.
 Latest provider resolution read boundary: `ba0538a`.
 Latest CLI formatted-output bound: `c6296e4`.
 Latest installed artifact output-limit smoke: `3472b13`.
+Latest cross-platform snapshot path handling: `6b1c9b5`.
+Latest platform-aware capture test harness: `261c47a`.
 Runtime evidence is tracked in [VALIDATION.md](VALIDATION.md); task status is
 authoritative in [TASK.md](TASK.md).
 
@@ -53,7 +55,7 @@ reasoning, and automatic dependency installation are outside this version.
 | R-11 | Produce deterministic semantic results for identical declared inputs | Implemented on tested runtimes; cross-platform determinism pending | V-09, V-17 |
 | R-12 | Keep analysis read-only, offline, and free of repository-code execution | Implemented by design/tests | V-18, V-19 |
 | R-13 | Provide one consistent CLI/API contract with machine-readable errors | Implemented draft | V-05, V-16, V-20 |
-| R-14 | Verify packaging/platform support before advertising a release | Local artifact/runtime checks, including installed API/CLI smoke, pass; Windows/hosted release gates pending | V-21, V-22 pending |
+| R-14 | Verify packaging/platform support before advertising a release | Local artifact/runtime checks, including installed API/CLI smoke, pass; hosted run 34083270577 passed Linux/macOS but failed three Windows tests on the earlier tree; local fixes are pending hosted rerun | V-21, V-22 pending |
 
 ## Draft CLI
 
@@ -209,7 +211,10 @@ are outside the v0.1 support contract until a separate compatibility decision
 and runtime evidence lower the floor. The maintained Node 22/24 and
 Linux/macOS/Windows CI matrix is configured in
 `.github/workflows/ci.yml`. Local execution covers Node.js `23.10.0` on macOS
-and Node.js 22/24 in Linux containers; Windows and hosted matrix jobs remain
-unexecuted. The package is not published and registry installation is not
+and Node.js 22/24 in Linux containers. Hosted run 34083270577 passed the
+Linux/macOS jobs but failed the Windows tests on the prior commit; the current
+path and test-harness fixes are local and await a rerun. The package is not
+published, and `npm publish --dry-run --ignore-scripts --access public` is the
+only publication check completed; authenticated registry installation is not
 claimed. See [DESIGN.md](DESIGN.md) for ownership decisions and
 [VALIDATION.md](VALIDATION.md) for release gates.
