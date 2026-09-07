@@ -316,16 +316,16 @@ function discoverInternalSymlinks(root: string, existingPaths: readonly string[]
         continue;
       }
       const absolutePath = join(directory, entry.name);
-      let isSymbolicLink = false;
+      let entryStat: ReturnType<typeof lstatSync>;
       try {
         // Dirent reparse-point flags are inconsistent across Windows runner
         // images, so lstat is the source of truth for supplemental aliases.
-        isSymbolicLink = lstatSync(absolutePath).isSymbolicLink();
+        entryStat = lstatSync(absolutePath);
       } catch {
         continue;
       }
-      if (!isSymbolicLink) {
-        if (entry.isDirectory()) {
+      if (!entryStat.isSymbolicLink()) {
+        if (entryStat.isDirectory()) {
           pending.push(absolutePath);
         }
         continue;
