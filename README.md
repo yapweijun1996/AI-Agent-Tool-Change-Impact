@@ -35,7 +35,7 @@ public registry link and exact artifact evidence are recorded in
 | Supported source | JavaScript, TypeScript, and TSX in one selected `tsconfig.json` or `jsconfig.json` project |
 | Provider | TypeScript `5.9.3` Language Service plus AST inspection |
 | Runtime floor | Node.js `22` or newer according to `package.json`; Node.js `23.10.0` on macOS and Node.js 22/24 Linux containers have been run locally |
-| Release state | `0.1.x` package line; unchanged draft contract and bounded artifact checks |
+| Release state | `0.1.1` is published on npm; the draft contract is unchanged and bounded artifact checks pass |
 
 ## Install and verify from a checkout
 
@@ -78,9 +78,11 @@ changelog heading, draft schema version, required entry points, and the actual
 dry-run tarball file set. Set `AGENT_IMPACT_RELEASE_TAG=v<package.version>` when
 validating a release tag. It does not publish or create a release.
 `npm publish --dry-run --ignore-scripts --access public` passes for the current
-package. The authorized `npm publish --access public` and clean registry install
-are the remaining external release checks for `0.1.1`; results are recorded in
-[VALIDATION.md](VALIDATION.md).
+package. The authorized `npm publish --access public` completed for
+`agent-change-impact@0.1.1`; a clean registry install, API/CLI/skill checks,
+integrity/SHA-1 metadata, and npm signature verification pass. No provenance
+attestation is present because this release used interactive authentication;
+results are recorded in [VALIDATION.md](VALIDATION.md).
 The bounded fan-out benchmark in
 [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) records local
 API/CLI cold-start and limit behavior without making a performance guarantee.
@@ -110,7 +112,7 @@ For a GitHub checkout, run `npm ci --ignore-scripts`, `npm run build`, and use
 `node dist/cli.js ...`. For an npm install, use `npm install
 agent-change-impact`, then `npx --no-install agent-impact ...`; use
 `npm view agent-change-impact version` when the registry version and the GitHub
-checkout may be at different release stages. The current `0.1.1` candidate
+checkout may be at different release stages. The current public `0.1.1`
 package includes the guide and skill files so an agent can install the CLI and
 its instructions from the same artifact. Check `npm view
 agent-change-impact version` before relying on those paths from the public

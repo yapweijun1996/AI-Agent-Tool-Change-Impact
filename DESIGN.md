@@ -1,9 +1,9 @@
 # Design
 
-Status: implemented v0.1 draft; declared-scope, artifact, and hosted gates pass
-for the `0.1.1` release candidate. Registry clean-install evidence remains a
-separate post-publication check; the prior `0.1.0` release has npm signature
-metadata and no provenance attestation because it used interactive authentication.
+Status: implemented v0.1 draft; declared-scope, artifact, hosted, and registry
+gates pass for published package `0.1.1`. The prior `0.1.0` release and this
+interactive `0.1.1` release have npm signature metadata and no provenance
+attestation because they used interactive authentication.
 Current implementation tree: `7cf02d0`.
 Latest Windows path-boundary fix: [`0b72a83`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/0b72a83)
 Latest documentation line-ending check: [`e85c573`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/e85c573)

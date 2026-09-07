@@ -1,8 +1,8 @@
 # Changelog
 
 All notable changes to this project are documented here. Version `0.1.1` is the
-current release candidate; registry integrity and installation evidence are
-recorded in [VALIDATION.md](VALIDATION.md) after publication.
+current published release; registry integrity and installation evidence are
+recorded in [VALIDATION.md](VALIDATION.md).
 
 ## [0.1.1] - 2026-09-07
 
@@ -15,6 +15,9 @@ recorded in [VALIDATION.md](VALIDATION.md) after publication.
   artifact; no analysis behavior or draft schema changes are introduced.
 - Preserve the reviewed `0.1-draft` schema/API contract and implementation
   behavior from `0.1.0`; this patch contains no code behavior changes.
+- Publish `agent-change-impact@0.1.1` to npm as a 41-file artifact; clean
+  registry installation, integrity/SHA-1 metadata, and npm signature checks
+  pass. No provenance attestation is present for the interactive release.
 
 ## [0.1.0] - 2026-09-07
 

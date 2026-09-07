@@ -82,9 +82,10 @@ The draft schema and local verification pass. The schema/API surface was reviewe
 for `0.1.0` and is carried unchanged by package `0.1.1` while retaining the
 `0.1-draft` identifier.
 Cancellation and memory-isolation measurements remain deferred. Package
-`agent-change-impact@0.1.1` is prepared as the documentation patch release;
-registry publication, clean installation, integrity, and signature checks remain
-the final external release step.
+`agent-change-impact@0.1.1` is published as the documentation patch release;
+clean registry installation, integrity, SHA-1 shasum, and npm signature checks
+pass. No provenance attestation is present because publication used interactive
+authentication.
 Provider unresolved observations are now bounded before result projection, with
 an explicit partial-result marker and regression coverage in
 [`32fd01a`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/32fd01a).
@@ -140,8 +141,8 @@ attributes in [`c32634e`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-
 | E-06: Candidate-test projection | CI-06 | Done for scope | Filename candidates linked to retained dependency edges |
 | E-07: Changed-target orchestration | CI-07 | Done for tested cases | Modification, deletion, rename, configuration, unsupported-file, worktree projections |
 | E-08: Resource and correctness hardening | CI-08 | Done for declared scope | Deterministic file/graph/provider/diagnostic/output limits, bounded descriptor/Git/external reads, repeated cold starts, high-fan-out regressions, bounded fan-out measurements, clean-filter isolation, and the green Node 22/24 Ubuntu/macOS/Windows matrix are present; cancellation and memory isolation remain deferred |
-| E-09: Package and release gates | CI-09 | Release candidate; publication pending | Local pack/publish dry-runs, release metadata, dependency audit, installed API/CLI smoke, schema/API freeze review, and hosted run 34123415471 pass; npm publication, clean registry install, integrity, and signature evidence remain pending for `0.1.1` |
-| E-10: Agent host distribution | CI-10 | Done locally for candidate | `AGENT_GUIDE.md`, portable `skills/agent-change-impact/SKILL.md`, optional Codex metadata, GitHub/npm install paths, and CLI/result interpretation are packaged and checked; live host discovery and public registry availability remain separate evidence |
+| E-09: Package and release gates | CI-09 | Done with limitation | Local pack/publish dry-runs, release metadata, dependency audit, installed API/CLI smoke, schema/API freeze review, hosted run 34123415471, and published `0.1.1` registry checks pass; no provenance attestation is present for interactive publication |
+| E-10: Agent host distribution | CI-10 | Done and published | `AGENT_GUIDE.md`, portable `skills/agent-change-impact/SKILL.md`, optional Codex metadata, GitHub/npm install paths, and CLI/result interpretation are packaged and checked; a clean registry install verifies the public skill artifact, while live host discovery remains outside repository automation |
 
 ## Acceptance by work package
 
@@ -247,9 +248,10 @@ distinct base/head diagnostic-snapshot, internal-symlink, and repository-root
 symlink-alias fixtures. Package-only Node 22.23.2 and 24.20.0
 Linux checkouts also pass clean `npm ci` and `release:check`.
 The latest hosted result is run 34123415471, with all six jobs passing package
-checks and documentation checks. Package `agent-change-impact@0.1.1` is ready
-for publication; the registry install, integrity, SHA-1 shasum, signature, and
-provenance results will be recorded after the publish command.
+checks and documentation checks. Package `agent-change-impact@0.1.1` is
+published; a fresh registry install verifies the 41-file artifact, API/CLI,
+guide, skill, integrity, SHA-1 shasum, and npm signature metadata. No provenance
+attestation is present for the interactive release.
 
 The current workflow uses full-history checkout, read-only contents permission,
 and `npm ci --ignore-scripts`; this policy is recorded in [`f64fbb6`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/f64fbb6).
@@ -274,11 +276,10 @@ records the host discovery commands and copy paths instead.
 The declared v0.1 implementation scope and release gates are complete: every
 in-scope requirement has evidence in [VALIDATION.md](VALIDATION.md), the draft
 schema/API is reviewed and frozen across the `0.1.x` line, platform/artifact
-gates pass, E-10's agent guide and skill artifact are packaged, and package
-`0.1.1` is ready for the final registry release checks.
-The prior `0.1.0` registry artifact exposes npm signature metadata and no
-provenance attestation because that release used interactive authentication;
-`0.1.1` publication is still pending. Cancellation and memory isolation remain
+gates pass, E-10's agent guide and skill artifact are packaged, and published
+package `0.1.1` passes clean registry installation, integrity, SHA-1 shasum, and
+npm signature checks. No provenance attestation is present because publication
+used interactive authentication. Cancellation and memory isolation remain
 deferred product work.
 
 ## Dependencies and external prerequisites

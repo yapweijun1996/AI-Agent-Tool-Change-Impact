@@ -160,17 +160,22 @@ before changed-result deduplication. The package
 smoke uses a cache-preferred install with normal registry
 fallback when metadata is absent; the latest clean clone rerun after `273a344`
 also passed the documentation check and exercised packaged API/CLI analysis end
-to end. A local `npm publish --dry-run --ignore-scripts --access public` also
-passes for the 38-file implementation artifact. The `0.1.1` candidate now also
-packages `AGENT_GUIDE.md`, the portable Codex/Claude Code skill, and Codex UI
-metadata; the expanded artifact is verified by CI-10 below. Bounded fan-out
+to end. The local `npm publish --dry-run --ignore-scripts --access public` and
+the authorized registry publish pass for the 41-file `0.1.1` artifact. A fresh
+temporary-directory registry install verifies `AGENT_GUIDE.md`, the portable
+Codex/Claude Code skill, Codex UI metadata, the API, and the CLI. Bounded fan-out
 measurements are recorded in
 [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md). The draft
 schema/API was frozen for `0.1.0` after the Ajv 8.20.0 review and is carried
 unchanged by the `0.1.x` package line; its `0.1-draft` identifier remains.
-Hosted run 34123415471 passes all six matrix jobs. The package candidate is
-`agent-change-impact@0.1.1`; registry publication, clean-install, and metadata
-checks remain pending. Cancellation and memory isolation remain deferred.
+Hosted run 34123415471 passes all six matrix jobs for the implementation tree.
+The post-publication documentation and skill reconciliation is in local commit
+`c2eb1c2`; it has not been pushed, so no hosted run covers that documentation-
+only commit. Its local checks and the public registry install pass. The published package is
+`agent-change-impact@0.1.1`; registry metadata, clean installation, integrity,
+SHA-1 shasum, and npm signature checks pass. No provenance attestation is
+present because publication used interactive authentication. Cancellation and
+memory isolation remain deferred.
 
 ## Status definitions
 
@@ -203,8 +208,8 @@ checks remain pending. Cancellation and memory isolation remain deferred.
 | CI-06 | Add candidate-test classification and graph-linked results | Done for scope | CI-04, CI-05 | Filename candidates retain edge IDs/evidence and make no coverage claim; V-14 |
 | CI-07 | Implement two-snapshot changed-target analysis and fallback | Done for tested cases | CI-03, CI-04, CI-05 | Modification/deletion/rename/configuration/unsupported/worktree cases; V-10, V-11, V-12 |
 | CI-08 | Enforce budgets, deterministic results, isolation, and measured limits | Done for declared scope | CI-05, CI-06, CI-07 | Local file/graph/provider/diagnostic/output limits, pre-decode bounded source/external/module-resolution reads, bounded Git revision buffers with `FILE_BUDGET_EXCEEDED` overflow diagnostics, snapshot-tagged base/head loader and project diagnostics, Windows path semantics, determinism/read-only checks, bounded fan-out API/CLI measurements across macOS and Node 22/24 Linux, high-fan-out unresolved-observation and diagnostic-cap regressions, and clean-filter isolation pass; cancellation and memory isolation are deferred; V-09, V-15 through V-20 |
-| CI-09 | Verify packaging, freeze contracts, and complete release gates | Release candidate; publication pending | CI-08 | Local pack/publish dry-runs, dependency audit, installed API/CLI end-to-end smoke, Node 22/24 Linux checks, full-history/read-only workflow, Ajv contract review, and hosted run 34123415471 pass; npm publication and clean registry installation remain pending for `0.1.1`; V-21, V-22 |
-| CI-10 | Package the AI agent guide and host-neutral skill | Done locally for the `0.1.1` candidate | CI-08 | `AGENT_GUIDE.md`, portable `skills/agent-change-impact/SKILL.md`, and Codex `agents/openai.yaml` are included in the npm file set; release-check requires them and pack-smoke verifies their installed paths; live host discovery and public registry availability remain separate evidence; V-23 |
+| CI-09 | Verify packaging, freeze contracts, and complete release gates | Done with limitation for `0.1.1` | CI-08 | Local pack/publish dry-runs, dependency audit, installed API/CLI end-to-end smoke, Node 22/24 Linux checks, full-history/read-only workflow, Ajv contract review, hosted run 34123415471, and published registry checks pass; no provenance attestation is present for interactive publication; V-21, V-22 |
+| CI-10 | Package the AI agent guide and host-neutral skill | Done and published in `0.1.1` | CI-08 | `AGENT_GUIDE.md`, portable `skills/agent-change-impact/SKILL.md`, and Codex `agents/openai.yaml` are included in the npm file set; release-check, pack-smoke, and a fresh registry install verify their paths; live host discovery remains outside repository automation; V-23 |
 
 Requirements and fixture definitions are in [SPEC.md](SPEC.md) and
 [VALIDATION.md](VALIDATION.md). Work-package context is in [EPIC.md](EPIC.md).
@@ -216,12 +221,12 @@ release action as completed evidence.
 
 | Gate slice | Parent | Status | Acceptance criterion | Current blocker or next input |
 | --- | --- | --- | --- | --- |
-| Local artifact and changelog integrity | CI-09 | Done | `npm pack --dry-run`, `npm publish --dry-run --ignore-scripts --access public`, and `npm run release:check` confirm the versioned package, lockfile, schema, compiled entry points, dated `CHANGELOG.md`, no development sources, and the 41-file artifact; installed API/CLI analysis and packaged pretty-output budget rejection pass | Registry publication and registry artifact checks remain pending |
-| Agent guide and skill distribution | CI-10 | Done locally for candidate | `AGENT_GUIDE.md`, `skills/agent-change-impact/SKILL.md`, and `skills/agent-change-impact/agents/openai.yaml` are present in the source tree and installed tarball; the guide documents GitHub/npm distribution and Codex/Claude Code copy paths | Publish the candidate before claiming npm-hosted skill availability |
-| Hosted platform matrix | CI-09 | Done for tested matrix | Six Node 22/24 jobs on Ubuntu, macOS, and Windows pass typecheck, tests, package checks, pack smoke, and docs check in [run 34123415471](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34123415471); the Windows capture-mutation harness skip is explicitly documented | No further hosted rerun is required for the current tree |
+| Local artifact and changelog integrity | CI-09 | Done | `npm pack --dry-run`, `npm publish --dry-run --ignore-scripts --access public`, and `npm run release:check` confirm the versioned package, lockfile, schema, compiled entry points, dated `CHANGELOG.md`, no development sources, and the 41-file artifact; installed API/CLI analysis and packaged pretty-output budget rejection pass | Published registry metadata and clean-install checks pass; no provenance attestation is present |
+| Agent guide and skill distribution | CI-10 | Done and published | `AGENT_GUIDE.md`, `skills/agent-change-impact/SKILL.md`, and `skills/agent-change-impact/agents/openai.yaml` are present in the source tree, local tarball, and fresh registry install; the guide documents GitHub/npm distribution and Codex/Claude Code copy paths | Live host discovery is outside repository automation |
+| Hosted platform matrix | CI-09 | Done for tested implementation tree | Six Node 22/24 jobs on Ubuntu, macOS, and Windows pass typecheck, tests, package checks, pack smoke, and docs check in [run 34123415471](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34123415471); the Windows capture-mutation harness skip is explicitly documented | The local documentation/skill commit `c2eb1c2` has no hosted run because it has not been pushed; run hosted CI after an authorized push if that evidence is required |
 | Provider cancellation and isolation | CI-08 | Deferred | Deterministic work caps and bounded reads are implemented; worker cancellation/timeout and memory-isolation evidence are outside the v0.1 contract | Revisit only when a worker boundary and public query-budget requirement are approved |
 | Schema/API freeze | CI-09 | Done for 0.1.x draft | Ajv 8.20.0 review validates capabilities, file, symbol, changed, and error envelopes; implementation, CLI, types, schema, and changelog retain the `0.1-draft` contract identifier across the patch release | A future tightening or rename requires a new versioned contract |
-| Registry release and provenance | CI-09 | Pending for 0.1.1 | The prior `0.1.0` package is published and verified; the `0.1.1` package must pass publication, clean registry installation, integrity/SHA-1, signature, and provenance checks | Publish after hosted CI passes; no Git tag or GitHub Release is planned |
+| Registry release and provenance | CI-09 | Done with limitation for `0.1.1` | The published package is visible with `latest: 0.1.1`; clean registry installation, API/CLI/schema, 41-file contents, integrity/SHA-1, and npm signature metadata match the registry artifact | No provenance attestation is present because publication used interactive authentication; no Git tag or GitHub Release is planned |
 
 ## Verified local commands
 
@@ -242,7 +247,7 @@ macOS, and Windows jobs.
 | `npm run release:check` | Pass: package/lockfile version, dated changelog heading, draft schema version, required CLI/API/agent entry points, and 41-file dry-run tarball set agree; `AGENT_IMPACT_RELEASE_TAG=v0.1.1 npm run release:check` also passes |
 | `npm run pack:smoke` | Pass: local tarball installed with `npm install --prefer-offline --omit=dev --ignore-scripts`; packaged API and CLI analysis returned valid draft results, packaged pretty output was rejected with `OUTPUT_LIMIT_EXCEEDED` when formatting exceeded the selected byte budget, and guide/skill files were present |
 | `npm publish --dry-run --ignore-scripts --access public` | Pass: npm assembled the 41-file `agent-change-impact@0.1.1` artifact |
-| `npm publish --access public` and clean registry install | Pending for `0.1.1`; after hosted release checks pass, publish and verify a fresh temporary-directory install, API/CLI schema, registry integrity/SHA-1 metadata, signature, and provenance state |
+| `npm publish --access public` and clean registry install | Pass for `0.1.1`: `npm view` reports `latest: 0.1.1`; a fresh temporary-directory install loads the API and CLI, confirms the 41-file package and guide/skill paths, and matches registry integrity/SHA-1 metadata; npm signature metadata is present and provenance is absent for the interactive release |
 | Node 22/24 package-only release check | Pass: clean Node.js `v22.23.2` and `v24.20.0` Alpine copies install the lockfile with `npm ci --ignore-scripts` and pass `npm run release:check` |
 | Pack-and-install smoke | Pass: local tarball installed with cache-preferred dependency resolution and install scripts disabled; packaged API returned `0.1-draft`, and packaged `analyzeChanged` did not execute a configured fsmonitor marker |
 | Node 22/24 Linux container matrix | Pass at `f9f904b`: current clean copies using Node.js `v22.23.2` and `v24.20.0` Alpine runtimes inside Git-capable Linux containers; after fresh lockfile `npm ci`, dependency audit, the 34-case suite, typecheck, pack check, installed API/CLI smoke, both release checks, docs check, and `git diff --check` pass; the run includes external-helper, symlink-escape, internal source/root symlink, malformed API request, out-of-range coordinate, NUL path rejection, effective analysis limits, provider-observation cap, diagnostic-limit, pre-decode bounded-reader, oversized revision-blob, and distinct base/head diagnostic-snapshot fixtures |
@@ -273,21 +278,21 @@ macOS, and Windows jobs.
   skipped because Node `execFile` cannot intercept a `.cmd` shim. Cancellation
   and memory-isolation behavior remain deferred.
 - The schema/API contract was frozen for `0.1.0` after the Ajv review and is
-  unchanged in the `0.1.1` patch. The prior `0.1.0` package is published and
-  verified; `0.1.1` publication is the active release step.
-- The `0.1.1` candidate includes the guide and host-neutral skill for Codex and
-  Claude Code. GitHub source installation is available now; npm-hosted skill
-  installation remains pending until the candidate is published.
+  unchanged in the `0.1.1` patch. Both packages are published and verified;
+  `0.1.1` is the current `latest` release.
+- The published `0.1.1` artifact includes the guide and host-neutral skill for
+  Codex and Claude Code. GitHub source and npm-hosted skill installation are
+  both available, and a fresh registry install verifies the packaged paths.
 - Project references, separate project test roots, historical dependency
   reconstruction, runtime/data-flow dispatch, and cancellation isolation remain
   explicit product limitations, not hidden completeness assumptions.
 
 ## Next steps
 
-1. Run the candidate checks for CI-10, publish `agent-change-impact@0.1.1`, then
-   verify a clean registry install and record the final artifact metadata.
-2. Monitor the published package and post-release reports while keeping the
+1. Monitor the published package and post-release reports while keeping the
    declared v0.1 scope unchanged.
+2. Decide whether a future patch should refresh the pre-publication status
+   wording embedded in the immutable `0.1.1` npm README.
 3. Revisit cancellation, memory isolation, project references, and historical
    dependency fidelity only as separately approved work.
 

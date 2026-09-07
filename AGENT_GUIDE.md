@@ -20,6 +20,11 @@ unambiguous `tsconfig.json`/`jsconfig.json` project. It reports static evidence,
 not a guarantee of runtime, dynamic-dispatch, data-flow, external-project, or
 test coverage impact.
 
+The public npm `latest` tag currently points to `agent-change-impact@0.1.1`.
+Verify the version with `npm view agent-change-impact version` before relying on
+the registry artifact; the GitHub checkout may contain a newer unreleased
+revision.
+
 ## Install the CLI
 
 ### From npm
@@ -45,8 +50,8 @@ registry and this GitHub checkout may be at different release stages.
 
 ### From GitHub
 
-Use the source checkout when an agent needs the latest committed documentation
-or skill before it is available in the registry:
+Use the source checkout when an agent needs a specific repository revision or
+the latest committed documentation and skill:
 
 ```sh
 git clone https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact.git
