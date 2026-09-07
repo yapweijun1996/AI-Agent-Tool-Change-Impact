@@ -513,7 +513,7 @@ test("worktree retains internal symlinked source files", () => {
   }
   try {
     const result = api.analyzeSymbol({ root, project: "tsconfig.json", file: "src/internal-link.ts", name: "calculateTotal" });
-    assert.equal(result.ok, true);
+    assert.equal(result.ok, true, result.ok ? undefined : JSON.stringify(result));
     assert.equal(result.analysis.status, "complete");
     assert.equal(result.target.file, "src/internal-link.ts");
     assert.ok(!result.warnings.some((warning) => warning.code === "PATH_OUTSIDE_ROOT" && warning.file === "src/internal-link.ts"));
