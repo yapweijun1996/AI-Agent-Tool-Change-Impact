@@ -1,8 +1,8 @@
 # Local performance findings
 
 Date: 2026-09-07
-Benchmark implementation revision: `e85c573`; latest Windows short-path boundary
-fix: `0b72a83`; latest package verification revision: `e85c573`; latest provider
+Benchmark implementation revision: `8577255`; latest Windows short-path boundary
+fix: `0b72a83`; latest package verification revision: `8577255`; latest provider
 observation bounding: `32fd01a`; latest diagnostic collection bounding: `a0f148b`;
 latest bounded source reads: `149e0fa`; latest validated real-path reads: `dd212e4`;
 latest bounded revision blob reads: `2f3c482`; latest snapshot diagnostic identity:
@@ -10,7 +10,7 @@ latest bounded revision blob reads: `2f3c482`; latest snapshot diagnostic identi
 formatted-output bound: `c6296e4`; latest installed artifact output-limit smoke:
 `3472b13`; latest Windows path handling: `0b72a83`; latest platform-aware capture
 harness: `261c47a`; latest Git clean-filter isolation: `c32634e`; latest hosted
-matrix: `34093972824`
+matrix: `34095969998`
 
 This note records bounded local resource experiments on macOS and Linux
 containers. It is evidence that the configured limits stop work predictably;
@@ -148,7 +148,7 @@ does not claim stock-image setup, hosted CI behavior, or registry availability.
 Returned counts and stop reasons match the macOS fixture behavior. These Linux
 observations improve cross-runtime evidence but do not establish sustained-memory
 limits, cancellation latency, or release performance thresholds. Hosted run
-34093972824 passes the tested Node 22/24 Ubuntu/macOS/Windows matrix after the
+34095969998 passes the tested Node 22/24 Ubuntu/macOS/Windows matrix after the
 Windows path and Git clean-filter fixes; it is workflow evidence rather than a
 performance SLA.
 

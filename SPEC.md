@@ -59,7 +59,7 @@ reasoning, and automatic dependency installation are outside this version.
 | R-11 | Produce deterministic semantic results for identical declared inputs | Implemented for the tested Node 22/24 Ubuntu, macOS, and Windows matrix; a general byte-for-byte cross-platform guarantee is outside the draft contract | V-09, V-17 |
 | R-12 | Keep analysis read-only, offline, and free of repository-code execution | Implemented by design/tests | V-18, V-19 |
 | R-13 | Provide one consistent CLI/API contract with machine-readable errors | Implemented and frozen as the v0.1.0 draft contract after Ajv review of all public operation envelopes | V-05, V-16, V-20 |
-| R-14 | Verify packaging/platform support before advertising a release | Local artifact/runtime checks pass; hosted run 34093972824 passes all six Node 22/24 Ubuntu/macOS/Windows jobs; registry publication remains pending authentication | V-21, V-22 pending |
+| R-14 | Verify packaging/platform support before advertising a release | Local artifact/runtime checks pass; hosted run 34095969998 passes all six Node 22/24 Ubuntu/macOS/Windows jobs; registry publication remains pending authentication | V-21, V-22 pending |
 
 ## Draft CLI
 
@@ -228,7 +228,7 @@ and runtime evidence lower the floor. The maintained Node 22/24 and
 Linux/macOS/Windows CI matrix is configured in
 `.github/workflows/ci.yml`. Local execution covers Node.js `23.10.0` on macOS
 and Node.js 22/24 in Linux containers. Hosted run
-[34093972824](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34093972824)
+[34095969998](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34095969998)
 passes all six Node 22/24 Ubuntu, macOS, and Windows jobs. The Windows
 concurrent-content assertion remains skipped because the test harness cannot
 intercept a `.cmd` shim through Node `execFile`. The package is not yet

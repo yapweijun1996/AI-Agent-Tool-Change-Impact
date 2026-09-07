@@ -2,7 +2,7 @@
 
 Status: implemented v0.1 draft; declared-scope gates pass, with registry
 publication still pending npm authentication.
-Current implementation tree: `e85c573`.
+Current implementation tree: `8577255`.
 Latest Windows path-boundary fix: [`0b72a83`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/0b72a83)
 Latest documentation line-ending check: [`e85c573`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/e85c573)
 Core implementation revision: [`8bb3651`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/8bb3651)
