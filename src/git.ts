@@ -1,6 +1,9 @@
+import { lstatSync, mkdtempSync, readFileSync, readlinkSync, rmSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { tmpdir } from "node:os";
 import type { ChangedSeed, Diagnostic, TextRange } from "./types";
 import { ImpactError } from "./errors";
-import { gitOutput, repositoryRoot, shouldIncludePath } from "./snapshot";
+import { gitDiffNoIndex, gitHashObjectPaths, gitHashObjectText, gitOutput, repositoryRoot, shouldIncludePath } from "./snapshot";
 import { compareText, normalizeRepoPath } from "./util";
 
 export interface GitChange {
@@ -33,19 +36,18 @@ export function collectGitChanges(rootInput: string | undefined, baseInput: stri
     throw new ImpactError("INVALID_ARGUMENT", "A valid head revision is required when worktree is false");
   }
   const captureBefore = worktree ? worktreeCaptureSignature(root, base) : undefined;
+  const worktreeState = worktree ? collectWorktreeState(root) : undefined;
   const endpoint = worktree ? undefined : head;
-  const args = ["diff", "--name-status", "-z", "--find-renames", "--no-ext-diff", "--no-textconv", base];
-  if (endpoint) {
-    args.push(endpoint);
-  }
-  const raw = gitOutput(root, args);
-  const changes = parseNameStatus(raw);
-  const patchArgs = ["diff", "--unified=0", "--find-renames", "--no-ext-diff", "--no-textconv", base];
-  if (endpoint) {
-    patchArgs.push(endpoint);
-  }
-  const patch = gitOutput(root, patchArgs);
-  const ranges = parsePatchRanges(patch);
+  const diffArgs = ["--name-status", "-z", "--find-renames", "--no-ext-diff", "--no-textconv"];
+  const raw = worktree
+    ? worktreeDiff(root, base, diffArgs, "", worktreeState!)
+    : gitOutput(root, ["diff", ...diffArgs, base, endpoint!]);
+  const changes = worktree ? mergeGitChanges(parseNameStatus(raw)) : parseNameStatus(raw);
+  const patchArgs = ["--unified=0", "--find-renames", "--no-ext-diff", "--no-textconv"];
+  const patchOutput = worktree
+    ? worktreeDiff(root, base, patchArgs, "\n", worktreeState!)
+    : gitOutput(root, ["diff", ...patchArgs, base, endpoint!]);
+  const ranges = parsePatchRanges(patchOutput);
   for (const change of changes) {
     const key = `${change.oldPath ?? ""}->${change.path}`;
     const range = ranges.get(key) ?? ranges.get(change.path);
@@ -56,14 +58,7 @@ export function collectGitChanges(rootInput: string | undefined, baseInput: stri
   }
   const diagnostics: Diagnostic[] = [];
   const hasConflictStatus = hasUnmergedStatus(raw);
-  let hasIndexConflict = false;
-  if (worktree) {
-    try {
-      hasIndexConflict = gitOutput(root, ["ls-files", "-u", "-z"]).length > 0;
-    } catch {
-      hasIndexConflict = false;
-    }
-  }
+  const hasIndexConflict = worktreeState?.hasConflict ?? false;
   if (hasConflictStatus || hasIndexConflict) {
     diagnostics.push({ code: "GIT_CONFLICT_STATE", message: "Git reported an unmerged/conflicted path; impact results are partial", severity: "warning" });
   }
@@ -85,9 +80,186 @@ export function collectGitChanges(rootInput: string | undefined, baseInput: stri
 }
 
 function worktreeCaptureSignature(root: string, base: string): string {
-  const status = gitOutput(root, ["status", "--porcelain=v1", "-z"]);
-  const rawDiff = gitOutput(root, ["diff", "--raw", "-z", "--no-ext-diff", "--no-textconv", base]);
-  return `${status}\0${rawDiff}`;
+  // `git diff` and `git status` can execute repository-configured clean
+  // filters while inspecting worktree content. Tree, index, and raw-file
+  // comparisons provide the same change-state signal without invoking them.
+  const state = collectWorktreeState(root);
+  return worktreeDiff(root, base, ["--raw", "-z", "--no-ext-diff", "--no-textconv"], "", state);
+}
+
+interface IndexEntry {
+  mode: string;
+  object: string;
+  stage: number;
+}
+
+interface WorktreeState {
+  changes: GitChange[];
+  index: Map<string, IndexEntry>;
+  workingHashes: Map<string, string>;
+  hasConflict: boolean;
+  signature: string;
+}
+
+function collectWorktreeState(root: string): WorktreeState {
+  const index = parseIndexEntries(gitOutput(root, ["ls-files", "--stage", "-z"]));
+  const stageZero = new Map<string, IndexEntry>();
+  const conflictPaths = new Set<string>();
+  for (const [path, entries] of index.entries()) {
+    const normal = entries.find((entry) => entry.stage === 0);
+    if (normal) {
+      stageZero.set(path, normal);
+    }
+    if (entries.some((entry) => entry.stage !== 0)) {
+      conflictPaths.add(path);
+    }
+  }
+
+  const hashablePaths: string[] = [];
+  const missingPaths = new Set<string>();
+  const symlinkHashes = new Map<string, string>();
+  for (const [path, entry] of stageZero.entries()) {
+    const absolute = join(root, ...path.split("/"));
+    try {
+      const stat = lstatSync(absolute);
+      if (stat.isSymbolicLink()) {
+        symlinkHashes.set(path, gitHashObjectText(root, readlinkSync(absolute, "utf8")));
+      } else if (stat.isFile()) {
+        hashablePaths.push(path);
+      } else if (entry.mode !== "160000") {
+        missingPaths.add(path);
+      }
+    } catch {
+      missingPaths.add(path);
+    }
+  }
+  const workingHashes = gitHashObjectPaths(root, hashablePaths);
+  for (const [path, hash] of symlinkHashes) {
+    workingHashes.set(path, hash);
+  }
+
+  const changes: GitChange[] = [];
+  for (const [path, entry] of stageZero.entries()) {
+    if (missingPaths.has(path) || (!workingHashes.has(path) && entry.mode !== "160000")) {
+      changes.push({ status: "deleted", path, oldRanges: [], newRanges: [] });
+      continue;
+    }
+    const current = workingHashes.get(path);
+    if (entry.mode !== "160000" && current !== entry.object) {
+      changes.push({ status: "modified", path, oldRanges: [], newRanges: [] });
+    }
+  }
+  for (const path of conflictPaths) {
+    if (!changes.some((change) => change.path === path)) {
+      changes.push({ status: "modified", path, oldRanges: [], newRanges: [] });
+    }
+  }
+
+  const untracked = parseUntracked(root);
+  const unmerged = gitOutput(root, ["ls-files", "-u", "-z"]);
+  const signature = JSON.stringify({
+    index: [...index.entries()].sort(([a], [b]) => compareText(a, b)),
+    working: [...workingHashes.entries()].sort(([a], [b]) => compareText(a, b)),
+    missing: [...missingPaths].sort(compareText),
+    untracked,
+    unmerged,
+  });
+  return { changes, index: stageZero, workingHashes, hasConflict: conflictPaths.size > 0 || unmerged.length > 0, signature };
+}
+
+function worktreeDiff(root: string, base: string, diffArgs: string[], separator: string, state: WorktreeState): string {
+  const head = gitOutput(root, ["rev-parse", "HEAD"]).trim();
+  const sections = [
+    // Compare immutable Git trees first, then the index. Both comparisons are
+    // independent of worktree content and therefore cannot execute clean filters.
+    gitOutput(root, ["diff", ...diffArgs, base, head]),
+    gitOutput(root, ["diff", "--cached", ...diffArgs, head]),
+  ];
+  if (diffArgs[0] === "--name-status") {
+    sections.push(serializeNameStatus(state.changes));
+  } else if (diffArgs[0] === "--raw") {
+    sections.push(state.signature);
+  } else {
+    sections.push(renderWorktreePatch(root, state));
+  }
+  return sections.join(separator);
+}
+
+function parseIndexEntries(raw: string): Map<string, IndexEntry[]> {
+  const entries = new Map<string, IndexEntry[]>();
+  for (const record of raw.split("\0").filter(Boolean)) {
+    const separator = record.indexOf("\t");
+    if (separator < 0) {
+      continue;
+    }
+    const header = record.slice(0, separator).split(" ");
+    const path = normalizeRepoPath(record.slice(separator + 1));
+    const mode = header[0] ?? "";
+    const object = header[1] ?? "";
+    const stage = Number(header[2] ?? "0");
+    if (!mode || !object || !Number.isInteger(stage)) {
+      continue;
+    }
+    const list = entries.get(path) ?? [];
+    list.push({ mode, object, stage });
+    entries.set(path, list);
+  }
+  return entries;
+}
+
+function serializeNameStatus(changes: readonly GitChange[]): string {
+  return changes.map((change) => {
+    if (change.status === "renamed" && change.oldPath) {
+      return `R100\0${change.oldPath}\0${change.path}\0`;
+    }
+    const status = change.status === "added" ? "A" : change.status === "deleted" ? "D" : "M";
+    return `${status}\0${change.path}\0`;
+  }).join("");
+}
+
+function renderWorktreePatch(root: string, state: WorktreeState): string {
+  const sections: string[] = [];
+  for (const change of state.changes) {
+    const entry = state.index.get(change.path);
+    const oldText = entry ? gitOutput(root, ["cat-file", "blob", entry.object]) : "";
+    const newText = change.status === "deleted" ? "" : readWorkingText(root, change.path) ?? "";
+    const temporary = mkdtempSync(join(tmpdir(), "agent-impact-diff-"));
+    try {
+      const oldFile = join(temporary, "old.impact");
+      const newFile = join(temporary, "new.impact");
+      writeFileSync(oldFile, oldText);
+      writeFileSync(newFile, newText);
+      const output = gitDiffNoIndex(temporary, oldFile, newFile);
+      const hunks = output.split(/\r?\n/).filter((line) => line.startsWith("@@ "));
+      if (hunks.length > 0) {
+        sections.push(`diff --git a/${change.path} b/${change.path}\n${hunks.join("\n")}`);
+      } else if (oldText !== newText) {
+        sections.push(`diff --git a/${change.path} b/${change.path}\n${fullFileHunk(oldText, newText)}`);
+      }
+    } finally {
+      rmSync(temporary, { recursive: true, force: true });
+    }
+  }
+  return sections.join("\n");
+}
+
+function readWorkingText(root: string, path: string): string | undefined {
+  const absolute = join(root, ...path.split("/"));
+  try {
+    const stat = lstatSync(absolute);
+    if (stat.isSymbolicLink()) {
+      return readlinkSync(absolute, "utf8");
+    }
+    return stat.isFile() ? readFileSync(absolute, "utf8") : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+function fullFileHunk(oldText: string, newText: string): string {
+  const oldCount = oldText.length === 0 ? 0 : oldText.split("\n").length - (oldText.endsWith("\n") ? 1 : 0);
+  const newCount = newText.length === 0 ? 0 : newText.split("\n").length - (newText.endsWith("\n") ? 1 : 0);
+  return `@@ -1,${oldCount} +1,${newCount} @@`;
 }
 
 function parseUntracked(root: string): string[] {
@@ -116,6 +288,47 @@ function parseNameStatus(raw: string): GitChange[] {
     changes.push({ status: mapped, path, oldRanges: [], newRanges: [] });
   }
   return changes;
+}
+
+function mergeGitChanges(changes: GitChange[]): GitChange[] {
+  const merged = new Map<string, GitChange>();
+  for (const change of changes) {
+    const current = merged.get(change.path);
+    if (!current) {
+      merged.set(change.path, { ...change, oldRanges: [], newRanges: [] });
+      continue;
+    }
+    const status = mergeGitStatus(current.status, change.status);
+    const oldPath = current.oldPath ?? change.oldPath;
+    merged.set(change.path, {
+      ...current,
+      status,
+      ...(oldPath ? { oldPath } : {}),
+    });
+  }
+  return [...merged.values()];
+}
+
+function mergeGitStatus(current: GitChange["status"], incoming: GitChange["status"]): GitChange["status"] {
+  if (current === incoming) {
+    return current;
+  }
+  if (current === "renamed" || incoming === "renamed") {
+    return "renamed";
+  }
+  if (incoming === "deleted") {
+    return "deleted";
+  }
+  if (current === "deleted") {
+    return incoming === "added" ? "modified" : "deleted";
+  }
+  if (current === "added") {
+    return "added";
+  }
+  if (incoming === "added") {
+    return "modified";
+  }
+  return "modified";
 }
 
 function hasUnmergedStatus(raw: string): boolean {

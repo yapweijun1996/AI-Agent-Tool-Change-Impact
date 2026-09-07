@@ -46,11 +46,11 @@ function withGitMutation(root, target, callback) {
       "@echo off",
       "\"%IMPACT_REAL_GIT%\" %*",
       "set \"code=%ERRORLEVEL%\"",
-      "if \"%~1\"==\"diff\" if \"%~2\"==\"--raw\" if not exist \"%IMPACT_CAPTURE_MARKER%\" (",
+      "if \"%~1\"==\"hash-object\" if \"%~2\"==\"--no-filters\" if \"%~3\"==\"--stdin-paths\" if not exist \"%IMPACT_CAPTURE_MARKER%\" (",
       "  >>\"%IMPACT_CAPTURE_TARGET%\" echo // concurrent edit",
       "  type nul > \"%IMPACT_CAPTURE_MARKER%\"",
       ")",
-      "if \"%~1\"==\"-c\" if \"%~2\"==\"core.fsmonitor=false\" if \"%~3\"==\"diff\" if \"%~4\"==\"--raw\" if not exist \"%IMPACT_CAPTURE_MARKER%\" (",
+      "if \"%~1\"==\"-c\" if \"%~2\"==\"core.fsmonitor=false\" if \"%~3\"==\"hash-object\" if \"%~4\"==\"--no-filters\" if \"%~5\"==\"--stdin-paths\" if not exist \"%IMPACT_CAPTURE_MARKER%\" (",
       "  >>\"%IMPACT_CAPTURE_TARGET%\" echo // concurrent edit",
       "  type nul > \"%IMPACT_CAPTURE_MARKER%\"",
       ")",
@@ -63,7 +63,7 @@ function withGitMutation(root, target, callback) {
       "\"$IMPACT_REAL_GIT\" \"$@\"",
       "code=$?",
       "if [ \"$1\" = \"-c\" ] && [ \"$2\" = \"core.fsmonitor=false\" ]; then shift 2; fi",
-      "if [ \"$1\" = \"diff\" ] && [ \"$2\" = \"--raw\" ] && [ ! -e \"$IMPACT_CAPTURE_MARKER\" ]; then",
+      "if [ \"$1\" = \"hash-object\" ] && [ \"$2\" = \"--no-filters\" ] && [ \"$3\" = \"--stdin-paths\" ] && [ ! -e \"$IMPACT_CAPTURE_MARKER\" ]; then",
       "  printf '\\n// concurrent edit\\n' >> \"$IMPACT_CAPTURE_TARGET\"",
       "  : > \"$IMPACT_CAPTURE_MARKER\"",
       "fi",
@@ -592,11 +592,14 @@ test("changed analysis disables configured external diff, textconv, and fsmonito
   const helper = join(root, "diff-helper.sh");
   writeFileSync(helper, `#!/bin/sh\nprintf 'executed\\n' > '${marker}'\nexit 0\n`);
   chmodSync(helper, 0o755);
-  writeFileSync(join(root, ".gitattributes"), "*.ts diff=fixture\n");
+  writeFileSync(join(root, ".gitattributes"), "*.ts diff=fixture filter=fixture\n");
   git(root, ["add", ".gitattributes"]);
   git(root, ["commit", "-qm", "configure-diff-driver"]);
   git(root, ["config", "diff.external", helper]);
   git(root, ["config", "diff.fixture.textconv", helper]);
+  git(root, ["config", "filter.fixture.clean", helper]);
+  git(root, ["config", "filter.fixture.smudge", "cat"]);
+  git(root, ["config", "filter.fixture.required", "false"]);
   git(root, ["config", "core.fsmonitor", helper]);
   const base = git(root, ["rev-parse", "HEAD"]);
   const mathPath = join(root, "src", "math.ts");

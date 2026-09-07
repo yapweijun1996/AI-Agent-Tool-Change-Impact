@@ -116,6 +116,27 @@ function runGit(root: string, args: string[], encoding: BufferEncoding = "utf8",
   }
 }
 
+function runGitInput(root: string, args: string[], input: string | Buffer, encoding: BufferEncoding = "utf8", maxBuffer = 64 * 1024 * 1024): string {
+  const safeArgs = ["-c", "core.fsmonitor=false", ...args];
+  try {
+    return execFileSync("git", safeArgs, {
+      cwd: root,
+      input,
+      encoding,
+      stdio: ["pipe", "pipe", "pipe"],
+      env: {
+        ...process.env,
+        GIT_OPTIONAL_LOCKS: "0",
+        GIT_TERMINAL_PROMPT: "0",
+      },
+      maxBuffer,
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new ImpactError("GIT_ERROR", `Git command failed: git ${safeArgs.join(" ")}`, { cause: message });
+  }
+}
+
 function isGitOutputLimitError(error: unknown, maxBuffer: number): boolean {
   if (!(error instanceof Error)) {
     return false;
@@ -368,6 +389,61 @@ export function readGitText(root: string, revision: string, relativePath: string
 
 export function gitOutput(root: string, args: string[]): string {
   return runGit(root, args);
+}
+
+/** Hash raw working-tree files without applying repository clean filters. */
+export function gitHashObjectPaths(root: string, paths: readonly string[]): Map<string, string> {
+  const hashes = new Map<string, string>();
+  const batchable = paths.filter((path) => !path.includes("\n") && !path.includes("\r"));
+  if (batchable.length > 0) {
+    const output = runGitInput(root, ["hash-object", "--no-filters", "--stdin-paths"], `${batchable.join("\n")}\n`);
+    const values = output.split(/\r?\n/).filter(Boolean);
+    if (values.length !== batchable.length) {
+      throw new ImpactError("GIT_ERROR", "Git returned an unexpected number of raw working-tree hashes");
+    }
+    batchable.forEach((path, index) => hashes.set(path, values[index]));
+  }
+  for (const path of paths) {
+    if (hashes.has(path)) {
+      continue;
+    }
+    const output = runGitInput(root, ["hash-object", "--no-filters", "--", path], "");
+    hashes.set(path, output.trim());
+  }
+  return hashes;
+}
+
+/** Hash raw content without applying repository clean filters. */
+export function gitHashObjectText(root: string, content: string | Buffer): string {
+  return runGitInput(root, ["hash-object", "--no-filters", "--stdin"], content).trim();
+}
+
+/** Run a content-only Git diff outside the repository attribute scope. */
+export function gitDiffNoIndex(cwd: string, left: string, right: string): string {
+  const safeArgs = ["-c", "core.fsmonitor=false", "diff", "--no-index", "--unified=0", "--no-ext-diff", "--no-textconv", "--", left, right];
+  try {
+    return execFileSync("git", safeArgs, {
+      cwd,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "pipe"],
+      env: {
+        ...process.env,
+        GIT_DIR: undefined,
+        GIT_WORK_TREE: undefined,
+        GIT_OPTIONAL_LOCKS: "0",
+        GIT_TERMINAL_PROMPT: "0",
+      },
+      maxBuffer: 64 * 1024 * 1024,
+    });
+  } catch (error) {
+    const status = (error as { status?: unknown }).status;
+    const stdout = (error as { stdout?: unknown }).stdout;
+    if (status === 1) {
+      return Buffer.isBuffer(stdout) ? stdout.toString("utf8") : typeof stdout === "string" ? stdout : "";
+    }
+    const message = error instanceof Error ? error.message : String(error);
+    throw new ImpactError("GIT_ERROR", `Git content diff failed: git ${safeArgs.join(" ")}`, { cause: message });
+  }
 }
 
 export function fileHash(content: string): string {
