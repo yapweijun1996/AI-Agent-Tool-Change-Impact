@@ -1,4 +1,4 @@
-import { realpathSync } from "node:fs";
+import { lstatSync, realpathSync } from "node:fs";
 import { isAbsolute, join, relative, resolve, sep } from "node:path";
 import * as ts from "typescript";
 import { ImpactError } from "./errors";
@@ -163,6 +163,32 @@ function sameRepoPath(left: string, right: string): boolean {
   return process.platform === "win32" ? left.toLowerCase() === right.toLowerCase() : left === right;
 }
 
+function dedupeRepoPaths(paths: readonly string[]): string[] {
+  const result: string[] = [];
+  for (const path of paths) {
+    if (!result.some((candidate) => sameRepoPath(candidate, path))) {
+      result.push(path);
+    }
+  }
+  return result.sort(compareText);
+}
+
+function isInternalProjectSymlink(snapshot: SourceSnapshot, fileName: string, projectFiles: readonly string[]): boolean {
+  if (projectFiles.some((projectFile) => sameRepoPath(projectFile, fileName))) {
+    return false;
+  }
+  try {
+    const absolute = snapshot.absolutePath(fileName);
+    if (!lstatSync(absolute).isSymbolicLink()) {
+      return false;
+    }
+    const target = toRepoFile(snapshot.root, realpathSync(absolute));
+    return target !== undefined && projectFiles.some((projectFile) => sameRepoPath(projectFile, target));
+  } catch {
+    return false;
+  }
+}
+
 export function createProjectContext(snapshot: SourceSnapshot, requestedProject?: string, limits: Limits = DEFAULT_LIMITS): ProjectContext {
   const configPath = discoverConfig(snapshot, requestedProject);
   const configAbsolute = snapshot.absolutePath(configPath);
@@ -182,10 +208,14 @@ export function createProjectContext(snapshot: SourceSnapshot, requestedProject?
       throw new ImpactError("PROJECT_CONFIG_INVALID", formatDiagnostic(fatal));
     }
   }
-  const projectFiles = parsedCommandLine.fileNames
+  const parsedProjectFiles = parsedCommandLine.fileNames
     .map((fileName) => toRepoFile(snapshot.root, fileName))
     .filter((fileName): fileName is string => fileName !== undefined && snapshot.fileExists(fileName))
     .sort(compareText);
+  const projectFiles = dedupeRepoPaths([
+    ...parsedProjectFiles,
+    ...snapshot.projectFiles().filter((fileName) => isInternalProjectSymlink(snapshot, fileName, parsedProjectFiles)),
+  ]);
   if (projectFiles.length === 0) {
     throw new ImpactError("PROJECT_CONFIG_INVALID", `Project configuration contains no readable source files: ${configPath}`);
   }
