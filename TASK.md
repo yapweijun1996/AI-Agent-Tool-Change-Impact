@@ -257,8 +257,7 @@ against `67ef4a1` and failed three Windows tests before package checks.
 - Local implementation and release checks pass on the current tree. Hosted run
   34083270577 executed the committed workflow at `67ef4a1`: four Linux/macOS jobs
   passed, while Node 22/24 Windows jobs failed the same three tests before package
-  checks. The fixes are committed locally in `6b1c9b5`, `261c47a`, and `c32634e`; the branch is
-  six commits ahead of `origin/main` and has not been pushed. Cancellation and
+  checks. The fixes are committed locally in `6b1c9b5`, `261c47a`, and `c32634e`; the branch contains unpushed commits beyond `origin/main`. Cancellation and
   memory-isolation behavior remain unmeasured.
 - Schema freeze still requires contract review. Registry publication is blocked by
   npm authentication (`npm whoami` returned E401); `npm publish --dry-run` passed,

@@ -52,7 +52,7 @@ used commit `67ef4a1`. Its Node 22/24 Ubuntu and macOS jobs passed; both Windows
 jobs failed three tests before package checks: CRLF-sensitive deletion-fixture
 matching, an in-root symlink target lookup, and the concurrent-content test's
 `.cmd` shim not being intercepted by Node `execFile`. The local fixes are in
-`6b1c9b5`, `261c47a`, and `c32634e`; they are six commits ahead of `origin/main` and await an
+`6b1c9b5`, `261c47a`, and `c32634e`; these changes are unpushed and await an
 authorized hosted rerun.
 
 After the bounded source-read change in `149e0fa`, fresh Node.js `22.23.2` and
