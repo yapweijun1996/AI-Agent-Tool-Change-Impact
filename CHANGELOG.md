@@ -1,8 +1,8 @@
 # Changelog
 
-All notable changes to this project are documented here. The `0.1.0` entry
-records the reviewed release contents; registry publication status is tracked in
-[README.md](README.md) and [VALIDATION.md](VALIDATION.md).
+All notable changes to this project are documented here. Version `0.1.0` was
+published to the public npm registry on 2026-09-07; registry integrity and
+installation evidence are recorded in [VALIDATION.md](VALIDATION.md).
 
 ## [0.1.0] - 2026-09-07
 

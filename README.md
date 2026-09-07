@@ -20,22 +20,30 @@ The draft result contract was reviewed against capabilities, file, symbol,
 changed, and error payloads with Ajv 8.20.0. It is frozen for package `0.1.0`
 while retaining the compatibility identifier `0.1-draft`; permissive draft
 fields remain intentional. Hosted workflow run
-[34095969998](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34095969998)
-passed all six Node 22/24 Ubuntu, macOS, and Windows jobs. The package is
-release-ready for the documented bounded local scope, but it has not yet been
-published because the current npm account is unauthenticated (`npm whoami`
-returns E401). Registry publication, clean-install, and provenance evidence are
-therefore still pending.
+[34096243103](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34096243103)
+passed all six Node 22/24 Ubuntu, macOS, and Windows jobs. Package
+`agent-change-impact@0.1.0` was published to the public npm registry on
+2026-09-07. A clean registry install loaded both the API and CLI and confirmed
+`schemaVersion: "0.1-draft"`; the registry metadata matches the published
+tarball (`sha512-ufe0wPbMgtLpVgMxqExB8Hlvt+D2JL7y1yuSxB2SUwwYZ3b/gbCMqakkN/rYkVUm+yye5NjK6g42xD26azKufA==`,
+SHA-1 `89938e925f54b3bc7e41063829fb1776c7142797`). npm supplied a registry
+signature, but no provenance attestation is present because this release used
+interactive authentication.
+
+The `0.1.0` npm tarball was assembled before this final repository-documentation
+reconciliation, so its immutable registry README retains the pre-publication
+status wording. The repository documentation is current; a future patch release
+is required to refresh text already published for `0.1.0`.
 
 | Surface | Current state |
 | --- | --- |
-| npm package name | `agent-change-impact` (`0.1.0`, publication pending authentication) |
+| npm package name | `agent-change-impact@0.1.0` ([public registry](https://www.npmjs.com/package/agent-change-impact)) |
 | CLI | `agent-impact` via `dist/cli.js` |
 | JavaScript API | `dist/index.js` exports `capabilities`, `analyzeFile`, `analyzeSymbol`, and `analyzeChanged` |
 | Supported source | JavaScript, TypeScript, and TSX in one selected `tsconfig.json` or `jsconfig.json` project |
 | Provider | TypeScript `5.9.3` Language Service plus AST inspection |
 | Runtime floor | Node.js `22` or newer according to `package.json`; Node.js `23.10.0` on macOS and Node.js 22/24 Linux containers have been run locally |
-| Release state | Draft contract frozen for `0.1.0`; registry publication pending |
+| Release state | Published `0.1.0`; draft contract frozen and registry clean-install verified |
 
 ## Install and verify from a checkout
 
@@ -60,7 +68,7 @@ verifies that an internal symlinked source file and a repository root addressed
 through an internal symlink remain within the repository boundary.
 The 34-case suite and package checks recorded at `f9f904b` pass in current
 Node.js 22 and 24 Linux container copies using fresh lockfile installs. The
-latest hosted run `34095969998` adds green Node 22/24 Ubuntu, macOS, and Windows
+latest hosted run `34096243103` adds green Node 22/24 Ubuntu, macOS, and Windows
 jobs. The Windows concurrent-content assertion remains intentionally skipped by
 the current harness because Node `execFile` cannot intercept Git with a `.cmd`
 shim on Windows; this is a test-harness limitation, not an untested product
@@ -76,10 +84,10 @@ byte budget.
 `npm run release:check` verifies package/lockfile versions, the versioned
 changelog heading, draft schema version, required entry points, and the actual
 dry-run tarball file set. Set `AGENT_IMPACT_RELEASE_TAG=v<package.version>` when
-validating a release tag. It does not publish or create a release. `npm publish
---dry-run --ignore-scripts --access public` passes locally for the 38-file
-artifact; an authenticated `npm whoami` is required before the authorized real
-publish and the subsequent clean registry install.
+validating a release tag. It does not publish or create a release.
+`npm publish --dry-run --ignore-scripts --access public` and the authorized
+`npm publish --access public` both passed for `0.1.0`; the clean registry install
+and metadata checks are recorded in [VALIDATION.md](VALIDATION.md).
 The bounded fan-out benchmark in
 [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md) records local
 API/CLI cold-start and limit behavior without making a performance guarantee.

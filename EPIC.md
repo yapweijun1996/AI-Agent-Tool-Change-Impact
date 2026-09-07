@@ -8,10 +8,10 @@ file/symbol analysis and a two-snapshot Git change mode.
 
 Latest Git clean-filter isolation: [`c32634e`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/c32634e).
 
-Current implementation tree: `8577255`. The latest Windows short-path
+Current implementation tree: `d5f75d5`. The latest Windows short-path
 boundary fix is [`0b72a83`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/0b72a83),
 and the hosted Node 22/24 matrix is green in
-[run 34095969998](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34095969998)
+[run 34096243103](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34096243103)
 across Ubuntu, macOS, and Windows.
 
 Status: the implementation vertical slice was delivered by
@@ -67,7 +67,7 @@ Windows `.cmd` invocation handling was hardened in
 the package-smoke fixture now uses a space-containing temporary path to exercise
 quoting (`1c195af`) and disables install scripts during the temporary install
 (`b248f10`); cache-preferred dependency resolution is in
-[`48f102e`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/48f102e); hosted run 34095969998 now passes all six Node 22/24 Ubuntu, macOS,
+[`48f102e`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/48f102e); hosted run 34096243103 now passes all six Node 22/24 Ubuntu, macOS,
 and Windows jobs. The Windows concurrent-content assertion remains skipped by
 the test harness because Node `execFile` cannot intercept a `.cmd` shim.
 Packaged API/CLI end-to-end analysis smoke was added in
@@ -79,9 +79,10 @@ Schema metadata and optional versioned-tag validation were added in
 and [`13990ce`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/13990ce).
 The draft schema and local verification pass. The schema/API surface is reviewed
 and frozen for package `0.1.0` while retaining the `0.1-draft` identifier.
-Cancellation and memory-isolation measurements remain deferred; registry
-publication and clean-install evidence remain open because npm authentication
-is unavailable.
+Cancellation and memory-isolation measurements remain deferred. Package
+`agent-change-impact@0.1.0` is published, and clean registry installation,
+integrity, and npm signature checks pass; no provenance attestation is present
+because publication used interactive authentication.
 Provider unresolved observations are now bounded before result projection, with
 an explicit partial-result marker and regression coverage in
 [`32fd01a`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/32fd01a).
@@ -137,7 +138,7 @@ attributes in [`c32634e`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-
 | E-06: Candidate-test projection | CI-06 | Done for scope | Filename candidates linked to retained dependency edges |
 | E-07: Changed-target orchestration | CI-07 | Done for tested cases | Modification, deletion, rename, configuration, unsupported-file, worktree projections |
 | E-08: Resource and correctness hardening | CI-08 | Done for declared scope | Deterministic file/graph/provider/diagnostic/output limits, bounded descriptor/Git/external reads, repeated cold starts, high-fan-out regressions, bounded fan-out measurements, clean-filter isolation, and the green Node 22/24 Ubuntu/macOS/Windows matrix are present; cancellation and memory isolation remain deferred |
-| E-09: Package and release gates | CI-09 | Release-ready; publication pending | Local pack/publish dry-runs, release metadata, dependency audit, installed API/CLI smoke, schema/API freeze review, and hosted run 34095969998 pass; actual npm publication, clean registry install, and provenance require authentication |
+| E-09: Package and release gates | CI-09 | Done and published | Local pack/publish dry-runs, release metadata, dependency audit, installed API/CLI smoke, schema/API freeze review, hosted run 34096243103, npm publication, and clean registry install pass; npm signature metadata is present and provenance is unavailable for the interactive release |
 
 ## Acceptance by work package
 
@@ -219,7 +220,7 @@ across four sizes on macOS and the 241-file fixture on Node 22/24 Linux, with
 separate API/CLI cold-start observations. A 20,000-oversized-file stress script
 confirms the default diagnostic cap returns 1,000 warnings and a 154,605-byte
 partial result. The hosted run
-[34095969998](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34095969998)
+[34096243103](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34096243103)
 passes all six Node 22/24 Ubuntu, macOS, and Windows jobs. The Windows
 concurrent-content assertion remains skipped by the harness because Node
 `execFile` cannot intercept a `.cmd` shim. Cancellation/resource-abort behavior
@@ -242,9 +243,12 @@ snapshot-aware, provider-observation, diagnostic-limit, oversized revision-blob,
 distinct base/head diagnostic-snapshot, internal-symlink, and repository-root
 symlink-alias fixtures. Package-only Node 22.23.2 and 24.20.0
 Linux checkouts also pass clean `npm ci` and `release:check`.
-The latest hosted result is run 34095969998, with all six jobs passing package
-checks and documentation checks. No registry publication, clean registry
-install, or provenance is claimed until npm authentication succeeds.
+The latest hosted result is run 34096243103, with all six jobs passing package
+checks and documentation checks. Package `agent-change-impact@0.1.0` is published
+with `latest: 0.1.0`; a clean registry install loads the API and CLI and confirms
+the `0.1-draft` schema identifier. Registry integrity, SHA-1 shasum, and npm
+signature metadata match the published tarball. No provenance attestation is
+present because the release used interactive authentication.
 
 The current workflow uses full-history checkout, read-only contents permission,
 and `npm ci --ignore-scripts`; this policy is recorded in [`f64fbb6`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/f64fbb6).
@@ -253,17 +257,18 @@ Git revision inputs; regression coverage is in [`ab27679`](https://github.com/ya
 
 ## Completion gate
 
-The declared v0.1 implementation scope is complete: every in-scope requirement
-has evidence in [VALIDATION.md](VALIDATION.md), the draft schema/API is reviewed
-and frozen for package `0.1.0`, and platform/artifact gates pass. The package is
-release-ready for its documented bounded scope. Registry publication, clean
-registry installation, and provenance remain a separate external gate blocked by
-the current npm authentication state; cancellation and memory isolation remain
-deferred product work.
+The declared v0.1 implementation scope and release gates are complete: every
+in-scope requirement has evidence in [VALIDATION.md](VALIDATION.md), the draft
+schema/API is reviewed and frozen for package `0.1.0`, platform/artifact gates
+pass, and the package is published with a verified clean registry install.
+The registry exposes npm signature metadata; no provenance attestation is
+present because the release used interactive authentication. Cancellation and
+memory isolation remain deferred product work.
 
 ## Dependencies and external prerequisites
 
 The implementation depends on local Git, Node.js `>=22`, and TypeScript
 `5.9.3`. Ajv is development-only. The optional Code Slice repository is not an
-installed dependency. CI runners, npm ownership, release credentials,
-provenance, and a clean registry install are external release prerequisites.
+installed dependency. CI runners and npm ownership were required for the v0.1
+release; future releases should repeat the registry, clean-install, and
+provenance checks.

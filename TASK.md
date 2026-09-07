@@ -1,7 +1,7 @@
 # Task Status
 
 Latest Git clean-filter isolation: [`c32634e`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/c32634e)
-Current implementation tree: `8577255`; latest Windows short-path boundary
+Current implementation tree: `d5f75d5`; latest Windows short-path boundary
 fix: [`0b72a83`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/0b72a83);
 latest documentation line-ending check: [`e85c573`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/e85c573).
 Status date: 2026-09-07. This is the authoritative execution ledger. The
@@ -61,7 +61,7 @@ and the smoke fixture now exercises space-containing temporary paths in
 [`1c195af`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/1c195af)
 and disables install scripts during temporary installation in
 [`b248f10`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/b248f10);
-hosted run 34095969998 passes all six Node 22/24 Ubuntu/macOS/Windows jobs; the
+hosted run 34096243103 passes all six Node 22/24 Ubuntu/macOS/Windows jobs; the
 Windows concurrent-content assertion remains skipped by the test harness because
 Node `execFile` cannot intercept a `.cmd` shim;
 cache-preferred dependency resolution is in
@@ -164,9 +164,11 @@ to end. A local `npm publish --dry-run --ignore-scripts --access public` also
 passes for the 38-file artifact. Bounded fan-out measurements are recorded in
 [`spike/PERFORMANCE_FINDINGS.md`](spike/PERFORMANCE_FINDINGS.md). The draft
 schema/API is frozen for package `0.1.0` after the Ajv 8.20.0 review, while its
-`0.1-draft` identifier remains. Hosted run 34095969998 passes all six matrix jobs.
-Registry publication and clean registry installation remain open because
-`npm whoami` returns E401; cancellation and memory isolation remain deferred.
+`0.1-draft` identifier remains. Hosted run 34096243103 passes all six matrix jobs.
+The package is published as `agent-change-impact@0.1.0`; registry clean-install
+and metadata checks pass, including npm integrity and signature metadata. No
+provenance attestation is present because publication used interactive
+authentication. Cancellation and memory isolation remain deferred.
 
 ## Status definitions
 
@@ -199,7 +201,7 @@ Registry publication and clean registry installation remain open because
 | CI-06 | Add candidate-test classification and graph-linked results | Done for scope | CI-04, CI-05 | Filename candidates retain edge IDs/evidence and make no coverage claim; V-14 |
 | CI-07 | Implement two-snapshot changed-target analysis and fallback | Done for tested cases | CI-03, CI-04, CI-05 | Modification/deletion/rename/configuration/unsupported/worktree cases; V-10, V-11, V-12 |
 | CI-08 | Enforce budgets, deterministic results, isolation, and measured limits | Done for declared scope | CI-05, CI-06, CI-07 | Local file/graph/provider/diagnostic/output limits, pre-decode bounded source/external/module-resolution reads, bounded Git revision buffers with `FILE_BUDGET_EXCEEDED` overflow diagnostics, snapshot-tagged base/head loader and project diagnostics, Windows path semantics, determinism/read-only checks, bounded fan-out API/CLI measurements across macOS and Node 22/24 Linux, high-fan-out unresolved-observation and diagnostic-cap regressions, and clean-filter isolation pass; cancellation and memory isolation are deferred; V-09, V-15 through V-20 |
-| CI-09 | Verify packaging, freeze contracts, and complete release gates | Release-ready; registry publication pending | CI-08 | Local pack/publish dry-runs, dependency audit, installed API/CLI end-to-end smoke, Node 22/24 Linux checks, full-history/read-only workflow, Ajv contract review, and hosted run 34095969998 pass all six Node 22/24 Ubuntu/macOS/Windows jobs; npm publication and clean registry installation remain blocked by authentication; V-21, V-22 |
+| CI-09 | Verify packaging, freeze contracts, and complete release gates | Done and published | CI-08 | Local pack/publish dry-runs, dependency audit, installed API/CLI end-to-end smoke, Node 22/24 Linux checks, full-history/read-only workflow, Ajv contract review, hosted run 34096243103, npm publication, and clean registry installation pass; the registry has npm signature metadata but no provenance attestation; V-21, V-22 |
 
 Requirements and fixture definitions are in [SPEC.md](SPEC.md) and
 [VALIDATION.md](VALIDATION.md). Work-package context is in [EPIC.md](EPIC.md).
@@ -211,11 +213,11 @@ release action as completed evidence.
 
 | Gate slice | Parent | Status | Acceptance criterion | Current blocker or next input |
 | --- | --- | --- | --- | --- |
-| Local artifact and changelog integrity | CI-09 | Done locally | `npm pack --dry-run`, `npm publish --dry-run --ignore-scripts --access public`, and `npm run release:check` confirm the versioned package, lockfile, schema, compiled entry points, dated `CHANGELOG.md`, and no development sources; installed API/CLI analysis and packaged pretty-output budget rejection pass | Actual registry publication remains external |
-| Hosted platform matrix | CI-09 | Done for tested matrix | Six Node 22/24 jobs on Ubuntu, macOS, and Windows pass typecheck, tests, package checks, pack smoke, and docs check in [run 34095969998](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34095969998); the Windows capture-mutation harness skip is explicitly documented | No further hosted rerun is required for the current tree |
+| Local artifact and changelog integrity | CI-09 | Done | `npm pack --dry-run`, `npm publish --dry-run --ignore-scripts --access public`, and `npm run release:check` confirm the versioned package, lockfile, schema, compiled entry points, dated `CHANGELOG.md`, and no development sources; installed API/CLI analysis and packaged pretty-output budget rejection pass | Registry artifact checks also pass |
+| Hosted platform matrix | CI-09 | Done for tested matrix | Six Node 22/24 jobs on Ubuntu, macOS, and Windows pass typecheck, tests, package checks, pack smoke, and docs check in [run 34096243103](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/actions/runs/34096243103); the Windows capture-mutation harness skip is explicitly documented | No further hosted rerun is required for the current tree |
 | Provider cancellation and isolation | CI-08 | Deferred | Deterministic work caps and bounded reads are implemented; worker cancellation/timeout and memory-isolation evidence are outside the v0.1 contract | Revisit only when a worker boundary and public query-budget requirement are approved |
 | Schema/API freeze | CI-09 | Done for v0.1.0 draft | Ajv 8.20.0 review validates capabilities, file, symbol, changed, and error envelopes; implementation, CLI, types, schema, and changelog retain the `0.1-draft` contract identifier | A future tightening or rename requires a new versioned contract |
-| Registry release and provenance | CI-09 | Blocked by authorization | Package version, Git tag, GitHub Release, changelog, registry tarball, clean install, and provenance metadata match | Requires release credentials and explicit publication authorization |
+| Registry release and provenance | CI-09 | Done with limitation | `agent-change-impact@0.1.0` is visible with `latest: 0.1.0`; clean registry install, API/CLI schema checks, tarball integrity, SHA-1 shasum, and npm signature metadata match the published artifact | No provenance attestation is present because publication used interactive authentication; no Git tag or GitHub Release was requested |
 
 ## Verified local commands
 
@@ -223,19 +225,20 @@ The latest local macOS gate passed on 2026-09-07 using Node.js `v23.10.0` on
 macOS `Darwin 25.6.0 arm64`; `npm test` passed 36/36 together with typecheck,
 package, release, audit, smoke, documentation, and diff checks. The complete
 Node 22/24 Linux container evidence remains recorded at `f9f904b`. Hosted run
-34095969998 is the current six-job matrix result and passes all tested Ubuntu,
+34096243103 is the current six-job matrix result and passes all tested Ubuntu,
 macOS, and Windows jobs.
 
 | Command | Result |
 | --- | --- |
-| `npm test` | Pass: 36/36 on the latest macOS gate; the complete `f9f904b` cross-runtime gate remains 34/34, and hosted run 34095969998 passes the Windows test matrix with the documented `.cmd` harness skip |
+| `npm test` | Pass: 36/36 on the latest macOS gate; the complete `f9f904b` cross-runtime gate remains 34/34, and hosted run 34096243103 passes the Windows test matrix with the documented `.cmd` harness skip |
 | `npm run typecheck` | Pass: strict TypeScript check with unused locals/parameters rejected |
 | `npm run docs:check` | Pass: 11 Markdown files; links/anchors, identifiers, task DAG, fences, whitespace, Git references, and `.gitattributes` preservation, including CRLF-normalized checks |
 | `npm audit --json` | Pass: 0 vulnerabilities across production and development dependencies |
 | `npm pack --dry-run --ignore-scripts` | Pass: 38 package files, including `CHANGELOG.md`; no development sources/tests included |
 | `npm run release:check` | Pass: package/lockfile version, dated changelog heading, draft schema version, entry points, and 38-file dry-run tarball set agree; `AGENT_IMPACT_RELEASE_TAG=v0.1.0 npm run release:check` also passes |
 | `npm run pack:smoke` | Pass: local tarball installed with `npm install --prefer-offline --omit=dev --ignore-scripts`; packaged API and CLI analysis returned valid draft results, and packaged pretty output was rejected with `OUTPUT_LIMIT_EXCEEDED` when formatting exceeded the selected byte budget |
-| `npm publish --dry-run --ignore-scripts --access public` | Pass: npm assembled the 38-file `agent-change-impact@0.1.0` artifact; this did not publish and npm authentication remains unavailable (`npm whoami` returned E401) |
+| `npm publish --dry-run --ignore-scripts --access public` | Pass: npm assembled the 38-file `agent-change-impact@0.1.0` artifact |
+| `npm publish --access public` and clean registry install | Pass: published `agent-change-impact@0.1.0` with `latest: 0.1.0`; a fresh temporary directory installed the package, loaded the API and CLI, confirmed `0.1-draft`, and matched registry integrity/SHA-1 metadata; npm signature metadata is present and provenance is absent for the interactive release |
 | Node 22/24 package-only release check | Pass: clean Node.js `v22.23.2` and `v24.20.0` Alpine copies install the lockfile with `npm ci --ignore-scripts` and pass `npm run release:check` |
 | Pack-and-install smoke | Pass: local tarball installed with cache-preferred dependency resolution and install scripts disabled; packaged API returned `0.1-draft`, and packaged `analyzeChanged` did not execute a configured fsmonitor marker |
 | Node 22/24 Linux container matrix | Pass at `f9f904b`: current clean copies using Node.js `v22.23.2` and `v24.20.0` Alpine runtimes inside Git-capable Linux containers; after fresh lockfile `npm ci`, dependency audit, the 34-case suite, typecheck, pack check, installed API/CLI smoke, both release checks, docs check, and `git diff --check` pass; the run includes external-helper, symlink-escape, internal source/root symlink, malformed API request, out-of-range coordinate, NUL path rejection, effective analysis limits, provider-observation cap, diagnostic-limit, pre-decode bounded-reader, oversized revision-blob, and distinct base/head diagnostic-snapshot fixtures |
@@ -255,33 +258,33 @@ macOS, and Windows jobs.
 | Historical dependency-input fidelity | CI-03, CI-04, CI-07 | Use permitted current local declarations and report the limitation; never install/fetch history |
 | Precise module-widening rules | CI-02, CI-05 | Current file mode is module-level; symbol mode retains bound references |
 | Frozen schema/enums/API signatures | CI-02, CI-09 | Frozen for package `0.1.0` after Ajv review; keep the `0.1-draft` identifier until a future versioned contract changes it |
-| Node/platform compatibility | CI-09 | `engines.node >=22` is the deliberate v0.1 floor; Node 23/macOS and Node 22/24 Linux containers pass locally, and hosted run 34095969998 passes the Node 22/24 Ubuntu/macOS/Windows matrix; Node 18/20 remain unsupported |
+| Node/platform compatibility | CI-09 | `engines.node >=22` is the deliberate v0.1 floor; Node 23/macOS and Node 22/24 Linux containers pass locally, and hosted run 34096243103 passes the Node 22/24 Ubuntu/macOS/Windows matrix; Node 18/20 remain unsupported |
 | Input/provider/output thresholds | CI-08 | Defaults and hard caps, including 1,000/10,000 diagnostic budgets, are implemented; macOS and Node 22/24 Linux fan-out observations plus 20,000-file diagnostic stress exist; release performance SLAs are intentionally undefined |
 
 ## Blockers and limitations
 
 - Local implementation, release checks, and the hosted matrix pass for the
-  declared v0.1 scope. Run 34095969998 covers all six Node 22/24 Ubuntu/macOS/
+  declared v0.1 scope. Run 34096243103 covers all six Node 22/24 Ubuntu/macOS/
   Windows jobs; the Windows concurrent-content assertion is explicitly harness-
   skipped because Node `execFile` cannot intercept a `.cmd` shim. Cancellation
   and memory-isolation behavior remain deferred.
-- The schema/API contract is frozen for `0.1.0` after the Ajv review. Registry
-  publication is blocked by npm authentication (`npm whoami` returned E401);
-  `npm publish --dry-run` passes, but no package or registry installation has
-  been published or claimed.
+- The schema/API contract is frozen for `0.1.0` after the Ajv review. The
+  package is published and its clean registry install, integrity, and npm
+  signature metadata have been verified. No provenance attestation is present
+  because publication used interactive authentication; no Git tag or GitHub
+  Release was requested.
 - Project references, separate project test roots, historical dependency
   reconstruction, runtime/data-flow dispatch, and cancellation isolation remain
   explicit product limitations, not hidden completeness assumptions.
 
 ## Next steps
 
-1. Authenticate to npm, publish `agent-change-impact@0.1.0`, and verify a clean
-   registry install, integrity, and provenance as V-22; update the release
-   evidence after each observable step.
-2. Keep the declared v0.1 scope unchanged while monitoring post-publication
-   reports and package behavior.
-3. Revisit cancellation, memory isolation, project references, and historical
+1. Monitor the published package and post-release reports while keeping the
+   declared v0.1 scope unchanged.
+2. Revisit cancellation, memory isolation, project references, and historical
    dependency fidelity only as separately approved work.
+3. Decide whether a future release should add provenance through a CI-based
+   trusted publishing flow.
 
 ## Deferred work
 

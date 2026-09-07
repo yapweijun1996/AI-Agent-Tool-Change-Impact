@@ -1,8 +1,10 @@
 # Design
 
-Status: implemented v0.1 draft; declared-scope gates pass, with registry
-publication still pending npm authentication.
-Current implementation tree: `8577255`.
+Status: implemented and published v0.1 draft; declared-scope, artifact, hosted,
+and registry clean-install gates pass for `agent-change-impact@0.1.0`. The
+registry provides npm signature metadata; no provenance attestation is present
+because publication used interactive authentication.
+Current implementation tree: `d5f75d5`.
 Latest Windows path-boundary fix: [`0b72a83`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/0b72a83)
 Latest documentation line-ending check: [`e85c573`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/e85c573)
 Core implementation revision: [`8bb3651`](https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/commit/8bb3651)
@@ -203,7 +205,7 @@ evidence before the public provider contract is broadened.
 ### D-11: Keep the v0.1 runtime floor explicit
 
 The package targets Node.js 22 and newer, matching the maintained runtime lines
-selected for this release candidate and the configured Node 22/24 matrix. The
+selected for this release and the configured Node 22/24 matrix. The
 earlier proposal's Node 18/20 targets are not advertised by v0.1; lowering the
 floor requires separate compatibility evidence and a deliberate support
 decision. This keeps the published engine range aligned with tested behavior
