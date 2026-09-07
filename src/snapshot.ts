@@ -316,11 +316,18 @@ function discoverInternalSymlinks(root: string, existingPaths: readonly string[]
         continue;
       }
       const absolutePath = join(directory, entry.name);
-      if (entry.isDirectory()) {
-        pending.push(absolutePath);
+      let isSymbolicLink = false;
+      try {
+        // Dirent reparse-point flags are inconsistent across Windows runner
+        // images, so lstat is the source of truth for supplemental aliases.
+        isSymbolicLink = lstatSync(absolutePath).isSymbolicLink();
+      } catch {
         continue;
       }
-      if (!entry.isSymbolicLink()) {
+      if (!isSymbolicLink) {
+        if (entry.isDirectory()) {
+          pending.push(absolutePath);
+        }
         continue;
       }
       let realPath: string;
@@ -337,15 +344,6 @@ function discoverInternalSymlinks(root: string, existingPaths: readonly string[]
       const relativePath = normalizeRepoPath(relative(root, absolutePath).split(sep).join("/"));
       const key = process.platform === "win32" ? relativePath.toLowerCase() : relativePath;
       if (existing.has(key) || !shouldIncludePath(relativePath) || isGitIgnoredPath(root, relativePath)) {
-        continue;
-      }
-      // lstat guards against a path changing from a symlink between readdir
-      // and this read, keeping the supplemental scan deterministic.
-      try {
-        if (!lstatSync(absolutePath).isSymbolicLink()) {
-          continue;
-        }
-      } catch {
         continue;
       }
       discovered.push(relativePath);
