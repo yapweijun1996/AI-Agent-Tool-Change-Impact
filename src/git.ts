@@ -1,9 +1,9 @@
 import { lstatSync, mkdtempSync, readFileSync, readlinkSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
-import type { ChangedSeed, Diagnostic, TextRange } from "./types";
+import type { ChangedSeed, Diagnostic, Limits, TextRange } from "./types";
 import { ImpactError } from "./errors";
-import { gitDiffNoIndex, gitHashObjectPaths, gitHashObjectText, gitOutput, repositoryRoot, shouldIncludePath } from "./snapshot";
+import { gitDiffNoIndex, gitHashObjectPaths, gitHashObjectText, gitOutput, gitTextAttributes, repositoryRoot, shouldIncludePath } from "./snapshot";
 import { compareText, normalizeRepoPath } from "./util";
 
 export interface GitChange {
@@ -22,7 +22,7 @@ export interface GitChangeResult {
   diagnostics: Diagnostic[];
 }
 
-export function collectGitChanges(rootInput: string | undefined, baseInput: string, headInput?: string, worktree = false): GitChangeResult {
+export function collectGitChanges(rootInput: string | undefined, baseInput: string, headInput?: string, worktree = false, limits?: Limits): GitChangeResult {
   const root = repositoryRoot(rootInput);
   if (worktree === (headInput !== undefined)) {
     throw new ImpactError("INVALID_ARGUMENT", "Pass exactly one of head or worktree for changed analysis");
@@ -35,8 +35,8 @@ export function collectGitChanges(rootInput: string | undefined, baseInput: stri
   if (!worktree && (!head || head.startsWith("-") || head.includes("\0"))) {
     throw new ImpactError("INVALID_ARGUMENT", "A valid head revision is required when worktree is false");
   }
-  const captureBefore = worktree ? worktreeCaptureSignature(root, base) : undefined;
-  const worktreeState = worktree ? collectWorktreeState(root) : undefined;
+  const captureBefore = worktree ? worktreeCaptureSignature(root, base, limits) : undefined;
+  const worktreeState = worktree ? collectWorktreeState(root, limits) : undefined;
   const endpoint = worktree ? undefined : head;
   const diffArgs = ["--name-status", "-z", "--find-renames", "--no-ext-diff", "--no-textconv"];
   const raw = worktree
@@ -70,7 +70,7 @@ export function collectGitChanges(rootInput: string | undefined, baseInput: stri
   }
   changes.sort((a, b) => compareText(`${a.path}:${a.oldPath ?? ""}`, `${b.path}:${b.oldPath ?? ""}`));
   if (worktree) {
-    const captureAfter = worktreeCaptureSignature(root, base);
+    const captureAfter = worktreeCaptureSignature(root, base, limits);
     if (captureBefore !== captureAfter) {
       diagnostics.push({ code: "WORKTREE_CHANGED_DURING_CAPTURE", message: "Working-tree contents or status changed while the snapshot was being captured; results are partial", severity: "warning" });
     }
@@ -79,11 +79,11 @@ export function collectGitChanges(rootInput: string | undefined, baseInput: stri
   return { root, base, head: endpoint, changes, diagnostics };
 }
 
-function worktreeCaptureSignature(root: string, base: string): string {
+function worktreeCaptureSignature(root: string, base: string, limits?: Limits): string {
   // `git diff` and `git status` can execute repository-configured clean
   // filters while inspecting worktree content. Tree, index, and raw-file
   // comparisons provide the same change-state signal without invoking them.
-  const state = collectWorktreeState(root);
+  const state = collectWorktreeState(root, limits);
   return worktreeDiff(root, base, ["--raw", "-z", "--no-ext-diff", "--no-textconv"], "", state);
 }
 
@@ -101,7 +101,7 @@ interface WorktreeState {
   signature: string;
 }
 
-function collectWorktreeState(root: string): WorktreeState {
+function collectWorktreeState(root: string, limits?: Limits): WorktreeState {
   const index = parseIndexEntries(gitOutput(root, ["ls-files", "--stage", "-z"]));
   const stageZero = new Map<string, IndexEntry>();
   const conflictPaths = new Set<string>();
@@ -138,6 +138,10 @@ function collectWorktreeState(root: string): WorktreeState {
     workingHashes.set(path, hash);
   }
 
+  // Compare raw content without invoking repository-configured clean filters.
+  // Git normalizes text line endings at checkout on Windows, so reconcile a
+  // CRLF-only difference with the index object before classifying a change.
+  reconcileCheckoutLineEndings(root, stageZero, workingHashes, limits);
   const changes: GitChange[] = [];
   for (const [path, entry] of stageZero.entries()) {
     if (missingPaths.has(path) || (!workingHashes.has(path) && entry.mode !== "160000")) {
@@ -165,6 +169,74 @@ function collectWorktreeState(root: string): WorktreeState {
     unmerged,
   });
   return { changes, index: stageZero, workingHashes, hasConflict: conflictPaths.size > 0 || unmerged.length > 0, signature };
+}
+
+function reconcileCheckoutLineEndings(root: string, index: Map<string, IndexEntry>, workingHashes: Map<string, string>, limits?: Limits): void {
+  const candidates = [...index.entries()].filter(([path, entry]) => entry.mode !== "160000" && workingHashes.get(path) !== entry.object).map(([path]) => path);
+  if (candidates.length === 0) {
+    return;
+  }
+  let attributes: Map<string, string>;
+  try {
+    attributes = gitTextAttributes(root, candidates);
+  } catch {
+    attributes = new Map();
+  }
+  let autocrlf = "";
+  let eol = "";
+  try {
+    autocrlf = gitOutput(root, ["config", "--get", "core.autocrlf"]).trim().toLowerCase();
+  } catch {
+    // An unset core.autocrlf is equivalent to no implicit checkout conversion.
+  }
+  try {
+    eol = gitOutput(root, ["config", "--get", "core.eol"]).trim().toLowerCase();
+  } catch {
+    // An unset core.eol follows the platform default.
+  }
+  const maxBytes = limits?.maxFileBytes ?? 16 * 1024 * 1024;
+  for (const path of candidates) {
+    const attribute = attributes.get(path) ?? "unspecified";
+    const platformCheckout = process.platform === "win32" && autocrlf !== "false" && autocrlf !== "input" && eol !== "lf";
+    const textCheckout = (attribute === "set" || attribute === "auto") && (platformCheckout || autocrlf === "true")
+      || attribute === "unspecified" && autocrlf === "true" && eol !== "lf";
+    if (!textCheckout) {
+      continue;
+    }
+    const absolute = join(root, ...path.split("/"));
+    try {
+      const stat = lstatSync(absolute);
+      if (stat.isSymbolicLink() || !stat.isFile() || stat.size > maxBytes) {
+        continue;
+      }
+      const raw = readFileSync(absolute);
+      const normalized = normalizeCheckoutLineEndings(raw);
+      if (normalized && gitHashObjectText(root, normalized) === index.get(path)?.object) {
+        workingHashes.set(path, index.get(path)!.object);
+      }
+    } catch {
+      // Keep the raw hash when normalization cannot be proven equivalent.
+    }
+  }
+}
+
+function normalizeCheckoutLineEndings(value: Buffer): Buffer | undefined {
+  if (value.includes(0) || !value.includes(13)) {
+    return undefined;
+  }
+  const normalized: number[] = [];
+  let changed = false;
+  for (let index = 0; index < value.length; index += 1) {
+    const byte = value[index];
+    if (byte === 13 && value[index + 1] === 10) {
+      normalized.push(10);
+      index += 1;
+      changed = true;
+    } else {
+      normalized.push(byte);
+    }
+  }
+  return changed ? Buffer.from(normalized) : undefined;
 }
 
 function worktreeDiff(root: string, base: string, diffArgs: string[], separator: string, state: WorktreeState): string {

@@ -418,6 +418,26 @@ export function gitHashObjectText(root: string, content: string | Buffer): strin
   return runGitInput(root, ["hash-object", "--no-filters", "--stdin"], content).trim();
 }
 
+/** Read Git's built-in text attribute without evaluating a content filter. */
+export function gitTextAttributes(root: string, paths: readonly string[]): Map<string, string> {
+  const attributes = new Map<string, string>();
+  if (paths.length === 0) {
+    return attributes;
+  }
+  const input = Buffer.from(`${paths.join("\0")}\0`, "utf8");
+  const output = runGitInput(root, ["check-attr", "-z", "--stdin", "text"], input);
+  const tokens = output.split("\0");
+  for (let index = 0; index + 2 < tokens.length; index += 3) {
+    const path = normalizeRepoPath(tokens[index]);
+    const attribute = tokens[index + 1];
+    const value = tokens[index + 2];
+    if (attribute === "text") {
+      attributes.set(path, value);
+    }
+  }
+  return attributes;
+}
+
 /** Run a content-only Git diff outside the repository attribute scope. */
 export function gitDiffNoIndex(cwd: string, left: string, right: string): string {
   const safeArgs = ["-c", "core.fsmonitor=false", "diff", "--no-index", "--unified=0", "--no-ext-diff", "--no-textconv", "--", left, right];

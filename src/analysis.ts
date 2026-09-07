@@ -168,7 +168,7 @@ export function analyzeChanged(request: ChangedImpactRequest): ImpactResult {
     validateChangedRequest(request);
     const limits = mergeLimits(request.limits);
     const root = repositoryRoot(request.root);
-    const gitChanges = collectGitChanges(root, request.base, request.head, request.worktree === true);
+    const gitChanges = collectGitChanges(root, request.base, request.head, request.worktree === true, limits);
     const baseLoaded = loadRevision(root, request.base, limits);
     const headLoaded = request.worktree === true
       ? loadWorkingTreeStable(root, limits)
