@@ -98,6 +98,22 @@ distribution channels. An agent may need network access while installing from
 one of them, but the analysis itself reports `network: "disabled"` and does not
 execute repository code.
 
+### Global installation for Codex CLI
+
+Install the published CLI from any directory; no repository checkout or `cd` is required:
+
+```sh
+npm install --global agent-change-impact@latest
+agent-impact capabilities --json
+```
+
+For a GitHub revision that has not been published to npm yet, npm builds the checkout through its `prepare` script:
+
+```sh
+npm install --global github:yapweijun1996/AI-Agent-Tool-Change-Impact
+agent-impact capabilities --json
+```
+
 Read [AGENT_GUIDE.md](AGENT_GUIDE.md) for the install and operating workflow.
 The repository also ships the portable Agent Skills file
 [`skills/agent-change-impact/SKILL.md`](skills/agent-change-impact/SKILL.md),

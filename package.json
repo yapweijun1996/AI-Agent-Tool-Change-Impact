@@ -3,6 +3,21 @@
   "version": "0.1.1",
   "description": "Bounded, evidence-backed change impact analysis for AI coding agents",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact.git"
+  },
+  "homepage": "https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact#readme",
+  "bugs": {
+    "url": "https://github.com/yapweijun1996/AI-Agent-Tool-Change-Impact/issues"
+  },
+  "keywords": [
+    "ai-agent",
+    "change-impact",
+    "static-analysis",
+    "typescript",
+    "cli"
+  ],
   "type": "commonjs",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -35,7 +50,12 @@
     "release:check": "node scripts/release-check.cjs",
     "pack:check": "npm run build && npm pack --dry-run --ignore-scripts",
     "pack:smoke": "npm run build && node scripts/pack-smoke.cjs",
+    "prepare": "npm run build",
     "prepack": "npm run build"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   },
   "dependencies": {
     "typescript": "5.9.3"
