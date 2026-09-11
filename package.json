@@ -50,7 +50,6 @@
     "release:check": "node scripts/release-check.cjs",
     "pack:check": "npm run build && npm pack --dry-run --ignore-scripts",
     "pack:smoke": "npm run build && node scripts/pack-smoke.cjs",
-    "prepare": "npm install --global=false --ignore-scripts --include=dev --no-package-lock --no-audit --no-fund && npm run build",
     "prepack": "npm run build"
   },
   "publishConfig": {

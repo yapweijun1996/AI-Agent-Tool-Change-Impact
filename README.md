@@ -107,12 +107,6 @@ npm install --global agent-change-impact@latest
 agent-impact capabilities --json
 ```
 
-For a GitHub revision that has not been published to npm yet, npm builds the checkout through its `prepare` script:
-
-```sh
-npm install --global github:yapweijun1996/AI-Agent-Tool-Change-Impact
-agent-impact capabilities --json
-```
 
 Read [AGENT_GUIDE.md](AGENT_GUIDE.md) for the install and operating workflow.
 The repository also ships the portable Agent Skills file
